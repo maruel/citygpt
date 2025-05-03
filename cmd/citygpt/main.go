@@ -158,13 +158,16 @@ const htmlTemplate = `<!DOCTYPE html>
 </html>
 `
 
-func generateResponse(_ string) string {
+// server represents the HTTP server that handles the chat application.
+type server struct{}
+
+func (s *server) generateResponse(_ string) string {
 	// For now, just return "Hello" as requested
 	// This function will be replaced later with actual implementation
 	return "Hello"
 }
 
-func handleChat(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -176,7 +179,7 @@ func handleChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := generateResponse(req.Message)
+	response := s.generateResponse(req.Message)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ChatResponse{
@@ -187,7 +190,7 @@ func handleChat(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -207,10 +210,10 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func startServer() error {
+func (s *server) start() error {
 	// Set up routes
-	http.HandleFunc("/", handleIndex)
-	http.HandleFunc("/api/chat", handleChat)
+	http.HandleFunc("/", s.handleIndex)
+	http.HandleFunc("/api/chat", s.handleChat)
 
 	port := "8080"
 	log.Printf("Server starting on http://localhost:%s", port)
@@ -240,8 +243,8 @@ func mainImpl() error {
 		println(resp.Contents[0].Text)
 	*/
 
-	// Start the web server
-	return startServer()
+	s := server{}
+	return s.start()
 }
 
 func main() {
