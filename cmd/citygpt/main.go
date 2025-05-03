@@ -176,7 +176,7 @@ func watchExecutable(cancel context.CancelFunc) error {
 
 func mainImpl() error {
 	Level := &slog.LevelVar{}
-	Level.Set(slog.LevelError)
+	Level.Set(slog.LevelInfo)
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
 	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
