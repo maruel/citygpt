@@ -57,11 +57,24 @@ type server struct {
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
 // It loads content from summarize.txt instead of listing files.
+// It validates that the response is a valid file in s.cityData and retries up to 3 times with increasing temperature.
 func (s *server) askLLMForBestFile(userMessage string) (string, error) {
 	// Load the content from summarize.txt file
 	fileContent, err := s.cityData.ReadFile("summarize.txt")
 	if err != nil {
 		return "", fmt.Errorf("error reading summarize.txt: %w", err)
+	}
+
+	// Get all available files for validation
+	allFiles, err := s.getAllFiles()
+	if err != nil {
+		return "", fmt.Errorf("error getting file list for validation: %w", err)
+	}
+
+	// Create a map for faster lookup
+	validFiles := make(map[string]bool)
+	for _, file := range allFiles {
+		validFiles[file] = true
 	}
 
 	// Construct a prompt that uses the content from summarize.txt
@@ -71,18 +84,37 @@ func (s *server) askLLMForBestFile(userMessage string) (string, error) {
 		string(fileContent),
 	)
 
-	msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-	ctx := context.Background()
-	resp, err := s.c.Chat(ctx, msgs, &opts)
-	if err != nil {
-		return "", fmt.Errorf("error asking LLM for best file: %w", err)
+	// Try up to 3 times with increasing temperature
+	for attempt := range 3 {
+		// Increase temperature with each attempt
+		temperature := 0.01 * float64(attempt+1)
+		slog.Info("Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
+
+		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
+		opts := genai.ChatOptions{Seed: 1, Temperature: temperature}
+		ctx := context.Background()
+		resp, err := s.c.Chat(ctx, msgs, &opts)
+		if err != nil {
+			slog.Warn("Error asking LLM for best file", "attempt", attempt+1, "error", err)
+			continue
+		}
+		if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
+			slog.Warn("No response from LLM when asking for best file", "attempt", attempt+1)
+			continue
+		}
+
+		response := strings.TrimSpace(resp.Message.Contents[0].Text)
+		slog.Info("LLM suggested file", "file", response)
+
+		// Validate that the response is an actual file in s.cityData
+		if validFiles[response] {
+			return response, nil
+		}
+
+		slog.Warn("LLM suggested invalid file", "file", response, "attempt", attempt+1)
 	}
-	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
-		return "", fmt.Errorf("no response from LLM when asking for best file")
-	}
-	response := strings.TrimSpace(resp.Message.Contents[0].Text)
-	return response, nil
+
+	return "", fmt.Errorf("failed to get a valid file after 3 attempts")
 }
 
 // getAllFiles returns a list of all files in the embedded filesystem.
