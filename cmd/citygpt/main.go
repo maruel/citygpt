@@ -435,7 +435,7 @@ func mainImpl() error {
 		slog.Warn("Could not set up executable watcher", "error", err)
 	}
 
-	modelFlag := flag.String("model", "llama3.1-8b", "Model to use for chat completions")
+	modelFlag := flag.String("model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	flag.Parse()
 
 	c, err := cerebras.New("", "")
