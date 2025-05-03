@@ -14,17 +14,22 @@ import (
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
+	"github.com/maruel/genai/gemini"
 	"github.com/maruel/genai/groq"
 )
 
 var (
 	modelFlag   string
 	useCerebras bool
+	useGemini   bool
 	useGroq     bool
 )
 
 func init() {
-	if os.Getenv("GROQ_API_KEY") != "" {
+	if os.Getenv("GEMINI_API_KEY") != "" {
+		useGemini = true
+		flag.StringVar(&modelFlag, "model", "gemini-2.5-flash-preview-04-17", "Model to use for chat completions")
+	} else if os.Getenv("GROQ_API_KEY") != "" {
 		useGroq = true
 		flag.StringVar(&modelFlag, "model", "meta-llama/llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	} else if os.Getenv("CEREBRAS_API_KEY") != "" {
@@ -38,6 +43,27 @@ func init() {
 }
 
 func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
+	if useGemini {
+		c, err := gemini.New("", "")
+		if err == nil {
+			if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
+				modelNames := make([]string, 0, len(models))
+				found := false
+				for _, model := range models {
+					n := model.GetID()
+					if n == modelFlag {
+						found = true
+						break
+					}
+					modelNames = append(modelNames, n)
+				}
+				if !found {
+					return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
+				}
+			}
+		}
+		return gemini.New("", modelFlag)
+	}
 	if useCerebras {
 		c, err := cerebras.New("", "")
 		if err == nil {
