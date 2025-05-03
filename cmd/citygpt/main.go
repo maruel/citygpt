@@ -6,7 +6,7 @@ package main
 
 import (
 	"context"
-	_ "embed"
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -45,9 +45,13 @@ type ChatResponse struct {
 //go:embed templates/chat.html
 var htmlTemplate string
 
+//go:embed data/ottawa
+var ottawaDataFS embed.FS
+
 // server represents the HTTP server that handles the chat application.
 type server struct {
-	c genai.ChatProvider
+	c          genai.ChatProvider
+	ottawaData embed.FS
 }
 
 func (s *server) generateResponse(message string) string {
@@ -247,7 +251,10 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
-	s := server{c: c}
+	s := server{
+		c:          c,
+		ottawaData: ottawaDataFS,
+	}
 	return s.start(ctx)
 }
 
