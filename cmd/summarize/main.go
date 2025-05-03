@@ -1,4 +1,4 @@
-// Copyright 2024 Marc-Antoine Ruel. All rights reserved.
+// Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
@@ -37,7 +37,7 @@ func mainImpl() error {
 	if flag.NArg() != 1 {
 		return fmt.Errorf("expected a single filename argument. Usage: summarize [flags] <filename>")
 	}
-	
+
 	filename := flag.Arg(0)
 
 	// Read the file content

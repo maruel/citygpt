@@ -1,4 +1,4 @@
-// Copyright 2024 Marc-Antoine Ruel. All rights reserved.
+// Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
@@ -14,7 +14,7 @@ func TestReadFile(t *testing.T) {
 	// Create a temporary test file
 	testContent := "This is a test file content."
 	tempFile := filepath.Join(t.TempDir(), "test.txt")
-	if err := os.WriteFile(tempFile, []byte(testContent), 0644); err != nil {
+	if err := os.WriteFile(tempFile, []byte(testContent), 0o644); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
