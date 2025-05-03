@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,8 +20,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/lmittmann/tint"
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
+	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 )
 
 // Message represents a chat message.
@@ -126,7 +130,7 @@ func (s *server) start(ctx context.Context) error {
 	}()
 	select {
 	case <-ctx.Done():
-		log.Println("Shutdown signal received, gracefully shutting down server...")
+		slog.Info("main", "message", "Shutdown signal received, gracefully shutting down server...")
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := srv.Shutdown(shutdownCtx); err != nil {
@@ -172,24 +176,55 @@ func watchExecutable(cancel context.CancelFunc) error {
 }
 
 func mainImpl() error {
-	// Define flags
-	modelFlag := flag.String("model", "llama3.1-8b", "Model to use for chat completions")
-	flag.Parse()
-
-	ctx, cancel := context.WithCancel(context.Background())
+	Level := &slog.LevelVar{}
+	Level.Set(slog.LevelError)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
-
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		sig := <-sigChan
-		log.Printf("Received signal: %s", sig)
-		cancel()
-	}()
-
+	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
+		Level:      Level,
+		TimeFormat: "15:04:05.000", // Like time.TimeOnly plus milliseconds.
+		NoColor:    !isatty.IsTerminal(os.Stderr.Fd()),
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			switch t := a.Value.Any().(type) {
+			case string:
+				if t == "" {
+					return slog.Attr{}
+				}
+			case bool:
+				if !t {
+					return slog.Attr{}
+				}
+			case uint64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case int64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case float64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case time.Time:
+				if t.IsZero() {
+					return slog.Attr{}
+				}
+			case time.Duration:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			}
+			return a
+		},
+	}))
+	slog.SetDefault(logger)
 	if err := watchExecutable(cancel); err != nil {
 		log.Printf("Warning: Could not set up executable watcher: %v", err)
 	}
+
+	modelFlag := flag.String("model", "llama3.1-8b", "Model to use for chat completions")
+	flag.Parse()
 
 	c, err := cerebras.New("", "")
 	if err == nil {
