@@ -58,41 +58,31 @@ type server struct {
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
 // It loads content from summarize.txt instead of listing files.
 // It validates that the response is a valid file in s.cityData and retries up to 3 times with increasing temperature.
-func (s *server) askLLMForBestFile(userMessage string) (string, error) {
-	// Load the content from summarize.txt file
-	fileContent, err := s.cityData.ReadFile("summarize.txt")
+func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (string, error) {
+	fileContent, err := s.cityData.ReadFile("summaries.txt")
 	if err != nil {
 		return "", fmt.Errorf("error reading summarize.txt: %w", err)
 	}
-
-	// Get all available files for validation
 	allFiles, err := s.getAllFiles()
 	if err != nil {
 		return "", fmt.Errorf("error getting file list for validation: %w", err)
 	}
-
-	// Create a map for faster lookup
 	validFiles := make(map[string]bool)
 	for _, file := range allFiles {
 		validFiles[file] = true
 	}
-
-	// Construct a prompt that uses the content from summarize.txt
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
 		userMessage,
 		string(fileContent),
 	)
-
-	// Try up to 3 times with increasing temperature
 	for attempt := range 3 {
 		// Increase temperature with each attempt
-		temperature := 0.01 * float64(attempt+1)
+		temperature := 0.1 * float64(attempt+1)
 		slog.Info("Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
 
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: temperature}
-		ctx := context.Background()
+		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
 			slog.Warn("Error asking LLM for best file", "attempt", attempt+1, "error", err)
@@ -132,7 +122,7 @@ func (s *server) getAllFiles() ([]string, error) {
 	return files, err
 }
 
-func (s *server) generateResponse(message string) string {
+func (s *server) generateResponse(ctx context.Context, message string) string {
 	// First, get a list of all files in the embedded FS
 	files, err := s.getAllFiles()
 	if err != nil {
@@ -145,7 +135,6 @@ func (s *server) generateResponse(message string) string {
 		// Fallback to direct response if no files are available
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
 		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-		ctx := context.Background()
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
 			slog.Error("Error generating response", "error", err)
@@ -157,13 +146,12 @@ func (s *server) generateResponse(message string) string {
 		return resp.Message.Contents[0].Text
 	}
 
-	bestFile, err := s.askLLMForBestFile(message)
+	bestFile, err := s.askLLMForBestFile(ctx, message)
 	if err != nil {
 		slog.Error("Error asking LLM for best file", "error", err)
 		// Fallback to direct response.
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-		ctx := context.Background()
+		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
 			slog.Error("Error generating response", "error", err)
@@ -183,8 +171,7 @@ func (s *server) generateResponse(message string) string {
 		slog.Error("Error reading selected file", "file", bestFile, "error", err)
 		// Fallback to direct response
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-		ctx := context.Background()
+		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
 			slog.Error("Error generating response", "error", err)
@@ -205,8 +192,7 @@ func (s *server) generateResponse(message string) string {
 	)
 
 	msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-	ctx := context.Background()
+	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
 		slog.Error("Error generating response", "error", err)
@@ -230,8 +216,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := s.generateResponse(req.Message)
-
+	response := s.generateResponse(r.Context(), req.Message)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{
 		Message: Message{
