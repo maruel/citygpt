@@ -8,7 +8,7 @@ that can be found in the LICENSE file.
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>{{.AppName}} Chat</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,10 +77,11 @@ that can be found in the LICENSE file.
 			display: flex;
 			flex-direction: column;
 			height: calc(100vh - 70px);
+			max-height: 100%;
 		}
 
 		#chat-container {
-			flex-grow: 1;
+			flex: 1 1 auto;
 			overflow-y: auto;
 			padding: 20px;
 			background: white;
@@ -88,6 +89,7 @@ that can be found in the LICENSE file.
 			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
 			margin-bottom: 20px;
 			scroll-behavior: smooth;
+			min-height: 100px; /* Ensure minimum height even on small screens */
 		}
 
 		.message-row {
@@ -275,11 +277,12 @@ that can be found in the LICENSE file.
 		/* Responsive Styles */
 		@media (max-width: 768px) {
 			.container {
-				padding: 15px;
+				padding: 10px;
+				height: calc(100vh - 60px); /* Reduced height for mobile */
 			}
 
 			header {
-				padding: 0.8rem 1.5rem;
+				padding: 0.7rem 1.2rem;
 			}
 
 			header h1 {
@@ -289,11 +292,25 @@ that can be found in the LICENSE file.
 			.message {
 				max-width: 85%;
 			}
+
+			#chat-container {
+				/* Limit the height of the chat container on mobile */
+				max-height: calc(100vh - 180px);
+				flex: 0 1 auto;
+				margin-bottom: 15px;
+			}
 		}
 
 		@media (max-width: 480px) {
+			.container {
+				padding: 8px;
+				height: calc(100vh - 55px);
+			}
+
 			#chat-container {
 				padding: 10px;
+				/* Further restrict on very small screens */
+				max-height: calc(100vh - 160px);
 			}
 
 			.message {
@@ -308,6 +325,11 @@ that can be found in the LICENSE file.
 			#send-button {
 				width: 44px;
 				height: 44px;
+			}
+
+			body {
+				display: flex;
+				flex-direction: column;
 			}
 		}
 	</style>
