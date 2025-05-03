@@ -24,15 +24,16 @@ var (
 )
 
 func init() {
-	if os.Getenv("CEREBRAS_API_KEY") != "" {
+	if os.Getenv("GROQ_API_KEY") != "" {
+		useGroq = true
+		flag.StringVar(&modelFlag, "model", "meta-llama/llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
+	} else if os.Getenv("CEREBRAS_API_KEY") != "" {
+		// Cerebras limits to 8K context on free tier.
 		useCerebras = true
 		// llama3.1-8b
 		// llama-3.3-70b
 		// llama-4-scout-17b-16e-instruct
 		flag.StringVar(&modelFlag, "model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
-	} else if os.Getenv("GROQ_API_KEY") != "" {
-		useGroq = true
-		flag.StringVar(&modelFlag, "model", "meta-llama/llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	}
 }
 
