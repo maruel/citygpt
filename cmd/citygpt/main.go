@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/lmittmann/tint"
+	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
 	"github.com/mattn/go-colorable"
@@ -45,13 +46,10 @@ type ChatResponse struct {
 //go:embed templates/chat.html
 var htmlTemplate string
 
-//go:embed data/ottawa
-var ottawaDataFS embed.FS
-
 // server represents the HTTP server that handles the chat application.
 type server struct {
-	c          genai.ChatProvider
-	ottawaData embed.FS
+	c        genai.ChatProvider
+	cityData embed.FS
 }
 
 func (s *server) generateResponse(message string) string {
@@ -94,6 +92,28 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
+	dataFiles, err := s.cityData.ReadDir("")
+	if err != nil {
+		http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	fmt.Fprintln(w, "Data Files:")
+	for _, file := range dataFiles {
+		fmt.Fprintf(w, "- %s\n", file.Name())
+		if !file.IsDir() {
+			data, err := s.cityData.ReadFile(file.Name())
+			if err != nil {
+				fmt.Fprintf(w, "  Error reading file: %v\n", err)
+			} else {
+				fmt.Fprintf(w, "  Size: %d bytes\n", len(data))
+			}
+		}
+	}
+}
+
 func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -118,6 +138,7 @@ func (s *server) start(ctx context.Context) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", s.handleIndex)
 	mux.HandleFunc("/api/chat", s.handleChat)
+	mux.HandleFunc("/city-data", s.handleCityData)
 
 	port := "8080"
 	srv := &http.Server{
@@ -252,8 +273,8 @@ func mainImpl() error {
 		return err
 	}
 	s := server{
-		c:          c,
-		ottawaData: ottawaDataFS,
+		c:        c,
+		cityData: ottawa.DataFS,
 	}
 	return s.start(ctx)
 }
