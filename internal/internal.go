@@ -6,6 +6,7 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -16,9 +17,11 @@ import (
 	"github.com/maruel/genai/groq"
 )
 
-var modelFlag string
-
-var useCerebras bool
+var (
+	modelFlag   string
+	useCerebras bool
+	useGroq     bool
+)
 
 func init() {
 	if os.Getenv("CEREBRAS_API_KEY") != "" {
@@ -28,11 +31,8 @@ func init() {
 		// llama-4-scout-17b-16e-instruct
 		flag.StringVar(&modelFlag, "model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	} else if os.Getenv("GROQ_API_KEY") != "" {
+		useGroq = true
 		flag.StringVar(&modelFlag, "model", "meta-llama/llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
-	} else {
-		// TODO: Gross hack.
-		fmt.Fprintf(os.Stderr, "Set either CEREBRAS_API_KEY or GROQ_API_KEY")
-		os.Exit(1)
 	}
 }
 
@@ -58,23 +58,26 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		}
 		return cerebras.New("", modelFlag)
 	}
-	c, err := groq.New("", "")
-	if err == nil {
-		if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
-			modelNames := make([]string, 0, len(models))
-			found := false
-			for _, model := range models {
-				n := model.GetID()
-				if n == modelFlag {
-					found = true
-					break
+	if useGroq {
+		c, err := groq.New("", "")
+		if err == nil {
+			if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
+				modelNames := make([]string, 0, len(models))
+				found := false
+				for _, model := range models {
+					n := model.GetID()
+					if n == modelFlag {
+						found = true
+						break
+					}
+					modelNames = append(modelNames, n)
 				}
-				modelNames = append(modelNames, n)
-			}
-			if !found {
-				return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
+				if !found {
+					return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
+				}
 			}
 		}
+		return groq.New("", modelFlag)
 	}
-	return groq.New("", modelFlag)
+	return nil, errors.New("Set either CEREBRAS_API_KEY or GROQ_API_KEY")
 }
