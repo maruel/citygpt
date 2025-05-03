@@ -393,7 +393,9 @@ that can be found in the LICENSE file.
 
 			const messageRow = document.createElement('div');
 			messageRow.classList.add('message-row');
-			messageRow.classList.add(role === 'user' ? 'user' : '');
+			if (role === 'user') {
+				messageRow.classList.add('user');
+			}
 
 			// Create avatar
 			const avatar = document.createElement('div');
