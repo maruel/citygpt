@@ -53,6 +53,7 @@ var htmlTemplate string
 type server struct {
 	c        genai.ChatProvider
 	cityData citygpt.ReadDirFileFS
+	appName  string
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
@@ -322,7 +323,13 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	err = tmpl.Execute(w, nil)
+	// Pass the app name to the template
+	data := struct {
+		AppName string
+	}{
+		AppName: s.appName,
+	}
+	err = tmpl.Execute(w, data)
 	if err != nil {
 		slog.Error("Template execution error", "error", err)
 	}
@@ -442,6 +449,9 @@ func mainImpl() error {
 		slog.Warn("Could not set up executable watcher", "error", err)
 	}
 
+	// Define flags
+	appName := flag.String("app-name", "CityGPT", "The name of the application displayed in the UI")
+
 	flag.Parse()
 
 	c, err := internal.LoadProvider(ctx)
@@ -451,6 +461,7 @@ func mainImpl() error {
 	s := server{
 		c:        c,
 		cityData: ottawa.DataFS,
+		appName:  *appName,
 	}
 	return s.start(ctx)
 }

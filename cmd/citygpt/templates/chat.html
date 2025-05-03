@@ -9,7 +9,7 @@ that can be found in the LICENSE file.
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>CityGPT Chat</title>
+	<title>{{.AppName}} Chat</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -315,7 +315,7 @@ that can be found in the LICENSE file.
 
 <body>
 	<header>
-		<h1><i class="fa-solid fa-city"></i> CityGPT Chat</h1>
+		<h1><i class="fa-solid fa-city"></i> {{.AppName}} Chat</h1>
 	</header>
 
 	<div class="container">
@@ -324,7 +324,7 @@ that can be found in the LICENSE file.
 		</div>
 
 		<div class="typing-indicator" id="typing-indicator">
-			<span>CityGPT is typing</span>
+			<span id="typing-text">{{.AppName}} is typing</span>
 			<div class="dots">
 				<div class="dot"></div>
 				<div class="dot"></div>
@@ -343,6 +343,10 @@ that can be found in the LICENSE file.
 		const messageInput = document.getElementById('message-input');
 		const sendButton = document.getElementById('send-button');
 		const typingIndicator = document.getElementById('typing-indicator');
+		const typingText = document.getElementById('typing-text');
+
+		// Set typing indicator text
+		typingText.textContent = `${appName} is typing`;
 
 		// Add event listeners
 		sendButton.addEventListener('click', sendMessage);
@@ -431,10 +435,13 @@ that can be found in the LICENSE file.
 			chatContainer.scrollTop = chatContainer.scrollHeight;
 		}
 
+		// Set app name as a global variable
+		const appName = "{{.AppName}}";
+
 		// Welcome message
 		window.addEventListener('DOMContentLoaded', () => {
 			setTimeout(() => {
-				addMessageToChat('assistant', 'Hello! I am CityGPT, your virtual assistant. How can I help you today?');
+				addMessageToChat('assistant', `Hello! I am ${appName}, your virtual assistant. How can I help you today?`);
 			}, 500);
 		});
 	</script>

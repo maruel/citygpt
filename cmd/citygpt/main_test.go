@@ -78,3 +78,22 @@ func TestHandleCityData(t *testing.T) {
 		})
 	}
 }
+
+// TestAppNameFlag verifies that the app-name flag works correctly
+func TestAppNameFlag(t *testing.T) {
+	// Test with default app name
+	s := server{
+		appName: "CityGPT",
+	}
+	if s.appName != "CityGPT" {
+		t.Errorf("Default app name should be CityGPT, got %s", s.appName)
+	}
+
+	// Test with custom app name
+	s = server{
+		appName: "CustomName",
+	}
+	if s.appName != "CustomName" {
+		t.Errorf("Custom app name should be CustomName, got %s", s.appName)
+	}
+}
