@@ -24,8 +24,8 @@ import (
 	"github.com/lmittmann/tint"
 	"github.com/maruel/citygpt"
 	"github.com/maruel/citygpt/data/ottawa"
+	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/genai"
-	"github.com/maruel/genai/cerebras"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
 )
@@ -388,10 +388,10 @@ func watchExecutable(cancel context.CancelFunc) error {
 }
 
 func mainImpl() error {
-	Level := &slog.LevelVar{}
-	Level.Set(slog.LevelInfo)
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
+	Level := &slog.LevelVar{}
+	Level.Set(slog.LevelDebug)
 	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
 		Level:      Level,
 		TimeFormat: "15:04:05.000", // Like time.TimeOnly plus milliseconds.
@@ -435,28 +435,9 @@ func mainImpl() error {
 		slog.Warn("Could not set up executable watcher", "error", err)
 	}
 
-	modelFlag := flag.String("model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	flag.Parse()
 
-	c, err := cerebras.New("", "")
-	if err == nil {
-		if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
-			modelNames := make([]string, 0, len(models))
-			found := false
-			for _, model := range models {
-				n := model.GetID()
-				if n == *modelFlag {
-					found = true
-					break
-				}
-				modelNames = append(modelNames, n)
-			}
-			if !found {
-				return fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
-			}
-		}
-	}
-	c, err = cerebras.New("", *modelFlag)
+	c, err := internal.LoadProvider(ctx)
 	if err != nil {
 		return err
 	}

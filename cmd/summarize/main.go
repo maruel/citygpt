@@ -13,24 +13,68 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
+	"github.com/lmittmann/tint"
+	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/genai"
-	"github.com/maruel/genai/cerebras"
+	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 )
 
 func main() {
 	if err := mainImpl(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "summarize: %v\n", err)
 		os.Exit(1)
 	}
 }
 
 func mainImpl() error {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
+	Level := &slog.LevelVar{}
+	Level.Set(slog.LevelDebug)
+	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
+		Level:      Level,
+		TimeFormat: "15:04:05.000", // Like time.TimeOnly plus milliseconds.
+		NoColor:    !isatty.IsTerminal(os.Stderr.Fd()),
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			switch t := a.Value.Any().(type) {
+			case string:
+				if t == "" {
+					return slog.Attr{}
+				}
+			case bool:
+				if !t {
+					return slog.Attr{}
+				}
+			case uint64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case int64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case float64:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			case time.Time:
+				if t.IsZero() {
+					return slog.Attr{}
+				}
+			case time.Duration:
+				if t == 0 {
+					return slog.Attr{}
+				}
+			}
+			return a
+		},
+	}))
+	slog.SetDefault(logger)
 
-	modelFlag := flag.String("model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
 	timeoutFlag := flag.Duration("timeout", 2*time.Minute, "Timeout for the API request")
 	flag.Parse()
 
@@ -44,9 +88,9 @@ func mainImpl() error {
 	}
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, *timeoutFlag)
 	defer cancel()
-	c, err := cerebras.New("", *modelFlag)
+	c, err := internal.LoadProvider(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to initialize Cerebras client: %w", err)
+		return err
 	}
 	messages := genai.Messages{
 		genai.NewTextMessage(genai.User, "You are a helpful assistant that summarizes text content accurately and concisely."),
@@ -59,7 +103,7 @@ func mainImpl() error {
 	if err != nil {
 		return fmt.Errorf("failed to get summary: %w", err)
 	}
-	for _, content := range resp.Message.Contents {
+	for _, content := range resp.Contents {
 		if content.Text != "" {
 			fmt.Println(content.Text)
 		} else if content.Document != nil || content.URL != "" {
