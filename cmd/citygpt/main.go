@@ -54,10 +54,134 @@ type server struct {
 	cityData embed.FS
 }
 
-func (s *server) generateResponse(message string) string {
+// askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
+func (s *server) askLLMForBestFile(userMessage string, files []string) (string, error) {
+	// Construct a prompt that asks which file would be the best source
+	fileList := strings.Join(files, "\n- ")
+	prompt := fmt.Sprintf(
+		"Given the user's question: \"%s\"\n\nWhich of these files would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nAvailable files:\n- %s",
+		userMessage,
+		fileList,
+	)
+
 	msgs := genai.Messages{
-		genai.NewTextMessage(genai.User, message),
+		genai.NewTextMessage(genai.User, prompt),
 	}
+
+	opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
+	ctx := context.Background()
+	resp, err := s.c.Chat(ctx, msgs, &opts)
+	if err != nil {
+		return "", fmt.Errorf("error asking LLM for best file: %w", err)
+	}
+
+	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
+		return "", fmt.Errorf("no response from LLM when asking for best file")
+	}
+
+	// Extract just the filename from the response (in case the LLM includes explanations)
+	response := resp.Message.Contents[0].Text
+	response = strings.TrimSpace(response)
+
+	// Check if the response contains one of our files
+	for _, file := range files {
+		if strings.Contains(response, file) {
+			return file, nil
+		}
+	}
+
+	// If we couldn't find an exact match, just return the response
+	return response, nil
+}
+
+// getAllFiles returns a list of all files in the embedded filesystem.
+func (s *server) getAllFiles() ([]string, error) {
+	var files []string
+	err := fs.WalkDir(s.cityData, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
+}
+
+func (s *server) generateResponse(message string) string {
+	// First, get a list of all files in the embedded FS
+	files, err := s.getAllFiles()
+	if err != nil {
+		slog.Error("Error getting file list", "error", err)
+		return "Sorry, there was an error processing your request."
+	}
+
+	if len(files) == 0 {
+		slog.Warn("No files found in embedded FS")
+		// Fallback to direct response if no files are available
+		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
+		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
+		ctx := context.Background()
+		resp, err := s.c.Chat(ctx, msgs, &opts)
+		if err != nil {
+			slog.Error("Error generating response", "error", err)
+			return "Sorry, there was an error processing your request."
+		}
+		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
+			return "No response generated"
+		}
+		return resp.Message.Contents[0].Text
+	}
+
+	bestFile, err := s.askLLMForBestFile(message, files)
+	if err != nil {
+		slog.Error("Error asking LLM for best file", "error", err)
+		// Fallback to direct response.
+		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
+		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
+		ctx := context.Background()
+		resp, err := s.c.Chat(ctx, msgs, &opts)
+		if err != nil {
+			slog.Error("Error generating response", "error", err)
+			return "Sorry, there was an error processing your request."
+		}
+		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
+			return "No response generated"
+		}
+		return resp.Message.Contents[0].Text
+	}
+
+	slog.Info("Selected best file for response", "file", bestFile)
+
+	// Read the contents of the selected file
+	fileContent, err := s.cityData.ReadFile(bestFile)
+	if err != nil {
+		slog.Error("Error reading selected file", "file", bestFile, "error", err)
+		// Fallback to direct response
+		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
+		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
+		ctx := context.Background()
+		resp, err := s.c.Chat(ctx, msgs, &opts)
+		if err != nil {
+			slog.Error("Error generating response", "error", err)
+			return "Sorry, there was an error processing your request."
+		}
+		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
+			return "No response generated"
+		}
+		return resp.Message.Contents[0].Text
+	}
+
+	// Generate the final response, including the content from the selected file
+	prompt := fmt.Sprintf(
+		"Using the following information from file '%s', please answer the user's question: \"%s\"\n\nFile content:\n%s",
+		bestFile,
+		message,
+		string(fileContent),
+	)
+
+	msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
 	ctx := context.Background()
 	resp, err := s.c.Chat(ctx, msgs, &opts)
@@ -65,7 +189,7 @@ func (s *server) generateResponse(message string) string {
 		slog.Error("Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
-	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
+	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 		return "No response generated"
 	}
 	return resp.Message.Contents[0].Text
