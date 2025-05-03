@@ -263,35 +263,28 @@ func (s *server) start(ctx context.Context) error {
 	}
 }
 
-// watchExecutable watches for changes to the executable and signals for a shutdown when detected.
 func watchExecutable(cancel context.CancelFunc) error {
 	exePath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
-
 	initialStat, err := os.Stat(exePath)
 	if err != nil {
 		return fmt.Errorf("failed to stat executable: %w", err)
 	}
-
 	initialModTime := initialStat.ModTime()
 	initialSize := initialStat.Size()
-
 	go func() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
-
 		for range ticker.C {
 			currentStat, err := os.Stat(exePath)
 			if err != nil {
 				log.Printf("Warning: Could not stat executable: %v", err)
 				continue
 			}
-
 			currentModTime := currentStat.ModTime()
 			currentSize := currentStat.Size()
-
 			if !currentModTime.Equal(initialModTime) || currentSize != initialSize {
 				log.Println("Executable file was modified, initiating shutdown...")
 				cancel()
@@ -299,7 +292,6 @@ func watchExecutable(cancel context.CancelFunc) error {
 			}
 		}
 	}()
-
 	return nil
 }
 
@@ -319,7 +311,6 @@ func mainImpl() error {
 		cancel()
 	}()
 
-	// Set up executable file watcher
 	if err := watchExecutable(cancel); err != nil {
 		log.Printf("Warning: Could not set up executable watcher: %v", err)
 	}
