@@ -5,6 +5,9 @@
 
 set -eu
 
+# Handle Ctrl+C (SIGINT) gracefully
+trap "echo -e '\nExiting...'; exit 0" INT
+
 while true; do
   citygpt "$@"
 done
