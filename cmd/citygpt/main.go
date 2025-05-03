@@ -11,6 +11,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/maruel/genai"
+	"github.com/maruel/genai/cerebras"
 )
 
 // Message represents a chat message.
@@ -159,11 +162,29 @@ const htmlTemplate = `<!DOCTYPE html>
 `
 
 // server represents the HTTP server that handles the chat application.
-type server struct{}
+type server struct {
+	c genai.ChatProvider
+}
 
 func (s *server) generateResponse(_ string) string {
 	// For now, just return "Hello" as requested
 	// This function will be replaced later with actual implementation
+	/*
+		msgs := genai.Messages{
+			genai.NewTextMessage(genai.User, "Is Ottawa great?"),
+		}
+		opts := genai.ChatOptions{
+			Seed:        1,
+			Temperature: 0.01,
+			MaxTokens:   50,
+		}
+		ctx := context.Background()
+		resp, err := c.Chat(ctx, msgs, &opts)
+		if err != nil {
+			return err
+		}
+		println(resp.Contents[0].Text)
+	*/
 	return "Hello"
 }
 
@@ -222,28 +243,12 @@ func (s *server) start() error {
 
 func mainImpl() error {
 	// Keep the original code for reference, but it won't be used directly in web server mode
-	/*
-		c, err := cerebras.New("", "llama-3.1-8b")
-		if err != nil {
-			return err
-		}
-		msgs := genai.Messages{
-			genai.NewTextMessage(genai.User, "Is Ottawa great?"),
-		}
-		opts := genai.ChatOptions{
-			Seed:        1,
-			Temperature: 0.01,
-			MaxTokens:   50,
-		}
-		ctx := context.Background()
-		resp, err := c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			return err
-		}
-		println(resp.Contents[0].Text)
-	*/
+	c, err := cerebras.New("", "llama-3.1-8b")
+	if err != nil {
+		return err
+	}
 
-	s := server{}
+	s := server{c: c}
 	return s.start()
 }
 
