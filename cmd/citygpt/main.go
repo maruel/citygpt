@@ -11,7 +11,6 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -59,7 +58,7 @@ func (s *server) generateResponse(message string) string {
 	ctx := context.Background()
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		log.Printf("Error generating response: %v", err)
+		slog.Error("Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
@@ -100,14 +99,14 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.New("chat").Parse(htmlTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		log.Printf("Template parsing error: %v", err)
+		slog.Error("Template parsing error", "error", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
 	err = tmpl.Execute(w, nil)
 	if err != nil {
-		log.Printf("Template execution error: %v", err)
+		slog.Error("Template execution error", "error", err)
 	}
 }
 
@@ -125,7 +124,7 @@ func (s *server) start(ctx context.Context) error {
 
 	errorChan := make(chan error, 1)
 	go func() {
-		log.Printf("Server starting on http://localhost:%s", port)
+		slog.Info("Server starting", "url", fmt.Sprintf("http://localhost:%s", port))
 		errorChan <- srv.ListenAndServe()
 	}()
 	select {
@@ -136,7 +135,7 @@ func (s *server) start(ctx context.Context) error {
 		if err := srv.Shutdown(shutdownCtx); err != nil {
 			return fmt.Errorf("server shutdown error: %w", err)
 		}
-		log.Println("Server gracefully stopped")
+		slog.Info("Server gracefully stopped")
 		return nil
 	case err := <-errorChan:
 		return fmt.Errorf("server error: %w", err)
@@ -160,13 +159,13 @@ func watchExecutable(cancel context.CancelFunc) error {
 		for range ticker.C {
 			currentStat, err := os.Stat(exePath)
 			if err != nil {
-				log.Printf("Warning: Could not stat executable: %v", err)
+				slog.Warn("Could not stat executable", "error", err)
 				continue
 			}
 			currentModTime := currentStat.ModTime()
 			currentSize := currentStat.Size()
 			if !currentModTime.Equal(initialModTime) || currentSize != initialSize {
-				log.Println("Executable file was modified, initiating shutdown...")
+				slog.Info("Executable file was modified, initiating shutdown...")
 				cancel()
 				break
 			}
@@ -220,7 +219,7 @@ func mainImpl() error {
 	}))
 	slog.SetDefault(logger)
 	if err := watchExecutable(cancel); err != nil {
-		log.Printf("Warning: Could not set up executable watcher: %v", err)
+		slog.Warn("Could not set up executable watcher", "error", err)
 	}
 
 	modelFlag := flag.String("model", "llama3.1-8b", "Model to use for chat completions")
