@@ -11,10 +11,12 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"strings"
 	"syscall"
 	"time"
@@ -93,25 +95,85 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
-	dataFiles, err := s.cityData.ReadDir("")
-	if err != nil {
-		http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
+	// Extract the subpath from the URL
+	subPath := strings.TrimPrefix(r.URL.Path, "/city-data")
+	subPath = strings.TrimPrefix(subPath, "/")
+
+	// If no subpath is provided, list all top-level files and directories
+	if subPath == "" {
+		// Get all entries in the embedded FS
+		entries, err := s.cityData.ReadDir(".")
+		if err != nil {
+			http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintln(w, "Data Files:")
+		for _, entry := range entries {
+			fmt.Fprintf(w, "- %s\n", entry.Name())
+			if !entry.IsDir() {
+				data, err := s.cityData.ReadFile(entry.Name())
+				if err != nil {
+					fmt.Fprintf(w, "  Error reading file: %v\n", err)
+				} else {
+					fmt.Fprintf(w, "  Size: %d bytes\n", len(data))
+				}
+			}
+		}
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprintln(w, "Data Files:")
-	for _, file := range dataFiles {
-		fmt.Fprintf(w, "- %s\n", file.Name())
-		if !file.IsDir() {
-			data, err := s.cityData.ReadFile(file.Name())
-			if err != nil {
-				fmt.Fprintf(w, "  Error reading file: %v\n", err)
-			} else {
-				fmt.Fprintf(w, "  Size: %d bytes\n", len(data))
+	// Check if the path points to a directory
+	if info, err := fs.Stat(s.cityData, subPath); err == nil && info.IsDir() {
+		// If it's a directory, list its contents
+		entries, err := s.cityData.ReadDir(subPath)
+		if err != nil {
+			http.Error(w, "Error reading directory: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintf(w, "Contents of %s:\n", subPath)
+		for _, entry := range entries {
+			fullPath := path.Join(subPath, entry.Name())
+			fmt.Fprintf(w, "- %s\n", entry.Name())
+			if !entry.IsDir() {
+				data, err := s.cityData.ReadFile(fullPath)
+				if err != nil {
+					fmt.Fprintf(w, "  Error reading file: %v\n", err)
+				} else {
+					fmt.Fprintf(w, "  Size: %d bytes\n", len(data))
+				}
 			}
 		}
+		return
 	}
+
+	// Handle request for a specific file
+	data, err := s.cityData.ReadFile(subPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			http.Error(w, "File not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Error reading file: "+err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Set appropriate content type based on file extension
+	contentType := "text/plain"
+	if strings.HasSuffix(subPath, ".json") {
+		contentType = "application/json"
+	} else if strings.HasSuffix(subPath, ".html") {
+		contentType = "text/html"
+	} else if strings.HasSuffix(subPath, ".csv") {
+		contentType = "text/csv"
+	} else if strings.HasSuffix(subPath, ".xml") {
+		contentType = "application/xml"
+	}
+	w.Header().Set("Content-Type", contentType)
+	w.Write(data)
 }
 
 func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -138,6 +200,7 @@ func (s *server) start(ctx context.Context) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", s.handleIndex)
 	mux.HandleFunc("/api/chat", s.handleChat)
+	mux.HandleFunc("/city-data/", s.handleCityData)
 	mux.HandleFunc("/city-data", s.handleCityData)
 
 	port := "8080"
