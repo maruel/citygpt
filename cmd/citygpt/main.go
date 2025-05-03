@@ -56,13 +56,19 @@ type server struct {
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
-func (s *server) askLLMForBestFile(userMessage string, files []string) (string, error) {
-	// Construct a prompt that asks which file would be the best source
-	fileList := strings.Join(files, "\n- ")
+// It loads content from summarize.txt instead of listing files.
+func (s *server) askLLMForBestFile(userMessage string) (string, error) {
+	// Load the content from summarize.txt file
+	fileContent, err := s.cityData.ReadFile("summarize.txt")
+	if err != nil {
+		return "", fmt.Errorf("error reading summarize.txt: %w", err)
+	}
+
+	// Construct a prompt that uses the content from summarize.txt
 	prompt := fmt.Sprintf(
-		"Given the user's question: \"%s\"\n\nWhich of these files would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nAvailable files:\n- %s",
+		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
 		userMessage,
-		fileList,
+		string(fileContent),
 	)
 
 	msgs := genai.Messages{
@@ -84,12 +90,8 @@ func (s *server) askLLMForBestFile(userMessage string, files []string) (string, 
 	response := resp.Message.Contents[0].Text
 	response = strings.TrimSpace(response)
 
-	// Check if the response contains one of our files
-	for _, file := range files {
-		if strings.Contains(response, file) {
-			return file, nil
-		}
-	}
+	// Since we're not checking against a list of files anymore,
+	// just return the response as is
 
 	// If we couldn't find an exact match, just return the response
 	return response, nil
@@ -135,7 +137,7 @@ func (s *server) generateResponse(message string) string {
 		return resp.Message.Contents[0].Text
 	}
 
-	bestFile, err := s.askLLMForBestFile(message, files)
+	bestFile, err := s.askLLMForBestFile(message)
 	if err != nil {
 		slog.Error("Error asking LLM for best file", "error", err)
 		// Fallback to direct response.
