@@ -298,7 +298,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 		contentType = "application/xml"
 	}
 	w.Header().Set("Content-Type", contentType)
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {

@@ -1,402 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
+Use of this source code is governed under the Apache License, Version 2.0
+that can be found in the LICENSE file.
+-->
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CityGPT Chat</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --primary-light: #e6edff;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --user-msg-color: #4361ee;
-            --user-msg-text: #fff;
-            --bot-msg-color: #f2f5ff;
-            --bot-msg-text: #333;
-            --light-gray: #e0e0e0;
-            --dark-gray: #555;
-            --background: #fafafa;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background);
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        header h1 {
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        header h1 i {
-            margin-right: 10px;
-            font-size: 1.5rem;
-        }
-        
-        .container {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 70px);
-        }
-        
-        #chat-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            scroll-behavior: smooth;
-        }
-        
-        .message-row {
-            display: flex;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        
-        .message-row.user {
-            justify-content: flex-end;
-        }
-        
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--primary-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 1rem;
-            color: var(--primary-color);
-        }
-        
-        .message-row.user .avatar {
-            order: 1;
-            margin-right: 0;
-            margin-left: 12px;
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .message {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            position: relative;
-            animation: fadeIn 0.3s ease-out;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .user-message {
-            background-color: var(--user-msg-color);
-            color: var(--user-msg-text);
-            border-top-right-radius: 4px;
-        }
-        
-        .assistant-message {
-            background-color: var(--bot-msg-color);
-            color: var(--bot-msg-text);
-            border-top-left-radius: 4px;
-        }
-        
-        .message-time {
-            font-size: 0.7rem;
-            color: var(--dark-gray);
-            margin-top: 5px;
-            text-align: right;
-            opacity: 0.8;
-        }
-        
-        .message-row.user .message-time {
-            text-align: right;
-        }
-        
-        #input-container {
-            display: flex;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-        }
-        
-        #message-input {
-            flex-grow: 1;
-            padding: 14px 20px;
-            border: 1px solid var(--light-gray);
-            border-radius: 30px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        #message-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
-        }
-        
-        #send-button {
-            margin-left: 10px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        
-        #send-button:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-        
-        #send-button:active {
-            transform: scale(0.98);
-        }
-        
-        .typing-indicator {
-            display: none;
-            align-items: center;
-            margin: 10px 0;
-            color: var(--dark-gray);
-            font-style: italic;
-            animation: fadeIn 0.3s;
-        }
-        
-        .typing-indicator .dots {
-            display: flex;
-            margin-left: 8px;
-        }
-        
-        .typing-indicator .dot {
-            width: 8px;
-            height: 8px;
-            margin: 0 2px;
-            background-color: var(--dark-gray);
-            border-radius: 50%;
-            animation: typing 1.5s infinite ease-in-out;
-        }
-        
-        .typing-indicator .dot:nth-child(1) { animation-delay: 0s; }
-        .typing-indicator .dot:nth-child(2) { animation-delay: 0.3s; }
-        .typing-indicator .dot:nth-child(3) { animation-delay: 0.6s; }
-        
-        @keyframes typing {
-            0% { transform: translateY(0px); opacity: 0.3; }
-            50% { transform: translateY(-5px); opacity: 1; }
-            100% { transform: translateY(0px); opacity: 0.3; }
-        }
-        
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            header {
-                padding: 0.8rem 1.5rem;
-            }
-            
-            header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .message {
-                max-width: 85%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            #chat-container {
-                padding: 10px;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 10px 14px;
-            }
-            
-            #message-input {
-                padding: 12px 16px;
-            }
-            
-            #send-button {
-                width: 44px;
-                height: 44px;
-            }
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CityGPT Chat</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root {
+			--primary-color: #4361ee;
+			--primary-light: #e6edff;
+			--secondary-color: #3f37c9;
+			--accent-color: #4cc9f0;
+			--user-msg-color: #4361ee;
+			--user-msg-text: #fff;
+			--bot-msg-color: #f2f5ff;
+			--bot-msg-text: #333;
+			--light-gray: #e0e0e0;
+			--dark-gray: #555;
+			--background: #fafafa;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: var(--background);
+			color: #333;
+			max-width: 1200px;
+			margin: 0 auto;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		header {
+			background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+			color: white;
+			padding: 1rem 2rem;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			display: flex;
+			align-items: center;
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		header h1 {
+			font-weight: 700;
+			font-size: 1.8rem;
+			margin: 0;
+			display: flex;
+			align-items: center;
+		}
+
+		header h1 i {
+			margin-right: 10px;
+			font-size: 1.5rem;
+		}
+
+		.container {
+			flex: 1;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			height: calc(100vh - 70px);
+		}
+
+		#chat-container {
+			flex-grow: 1;
+			overflow-y: auto;
+			padding: 20px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+			margin-bottom: 20px;
+			scroll-behavior: smooth;
+		}
+
+		.message-row {
+			display: flex;
+			margin-bottom: 20px;
+			position: relative;
+		}
+
+		.message-row.user {
+			justify-content: flex-end;
+		}
+
+		.avatar {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background-color: var(--primary-light);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 12px;
+			font-size: 1rem;
+			color: var(--primary-color);
+		}
+
+		.message-row.user .avatar {
+			order: 1;
+			margin-right: 0;
+			margin-left: 12px;
+			background-color: var(--primary-color);
+			color: white;
+		}
+
+		.message {
+			max-width: 70%;
+			padding: 12px 16px;
+			border-radius: 18px;
+			position: relative;
+			animation: fadeIn 0.3s ease-out;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.user-message {
+			background-color: var(--user-msg-color);
+			color: var(--user-msg-text);
+			border-top-right-radius: 4px;
+		}
+
+		.assistant-message {
+			background-color: var(--bot-msg-color);
+			color: var(--bot-msg-text);
+			border-top-left-radius: 4px;
+		}
+
+		.message-time {
+			font-size: 0.7rem;
+			color: var(--dark-gray);
+			margin-top: 5px;
+			text-align: right;
+			opacity: 0.8;
+		}
+
+		.message-row.user .message-time {
+			text-align: right;
+		}
+
+		#input-container {
+			display: flex;
+			padding: 15px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+		}
+
+		#message-input {
+			flex-grow: 1;
+			padding: 14px 20px;
+			border: 1px solid var(--light-gray);
+			border-radius: 30px;
+			font-family: 'Inter', sans-serif;
+			font-size: 1rem;
+			outline: none;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+
+		#message-input:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+		}
+
+		#send-button {
+			margin-left: 10px;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background-color: var(--primary-color);
+			color: white;
+			border: none;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			transition: background-color 0.3s, transform 0.2s;
+		}
+
+		#send-button:hover {
+			background-color: var(--secondary-color);
+			transform: scale(1.05);
+		}
+
+		#send-button:active {
+			transform: scale(0.98);
+		}
+
+		.typing-indicator {
+			display: none;
+			align-items: center;
+			margin: 10px 0;
+			color: var(--dark-gray);
+			font-style: italic;
+			animation: fadeIn 0.3s;
+		}
+
+		.typing-indicator .dots {
+			display: flex;
+			margin-left: 8px;
+		}
+
+		.typing-indicator .dot {
+			width: 8px;
+			height: 8px;
+			margin: 0 2px;
+			background-color: var(--dark-gray);
+			border-radius: 50%;
+			animation: typing 1.5s infinite ease-in-out;
+		}
+
+		.typing-indicator .dot:nth-child(1) {
+			animation-delay: 0s;
+		}
+
+		.typing-indicator .dot:nth-child(2) {
+			animation-delay: 0.3s;
+		}
+
+		.typing-indicator .dot:nth-child(3) {
+			animation-delay: 0.6s;
+		}
+
+		@keyframes typing {
+			0% {
+				transform: translateY(0px);
+				opacity: 0.3;
+			}
+
+			50% {
+				transform: translateY(-5px);
+				opacity: 1;
+			}
+
+			100% {
+				transform: translateY(0px);
+				opacity: 0.3;
+			}
+		}
+
+		/* Responsive Styles */
+		@media (max-width: 768px) {
+			.container {
+				padding: 15px;
+			}
+
+			header {
+				padding: 0.8rem 1.5rem;
+			}
+
+			header h1 {
+				font-size: 1.5rem;
+			}
+
+			.message {
+				max-width: 85%;
+			}
+		}
+
+		@media (max-width: 480px) {
+			#chat-container {
+				padding: 10px;
+			}
+
+			.message {
+				max-width: 90%;
+				padding: 10px 14px;
+			}
+
+			#message-input {
+				padding: 12px 16px;
+			}
+
+			#send-button {
+				width: 44px;
+				height: 44px;
+			}
+		}
+	</style>
 </head>
+
 <body>
-    <header>
-        <h1><i class="fa-solid fa-city"></i> CityGPT Chat</h1>
-    </header>
-    
-    <div class="container">
-        <div id="chat-container">
-            <!-- Chat messages will appear here -->
-        </div>
-        
-        <div class="typing-indicator" id="typing-indicator">
-            <span>CityGPT is typing</span>
-            <div class="dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-        </div>
-        
-        <div id="input-container">
-            <input type="text" id="message-input" placeholder="Type your message..." autofocus>
-            <button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
+	<header>
+		<h1><i class="fa-solid fa-city"></i> CityGPT Chat</h1>
+	</header>
 
-    <script>
-        const chatContainer = document.getElementById('chat-container');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-        const typingIndicator = document.getElementById('typing-indicator');
+	<div class="container">
+		<div id="chat-container">
+			<!-- Chat messages will appear here -->
+		</div>
 
-        // Add event listeners
-        sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
+		<div class="typing-indicator" id="typing-indicator">
+			<span>CityGPT is typing</span>
+			<div class="dots">
+				<div class="dot"></div>
+				<div class="dot"></div>
+				<div class="dot"></div>
+			</div>
+		</div>
 
-        // Function to get formatted time
-        function getFormattedTime() {
-            const now = new Date();
-            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+		<div id="input-container">
+			<input type="text" id="message-input" placeholder="Type your message..." autofocus>
+			<button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
+		</div>
+	</div>
 
-        // Function to send message
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message === '') return;
+	<script>
+		const chatContainer = document.getElementById('chat-container');
+		const messageInput = document.getElementById('message-input');
+		const sendButton = document.getElementById('send-button');
+		const typingIndicator = document.getElementById('typing-indicator');
 
-            // Add user message to chat
-            addMessageToChat('user', message);
-            messageInput.value = '';
-            
-            // Show typing indicator
-            typingIndicator.style.display = 'flex';
+		// Add event listeners
+		sendButton.addEventListener('click', sendMessage);
+		messageInput.addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') {
+				sendMessage();
+			}
+		});
 
-            // Send message to server
-            fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Hide typing indicator
-                typingIndicator.style.display = 'none';
-                // Add response to chat
-                addMessageToChat(data.message.role, data.message.content);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                typingIndicator.style.display = 'none';
-                addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
-            });
-        }
+		// Function to get formatted time
+		function getFormattedTime() {
+			const now = new Date();
+			return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+		}
 
-        // Function to add message to chat
-        function addMessageToChat(role, content) {
-            const time = getFormattedTime();
-            
-            const messageRow = document.createElement('div');
-            messageRow.classList.add('message-row');
-            messageRow.classList.add(role === 'user' ? 'user' : '');
-            
-            // Create avatar
-            const avatar = document.createElement('div');
-            avatar.classList.add('avatar');
-            avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-building"></i>';
-            
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(role === 'user' ? 'user-message' : 'assistant-message');
-            
-            // Create message content
-            const messageContent = document.createElement('div');
-            messageContent.classList.add('message-content');
-            messageContent.textContent = content;
-            
-            // Create message time
-            const messageTime = document.createElement('div');
-            messageTime.classList.add('message-time');
-            messageTime.textContent = time;
-            
-            // Append elements
-            messageElement.appendChild(messageContent);
-            messageElement.appendChild(messageTime);
-            messageRow.appendChild(avatar);
-            messageRow.appendChild(messageElement);
-            
-            chatContainer.appendChild(messageRow);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-        
-        // Welcome message
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                addMessageToChat('assistant', 'Hello! I am CityGPT, your virtual assistant. How can I help you today?');
-            }, 500);
-        });
-    </script>
+		// Function to send message
+		function sendMessage() {
+			const message = messageInput.value.trim();
+			if (message === '') return;
+
+			// Add user message to chat
+			addMessageToChat('user', message);
+			messageInput.value = '';
+
+			// Show typing indicator
+			typingIndicator.style.display = 'flex';
+
+			// Send message to server
+			fetch('/api/chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({message}),
+			})
+				.then(response => response.json())
+				.then(data => {
+					// Hide typing indicator
+					typingIndicator.style.display = 'none';
+					// Add response to chat
+					addMessageToChat(data.message.role, data.message.content);
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					typingIndicator.style.display = 'none';
+					addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
+				});
+		}
+
+		// Function to add message to chat
+		function addMessageToChat(role, content) {
+			const time = getFormattedTime();
+
+			const messageRow = document.createElement('div');
+			messageRow.classList.add('message-row');
+			messageRow.classList.add(role === 'user' ? 'user' : '');
+
+			// Create avatar
+			const avatar = document.createElement('div');
+			avatar.classList.add('avatar');
+			avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-building"></i>';
+
+			const messageElement = document.createElement('div');
+			messageElement.classList.add('message');
+			messageElement.classList.add(role === 'user' ? 'user-message' : 'assistant-message');
+
+			// Create message content
+			const messageContent = document.createElement('div');
+			messageContent.classList.add('message-content');
+			messageContent.textContent = content;
+
+			// Create message time
+			const messageTime = document.createElement('div');
+			messageTime.classList.add('message-time');
+			messageTime.textContent = time;
+
+			// Append elements
+			messageElement.appendChild(messageContent);
+			messageElement.appendChild(messageTime);
+			messageRow.appendChild(avatar);
+			messageRow.appendChild(messageElement);
+
+			chatContainer.appendChild(messageRow);
+			chatContainer.scrollTop = chatContainer.scrollHeight;
+		}
+
+		// Welcome message
+		window.addEventListener('DOMContentLoaded', () => {
+			setTimeout(() => {
+				addMessageToChat('assistant', 'Hello! I am CityGPT, your virtual assistant. How can I help you today?');
+			}, 500);
+		});
+	</script>
 </body>
+
 </html>
