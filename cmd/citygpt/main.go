@@ -185,7 +185,7 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 
 	// Generate the final response, including the content from the selected file
 	prompt := fmt.Sprintf(
-		"Using the following information from file '%s', please answer the user's question: \"%s\"\n\nFile content:\n%s",
+		"Using the following information from file '%s', please answer the user's questions in a concise way : \"%s\"\n\nFile content:\n%s",
 		bestFile,
 		message,
 		string(fileContent),
