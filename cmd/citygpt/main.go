@@ -5,12 +5,16 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
@@ -166,26 +170,25 @@ type server struct {
 	c genai.ChatProvider
 }
 
-func (s *server) generateResponse(_ string) string {
-	// For now, just return "Hello" as requested
-	// This function will be replaced later with actual implementation
-	/*
-		msgs := genai.Messages{
-			genai.NewTextMessage(genai.User, "Is Ottawa great?"),
-		}
-		opts := genai.ChatOptions{
-			Seed:        1,
-			Temperature: 0.01,
-			MaxTokens:   50,
-		}
-		ctx := context.Background()
-		resp, err := c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			return err
-		}
-		println(resp.Contents[0].Text)
-	*/
-	return "Hello"
+func (s *server) generateResponse(message string) string {
+	msgs := genai.Messages{
+		genai.NewTextMessage(genai.User, message),
+	}
+	opts := genai.ChatOptions{
+		Seed:        1,
+		Temperature: 0.01,
+		MaxTokens:   50,
+	}
+	ctx := context.Background()
+	resp, err := s.c.Chat(ctx, msgs, &opts)
+	if err != nil {
+		log.Printf("Error generating response: %v", err)
+		return "Sorry, there was an error processing your request."
+	}
+	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
+		return "No response generated"
+	}
+	return resp.Message.Contents[0].Text
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
@@ -231,25 +234,98 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) start() error {
+func (s *server) start(ctx context.Context) error {
 	// Set up routes
-	http.HandleFunc("/", s.handleIndex)
-	http.HandleFunc("/api/chat", s.handleChat)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", s.handleIndex)
+	mux.HandleFunc("/api/chat", s.handleChat)
 
 	port := "8080"
-	log.Printf("Server starting on http://localhost:%s", port)
-	return http.ListenAndServe(":"+port, nil)
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: mux,
+	}
+
+	// Channel to catch server errors
+	errorChan := make(chan error, 1)
+
+	// Start the server in a goroutine
+	go func() {
+		log.Printf("Server starting on http://localhost:%s", port)
+		errorChan <- srv.ListenAndServe()
+	}()
+
+	// Wait for context cancellation or server error
+	select {
+	case <-ctx.Done():
+		log.Println("Shutdown signal received, gracefully shutting down server...")
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := srv.Shutdown(shutdownCtx); err != nil {
+			return fmt.Errorf("server shutdown error: %w", err)
+		}
+		log.Println("Server gracefully stopped")
+		return nil
+
+	case err := <-errorChan:
+		return fmt.Errorf("server error: %w", err)
+	}
+}
+
+// mockChatProvider is a simple implementation of genai.ChatProvider for testing purposes
+type mockChatProvider struct{}
+
+func (m *mockChatProvider) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
+	mockContent := genai.Content{
+		Text: "This is a mock response from CityGPT",
+	}
+	return genai.ChatResult{
+		Message: genai.Message{
+			Role:     genai.Assistant,
+			Contents: []genai.Content{mockContent},
+		},
+	}, nil
+}
+
+func (m *mockChatProvider) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) error {
+	// Implementation not needed for this example
+	return nil
 }
 
 func mainImpl() error {
-	// Keep the original code for reference, but it won't be used directly in web server mode
-	c, err := cerebras.New("", "llama-3.1-8b")
-	if err != nil {
-		return err
+	// Create a cancelable context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Set up signal handling for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Listen for signals in a separate goroutine
+	go func() {
+		sig := <-sigChan
+		log.Printf("Received signal: %s", sig)
+		cancel() // Cancel the context which will trigger server shutdown
+	}()
+
+	// Use a mock provider instead of the real Cerebras client for testing
+	mockProvider := &mockChatProvider{}
+
+	// If CEREBRAS_API_KEY is set, use the real client
+	var c genai.ChatProvider = mockProvider
+	if apiKey := os.Getenv("CEREBRAS_API_KEY"); apiKey != "" {
+		cerebrasClient, err := cerebras.New(apiKey, "llama-3.1-8b")
+		if err != nil {
+			return err
+		}
+		c = cerebrasClient
+	} else {
+		log.Println("Using mock chat provider. Set CEREBRAS_API_KEY to use the real API.")
 	}
 
 	s := server{c: c}
-	return s.start()
+	return s.start(ctx)
 }
 
 func main() {
