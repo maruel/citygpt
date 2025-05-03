@@ -7,12 +7,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -262,6 +264,10 @@ func (s *server) start(ctx context.Context) error {
 }
 
 func mainImpl() error {
+	// Define flags
+	modelFlag := flag.String("model", "llama-3.1-8b", "Model to use for chat completions")
+	flag.Parse()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -273,7 +279,26 @@ func mainImpl() error {
 		cancel()
 	}()
 
-	c, err := cerebras.New("", "llama-3.1-8b")
+	c, err := cerebras.New("", "")
+	if err == nil {
+		models, err := c.ListModels(ctx)
+		if err == nil && len(models) > 0 {
+			modelNames := make([]string, 0, len(models))
+			found := false
+			for _, model := range models {
+				n := model.GetID()
+				if n == *modelFlag {
+					found = true
+					break
+				}
+				modelNames = append(modelNames, n)
+			}
+			if !found {
+				return fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
+			}
+		}
+	}
+	c, err = cerebras.New("", *modelFlag)
 	if err != nil {
 		return err
 	}
