@@ -6,7 +6,7 @@ package main
 
 import (
 	"context"
-	"embed"
+	_ "embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/lmittmann/tint"
+	"github.com/maruel/citygpt"
 	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
@@ -51,7 +52,7 @@ var htmlTemplate string
 // server represents the HTTP server that handles the chat application.
 type server struct {
 	c        genai.ChatProvider
-	cityData embed.FS
+	cityData citygpt.ReadDirFileFS
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.

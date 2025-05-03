@@ -5,7 +5,23 @@
 // Package ottawa embeds the data for Ottawa's By-Laws.
 package ottawa
 
-import "embed"
+import (
+	"embed"
+	"io/fs"
 
-//go:embed *
-var DataFS embed.FS
+	"github.com/maruel/citygpt"
+)
+
+//go:embed pages_text
+var dataFS embed.FS
+
+// DataFS contains the pages under pages_text/.
+var DataFS citygpt.ReadDirFileFS
+
+func init() {
+	f, err := fs.Sub(dataFS, "pages_text")
+	if err != nil {
+		panic(err)
+	}
+	DataFS = f.(citygpt.ReadDirFileFS)
+}
