@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -38,134 +39,8 @@ type ChatResponse struct {
 	Message Message `json:"message"`
 }
 
-// HTML template for the chat interface.
-const htmlTemplate = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CityGPT Chat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        #chat-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 15px;
-        }
-        .message {
-            margin-bottom: 10px;
-            padding: 8px 12px;
-            border-radius: 18px;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
-        .user-message {
-            background-color: #e1f5fe;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        .assistant-message {
-            background-color: #f5f5f5;
-            align-self: flex-start;
-        }
-        #input-container {
-            display: flex;
-            gap: 10px;
-        }
-        #message-input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #send-button {
-            padding: 10px 15px;
-            background-color: #0084ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #send-button:hover {
-            background-color: #0073e6;
-        }
-    </style>
-</head>
-<body>
-    <h1>CityGPT Chat</h1>
-    <div id="chat-container">
-        <!-- Chat messages will appear here -->
-    </div>
-    <div id="input-container">
-        <input type="text" id="message-input" placeholder="Type your message..." autofocus>
-        <button id="send-button">Send</button>
-    </div>
-
-    <script>
-        const chatContainer = document.getElementById('chat-container');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-
-        // Add event listeners
-        sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Function to send message
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message === '') return;
-
-            // Add user message to chat
-            addMessageToChat('user', message);
-            messageInput.value = '';
-
-            // Send message to server
-            fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Add response to chat
-                addMessageToChat(data.message.role, data.message.content);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
-            });
-        }
-
-        // Function to add message to chat
-        function addMessageToChat(role, content) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(role === 'user' ? 'user-message' : 'assistant-message');
-            messageElement.textContent = content;
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-    </script>
-</body>
-</html>
-`
+//go:embed templates/chat.html
+var htmlTemplate string
 
 // server represents the HTTP server that handles the chat application.
 type server struct {
