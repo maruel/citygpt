@@ -346,7 +346,7 @@ that can be found in the LICENSE file.
 		const typingText = document.getElementById('typing-text');
 
 		// Set typing indicator text
-		typingText.textContent = `${appName} is typing`;
+		typingText.textContent = `{{.AppName}} is typing`;
 
 		// Add event listeners
 		sendButton.addEventListener('click', sendMessage);
@@ -435,13 +435,10 @@ that can be found in the LICENSE file.
 			chatContainer.scrollTop = chatContainer.scrollHeight;
 		}
 
-		// Set app name as a global variable
-		const appName = "{{.AppName}}";
-
 		// Welcome message
 		window.addEventListener('DOMContentLoaded', () => {
 			setTimeout(() => {
-				addMessageToChat('assistant', `Hello! I am ${appName}, your virtual assistant. How can I help you today?`);
+				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
 			}, 500);
 		});
 	</script>

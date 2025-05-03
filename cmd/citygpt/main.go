@@ -450,7 +450,7 @@ func mainImpl() error {
 	}
 
 	// Define flags
-	appName := flag.String("app-name", "CityGPT", "The name of the application displayed in the UI")
+	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 
 	flag.Parse()
 
