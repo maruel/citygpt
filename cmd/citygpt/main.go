@@ -173,7 +173,7 @@ func watchExecutable(cancel context.CancelFunc) error {
 
 func mainImpl() error {
 	// Define flags
-	modelFlag := flag.String("model", "llama-3.1-8b", "Model to use for chat completions")
+	modelFlag := flag.String("model", "llama3.1-8b", "Model to use for chat completions")
 	flag.Parse()
 
 	ctx, cancel := context.WithCancel(context.Background())
