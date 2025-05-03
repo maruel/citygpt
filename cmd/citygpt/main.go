@@ -204,7 +204,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	response := s.generateResponse(req.Message)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ChatResponse{
+	_ = json.NewEncoder(w).Encode(ChatResponse{
 		Message: Message{
 			Role:    "assistant",
 			Content: response,
@@ -239,8 +239,9 @@ func (s *server) start(ctx context.Context) error {
 
 	port := "8080"
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: mux,
+		Addr:              ":" + port,
+		Handler:           mux,
+		ReadHeaderTimeout: time.Minute,
 	}
 
 	errorChan := make(chan error, 1)
@@ -317,8 +318,7 @@ func mainImpl() error {
 
 	c, err := cerebras.New("", "")
 	if err == nil {
-		models, err := c.ListModels(ctx)
-		if err == nil && len(models) > 0 {
+		if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
 			modelNames := make([]string, 0, len(models))
 			found := false
 			for _, model := range models {
