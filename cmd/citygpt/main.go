@@ -71,29 +71,17 @@ func (s *server) askLLMForBestFile(userMessage string) (string, error) {
 		string(fileContent),
 	)
 
-	msgs := genai.Messages{
-		genai.NewTextMessage(genai.User, prompt),
-	}
-
+	msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
 	ctx := context.Background()
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
 		return "", fmt.Errorf("error asking LLM for best file: %w", err)
 	}
-
 	if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
 		return "", fmt.Errorf("no response from LLM when asking for best file")
 	}
-
-	// Extract just the filename from the response (in case the LLM includes explanations)
-	response := resp.Message.Contents[0].Text
-	response = strings.TrimSpace(response)
-
-	// Since we're not checking against a list of files anymore,
-	// just return the response as is
-
-	// If we couldn't find an exact match, just return the response
+	response := strings.TrimSpace(resp.Message.Contents[0].Text)
 	return response, nil
 }
 
