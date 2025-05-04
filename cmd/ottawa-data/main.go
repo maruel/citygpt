@@ -12,10 +12,8 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -24,7 +22,6 @@ import (
 	"time"
 
 	"github.com/maruel/citygpt/internal"
-	"github.com/maruel/citygpt/internal/htmlparse"
 	"github.com/maruel/genai"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
@@ -136,7 +133,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				s, err := processURL(ctx, c, fullURL, outputDir)
+				s, err := internal.ProcessURL(ctx, c, fullURL, outputDir)
 				if err != nil {
 					return err
 				}
@@ -162,53 +159,6 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 		err = err2
 	}
 	return err
-}
-
-const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
-
-// processURL downloads text from a single URL and saves it
-func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (internal.Item, error) {
-	out := internal.Item{URL: fullURL, Title: ""}
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
-	}
-	filename := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
-	if filename == "" {
-		filename = "index"
-	}
-	filename += ".md"
-	out.Name = filename
-	resp, err := http.Get(fullURL)
-	if err != nil {
-		return out, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
-	}
-	textContent, pageTitle, err := htmlparse.ExtractTextFromHTML(resp.Body)
-	if err != nil {
-		return out, fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
-	}
-	filePath := filepath.Join(outputDir, filename)
-	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
-		return out, fmt.Errorf("failed to write file %s: %w", filePath, err)
-	}
-
-	// Set the title from the extracted h1 tag
-	out.Title = pageTitle
-	messages := genai.Messages{
-		genai.NewTextMessage(genai.User, summarizationPrompt),
-		genai.NewTextMessage(genai.User, textContent),
-	}
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
-	r, err := c.Chat(ctx, messages, &opts)
-	if err != nil {
-		return out, err
-	}
-	out.Summary = r.Contents[0].Text
-	return out, nil
 }
 
 func mainImpl() error {

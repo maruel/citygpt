@@ -10,40 +10,89 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
+	"time"
 
-	"github.com/maruel/citygpt/internal/htmlparse"
+	"github.com/maruel/citygpt/internal"
+	"github.com/maruel/genai"
 )
 
+/*
 // processHTMLFile processes an HTML file and generates its golden file
-func processHTMLFile(htmlFilePath string) error {
-	// Open the HTML file
-	htmlFile, err := os.Open(htmlFilePath)
+func processHTMLFile(htmlFilePath string) (internal.Item, error) {
+	out := internal.Item{URL: "http://localhost:0/foo"}
+	f, err := os.Open(htmlFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to open HTML file: %w", err)
+		return out, fmt.Errorf("failed to open HTML file: %w", err)
 	}
-	defer htmlFile.Close()
-
-	// Extract text and title from the HTML
-	textContent, _, err := htmlparse.ExtractTextFromHTML(htmlFile)
+	defer f.Close()
+	textContent, title, err := htmlparse.ExtractTextFromHTML(f)
+	out.Title = title
 	if err != nil {
-		return fmt.Errorf("failed to extract text: %w", err)
+		return out, fmt.Errorf("failed to extract text: %w", err)
 	}
-	md := strings.TrimSuffix(htmlFilePath, filepath.Ext(htmlFilePath)) + ".md"
 	if err = os.WriteFile(md, []byte(textContent), 0o644); err != nil {
-		return fmt.Errorf("failed to write golden file: %w", err)
+		return out, fmt.Errorf("failed to write golden file: %w", err)
 	}
-
 	fmt.Printf("Successfully generated golden file: %s\n", md)
-	return nil
+	return out, nil
+}
+*/
+
+func generateGoldens(ctx context.Context, c genai.ChatProvider) error {
+	htmlFiles, err := filepath.Glob("testdata/*.html")
+	if err != nil {
+		return fmt.Errorf("failed to list HTML files: %w", err)
+	}
+	data := internal.Index{
+		Version: 1,
+		Created: time.Now(),
+	}
+	for _, htmlFile := range htmlFiles {
+		fmt.Printf("Processing existing HTML file: %s\n", htmlFile)
+		f, err := os.Open(htmlFile)
+		if err != nil {
+			return err
+		}
+		md := strings.TrimSuffix(htmlFile, filepath.Ext(htmlFile)) + ".md"
+		title, summary, err := internal.ProcessHTML(ctx, c, f, md, "")
+		_ = f.Close()
+		if err != nil {
+			return err
+		}
+		item := internal.Item{Title: title, Summary: summary, Name: filepath.Base(md), URL: "http://localhost:0/"}
+		data.Items = append(data.Items, item)
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile("testdata/index.json", b, 0o644)
 }
 
 func mainImpl() error {
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	defer cancel()
+	flag.Parse()
+	if flag.NArg() != 0 {
+		return errors.New("unknown arguments")
+	}
+	c, err := internal.LoadProvider(ctx)
+	if err != nil {
+		return err
+	}
+
 	const targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z/atv-orv-and-snowmobile-law-no-2019-421"
 	fmt.Printf("Downloading HTML content from %s\n", targetURL)
 	resp, err := http.Get(targetURL)
@@ -58,25 +107,12 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
-
-	// Save the raw HTML file
 	filename := filepath.Base(targetURL) + ".html"
 	if err = os.WriteFile(filepath.Join("testdata", filename), content, 0o644); err != nil {
 		return err
 	}
 	fmt.Printf("Successfully saved unprocessed HTML to %s\n", filename)
-
-	htmlFiles, err := filepath.Glob("testdata/*.html")
-	if err != nil {
-		return fmt.Errorf("failed to list HTML files: %w", err)
-	}
-	for _, htmlFile := range htmlFiles {
-		fmt.Printf("Processing existing HTML file: %s\n", htmlFile)
-		if err := processHTMLFile(htmlFile); err != nil {
-			return err
-		}
-	}
-	return nil
+	return generateGoldens(ctx, c)
 }
 
 func main() {

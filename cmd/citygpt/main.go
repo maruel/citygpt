@@ -11,6 +11,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"html"
 	"html/template"
 	"io/fs"
 	"log/slog"
@@ -107,7 +108,7 @@ func (s *server) genericReply(ctx context.Context, message string) string {
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 		return "No response generated"
 	}
-	return resp.Message.Contents[0].Text
+	return html.EscapeString(resp.Message.Contents[0].Text)
 }
 
 func (s *server) generateResponse(ctx context.Context, message string) string {
@@ -141,18 +142,10 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		return "No response generated"
 	}
 
-	// Add a clickable URL to the best file at the beginning of the response
-	fileURL := "/city-data/" + bestFile.Name
-	if bestFile.URL != "" {
-		fileURL = bestFile.URL
-	}
-
-	formattedResponse := fmt.Sprintf("<a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
-		fileURL,
-		bestFile.Name,
-		resp.Message.Contents[0].Text)
-
-	return formattedResponse
+	return fmt.Sprintf("<a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
+		html.EscapeString(bestFile.Title),
+		html.EscapeString(bestFile.Name),
+		html.EscapeString(resp.Message.Contents[0].Text))
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
