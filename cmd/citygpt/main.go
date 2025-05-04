@@ -142,9 +142,9 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		return "No response generated"
 	}
 
-	return fmt.Sprintf("<a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
+	return fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
+		html.EscapeString(bestFile.URL),
 		html.EscapeString(bestFile.Title),
-		html.EscapeString(bestFile.Name),
 		html.EscapeString(resp.Message.Contents[0].Text))
 }
 
