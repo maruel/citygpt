@@ -56,33 +56,19 @@ type server struct {
 	c        genai.ChatProvider
 	cityData citygpt.ReadDirFileFS
 	appName  string
+
+	files   map[string]internal.Item
+	summary string
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
-// It loads content from index.json.
-// It validates that the response is a valid file in s.cityData and retries up to 3 times with increasing
-// temperature.
-func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (string, error) {
-	// TODO: load once at beginning.
-	raw, err := s.cityData.ReadFile("index.json")
-	if err != nil {
-		return "", err
-	}
-	data := internal.Index{}
-	if err = json.Unmarshal(raw, &data); err != nil {
-		return "", err
-	}
-	validFiles := map[string]struct{}{}
-	var content []string
-	for _, item := range data.Items {
-		validFiles[item.Name] = struct{}{}
-		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
-	}
-	sort.Strings(content)
+//
+// It retries up to 3 times with increasing temperature.
+func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (internal.Item, error) {
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
 		userMessage,
-		strings.Join(content, "\n"),
+		s.summary,
 	)
 	for attempt := range 3 {
 		// Increase temperature with each attempt
@@ -101,55 +87,45 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (str
 		}
 		response := strings.TrimSpace(resp.Message.Contents[0].Text)
 		slog.Info("LLM suggested file", "file", response)
-		if _, ok := validFiles[response]; ok {
-			return response, nil
+		if selected, ok := s.files[response]; ok {
+			return selected, nil
 		}
 		slog.Warn("LLM suggested invalid file", "file", response, "attempt", attempt+1)
 	}
 
-	return "", fmt.Errorf("failed to get a valid file after 3 attempts")
+	return internal.Item{}, fmt.Errorf("failed to get a valid file after 3 attempts")
+}
+
+func (s *server) genericReply(ctx context.Context, message string) string {
+	msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
+	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
+	resp, err := s.c.Chat(ctx, msgs, &opts)
+	if err != nil {
+		slog.Error("Error generating response", "error", err)
+		return "Sorry, there was an error processing your request."
+	}
+	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
+		return "No response generated"
+	}
+	return resp.Message.Contents[0].Text
 }
 
 func (s *server) generateResponse(ctx context.Context, message string) string {
 	bestFile, err := s.askLLMForBestFile(ctx, message)
 	if err != nil {
 		slog.Error("Error asking LLM for best file", "error", err)
-		// Fallback to direct response.
-		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-		resp, err2 := s.c.Chat(ctx, msgs, &opts)
-		if err2 != nil {
-			slog.Error("Error generating response", "error", err2)
-			return "Sorry, there was an error processing your request."
-		}
-		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			return "No response generated"
-		}
-		return resp.Message.Contents[0].Text
+		return s.genericReply(ctx, message)
 	}
-	slog.Info("Selected best file for response", "file", bestFile)
-	// Read the contents of the selected file
-	fileContent, err := s.cityData.ReadFile(bestFile)
+	slog.Info("Selected best file for response", "file", bestFile.Name)
+	fileContent, err := s.cityData.ReadFile(bestFile.Name)
 	if err != nil {
-		slog.Error("Error reading selected file", "file", bestFile, "error", err)
-		// Fallback to direct response
-		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-		resp, err2 := s.c.Chat(ctx, msgs, &opts)
-		if err2 != nil {
-			slog.Error("Error generating response", "error", err2)
-			return "Sorry, there was an error processing your request."
-		}
-		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			return "No response generated"
-		}
-		return resp.Message.Contents[0].Text
+		slog.Error("Error reading selected file", "file", bestFile.Name, "error", err)
+		return s.genericReply(ctx, message)
 	}
-
 	// Generate the final response, including the content from the selected file
 	prompt := fmt.Sprintf(
 		"Using the following information from file '%s', please answer the user's questions in a concise way : \"%s\"\n\nFile content:\n%s",
-		bestFile,
+		bestFile.Name,
 		message,
 		string(fileContent),
 	)
@@ -296,6 +272,23 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
+	raw, err := s.cityData.ReadFile("index.json")
+	if err != nil {
+		return err
+	}
+	data := internal.Index{}
+	if err = json.Unmarshal(raw, &data); err != nil {
+		return err
+	}
+	s.files = map[string]internal.Item{}
+	var content []string
+	for _, item := range data.Items {
+		s.files[item.Name] = item
+		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
+	}
+	sort.Strings(content)
+	s.summary = strings.Join(content, "\n")
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", s.handleIndex)
 	mux.HandleFunc("/api/chat", s.handleChat)
