@@ -11,6 +11,34 @@ import (
 )
 
 func TestExtractTextFromHTML(t *testing.T) {
+	t.Run("title tag fallback", func(t *testing.T) {
+		// Test with a file that has no h1 tag but has a title tag
+		testFile, err := os.Open("testdata/test_title_tag.html")
+		if err != nil {
+			t.Fatalf("Failed to open test file: %v", err)
+		}
+		defer testFile.Close()
+
+		text, title, err := ExtractTextFromHTML(testFile)
+		if err != nil {
+			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check that the title was extracted from the title tag as fallback
+		expectedTitle := "This is the Title Tag Content"
+		if title != expectedTitle {
+			t.Errorf("Expected title to be '%s', got '%s'", expectedTitle, title)
+		}
+
+		// Check that the content is included
+		if !strings.Contains(text, "This is not the page title") {
+			t.Error("Expected h2 content to be extracted")
+		}
+		if !strings.Contains(text, "This is a test page that has a title tag but no h1 tag") {
+			t.Error("Expected paragraph content to be extracted")
+		}
+	})
+
 	t.Run("with lists and headers", func(t *testing.T) {
 		// Test with a file that has lists and headers that should be converted to Markdown
 		testFile, err := os.Open("testdata/test_lists_headers.html")
