@@ -26,8 +26,7 @@ const (
 	targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
 
 	// baseURL is the base URL for resolving relative links
-	baseURL = targetURL
-	// baseURL = "https://ottawa.ca/en/living-ottawa/"
+	baseURL = targetURL + "/"
 )
 
 // Extensions to ignore when processing URLs
