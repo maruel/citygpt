@@ -1,10 +1,3 @@
-https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z
-/themes/custom/ottca_theme/favicon.ico
-/sites/default/files/css/css_52e_uWe_VAQRFp79hJxF0k-Vq5hKQ5P3blmz-GKPiyU.css?delta=0&amp;language=en&amp;theme=ottca_theme&amp;include=eJxdjlEKwzAMQy-UNT-7T3ESkYU6cYndtd3pV7rByn6ExANJQcTUOs13H0jhwi9nlkB8U9u5tHwlFaqUoS5OSMWkj6UlNAsscfIX76J0-Ca9EpcXHDY7uiaf-jITD9_oxCzSaA9U_K9e0eGXbVhLyjCnuxrq5_SzYFV_6lAlLYw3d8lUOA
-/sites/default/files/css/css_hFLr7x21W9oCHr7VeKQl8t7iW3EXC8UtrVel-z4PWAk.css?delta=1&amp;language=en&amp;theme=ottca_theme&amp;include=eJxdjlEKwzAMQy-UNT-7T3ESkYU6cYndtd3pV7rByn6ExANJQcTUOs13H0jhwi9nlkB8U9u5tHwlFaqUoS5OSMWkj6UlNAsscfIX76J0-Ca9EpcXHDY7uiaf-jITD9_oxCzSaA9U_K9e0eGXbVhLyjCnuxrq5_SzYFV_6lAlLYw3d8lUOA
-https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css
-/sites/default/files/css/css_9o1-uicqkWWLCF8L6OsqVRxfn8k_3-LGuFgHLtUDgu4.css?delta=3&amp;language=en&amp;theme=ottca_theme&amp;include=eJxdjlEKwzAMQy-UNT-7T3ESkYU6cYndtd3pV7rByn6ExANJQcTUOs13H0jhwi9nlkB8U9u5tHwlFaqUoS5OSMWkj6UlNAsscfIX76J0-Ca9EpcXHDY7uiaf-jITD9_oxCzSaA9U_K9e0eGXbVhLyjCnuxrq5_SzYFV_6lAlLYw3d8lUOA
-//ottux.ottawa.ca/widgets/v1.4.5/css/app.css
 /en
 /en
 /en/living-ottawa/laws-licences-and-permits/laws/laws-z
