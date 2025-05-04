@@ -185,7 +185,7 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 		// Data rows
 		for _, row := range rows {
 			mdTable.WriteString("|")
-			for i := 0; i < columnCount; i++ {
+			for i := range make([]struct{}, columnCount) {
 				mdTable.WriteString(" ")
 				if i < len(row) {
 					mdTable.WriteString(row[i])
