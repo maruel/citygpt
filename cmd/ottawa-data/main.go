@@ -149,7 +149,7 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 	var processed atomic.Int32
 
 	// Start workers
-	for i := 0; i < numWorkers; i++ {
+	for range make([]struct{}, numWorkers) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
