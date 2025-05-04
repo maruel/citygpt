@@ -14,33 +14,17 @@ import (
 )
 
 // ExtractTextFromHTML extracts and cleans text content from HTML
-// It stops extracting text when encountering a div with id="ottux-footer"
+// If a div with id="block-mainpagecontent" exists, it only extracts content from that div
+// Otherwise, it extracts all content from the document
 func ExtractTextFromHTML(r io.Reader) (string, error) {
 	doc, err := html.Parse(r)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse HTML: %w", err)
 	}
 	var textBuilder strings.Builder
-	// Track if we've reached the footer section
-	footerFound := false
 	// Function to recursively extract text content
 	var extractText func(*html.Node)
 	extractText = func(n *html.Node) {
-		// Skip processing if we've already found the footer
-		if footerFound {
-			return
-		}
-
-		// Check if this is the footer div
-		if n.Type == html.ElementNode && strings.ToLower(n.Data) == "div" {
-			for _, attr := range n.Attr {
-				if attr.Key == "id" && attr.Val == "ottux-footer" {
-					footerFound = true
-					return
-				}
-			}
-		}
-
 		// Skip code blocks, pre blocks, and script elements
 		if n.Type == html.ElementNode {
 			tagName := strings.ToLower(n.Data)
@@ -66,7 +50,35 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 		}
 	}
 
-	extractText(doc)
+	// Find the div with id="block-mainpagecontent"
+	var findAndExtractMainContent func(*html.Node) bool
+	findAndExtractMainContent = func(n *html.Node) bool {
+		if n.Type == html.ElementNode && strings.ToLower(n.Data) == "div" {
+			for _, attr := range n.Attr {
+				if attr.Key == "id" && attr.Val == "block-mainpagecontent" {
+					// Found the main content div, extract text from it
+					extractText(n)
+					return true
+				}
+			}
+		}
+
+		// Recursively search child nodes
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			if findAndExtractMainContent(c) {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	// Try to find the block-mainpagecontent div first
+	if !findAndExtractMainContent(doc) {
+		// If block-mainpagecontent not found, extract all content
+		textBuilder.Reset() // Clear any partial content
+		extractText(doc)
+	}
 
 	// Post-process to remove JSON blocks and any remaining HTML tags
 	text := strings.TrimSpace(textBuilder.String())
