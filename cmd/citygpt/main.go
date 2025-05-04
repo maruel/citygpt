@@ -335,14 +335,13 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) start(ctx context.Context) error {
+func (s *server) start(ctx context.Context, port string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", s.handleIndex)
 	mux.HandleFunc("/api/chat", s.handleChat)
 	mux.HandleFunc("/city-data/", s.handleCityData)
 	mux.HandleFunc("/city-data", s.handleCityData)
 
-	port := "8080"
 	srv := &http.Server{
 		Addr:              ":" + port,
 		Handler:           mux,
@@ -451,6 +450,7 @@ func mainImpl() error {
 
 	// Define flags
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
+	port := flag.String("port", "8080", "The port to run the server on")
 
 	flag.Parse()
 
@@ -463,7 +463,8 @@ func mainImpl() error {
 		cityData: ottawa.DataFS,
 		appName:  *appName,
 	}
-	return s.start(ctx)
+	slog.Info("Configuration", "app-name", *appName, "port", *port)
+	return s.start(ctx, *port)
 }
 
 func main() {
