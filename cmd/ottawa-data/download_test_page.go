@@ -28,28 +28,6 @@ import (
 	"github.com/maruel/genai"
 )
 
-/*
-// processHTMLFile processes an HTML file and generates its golden file
-func processHTMLFile(htmlFilePath string) (internal.Item, error) {
-	out := internal.Item{URL: "http://localhost:0/foo"}
-	f, err := os.Open(htmlFilePath)
-	if err != nil {
-		return out, fmt.Errorf("failed to open HTML file: %w", err)
-	}
-	defer f.Close()
-	textContent, title, err := htmlparse.ExtractTextFromHTML(f)
-	out.Title = title
-	if err != nil {
-		return out, fmt.Errorf("failed to extract text: %w", err)
-	}
-	if err = os.WriteFile(md, []byte(textContent), 0o644); err != nil {
-		return out, fmt.Errorf("failed to write golden file: %w", err)
-	}
-	fmt.Printf("Successfully generated golden file: %s\n", md)
-	return out, nil
-}
-*/
-
 func generateGoldens(ctx context.Context, c genai.ChatProvider) error {
 	htmlFiles, err := filepath.Glob("testdata/*.html")
 	if err != nil {
@@ -71,10 +49,11 @@ func generateGoldens(ctx context.Context, c genai.ChatProvider) error {
 		if err != nil {
 			return err
 		}
-		item := internal.Item{Title: title, Summary: summary, Name: filepath.Base(md), URL: "http://localhost:0/"}
+		name := filepath.Base(md)
+		item := internal.Item{Title: title, Summary: summary, Name: name, URL: "http://localhost:0/" + name}
 		data.Items = append(data.Items, item)
 	}
-	b, err := json.Marshal(data)
+	b, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		return err
 	}

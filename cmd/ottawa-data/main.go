@@ -75,21 +75,6 @@ func extractLinks(url string) ([]string, error) {
 	return links, nil
 }
 
-// writeLinksToFile writes the extracted links to a file
-func writeLinksToFile(links []string, filename string) error {
-	f, err := os.Create(filename)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer f.Close()
-	for _, link := range links {
-		if _, err := f.WriteString(link + "\n"); err != nil {
-			return fmt.Errorf("failed to write to file: %w", err)
-		}
-	}
-	return nil
-}
-
 // isValidContentURL checks if a URL should be processed
 func isValidContentURL(link string) bool {
 	// Check if the URL has any of the ignored extensions
@@ -151,11 +136,11 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	}
 	close(jobs)
 	err = eg.Wait()
-	d, err2 := json.Marshal(data)
+	d, err2 := json.MarshalIndent(data, "", " ")
 	if err2 != nil {
 		panic(err2)
 	}
-	if err2 := os.WriteFile(filepath.Join(outputDir, "index.json"), d, 0o644); err == nil {
+	if err2 = os.WriteFile(filepath.Join(outputDir, "index.json"), d, 0o644); err == nil {
 		err = err2
 	}
 	return err
