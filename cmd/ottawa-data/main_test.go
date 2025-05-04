@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
 	"strings"
@@ -40,6 +41,65 @@ func TestExtractTextFromHTML(t *testing.T) {
 				t.Error("Extracted text contains JSON-like content")
 			}
 			t.Logf("Successfully extracted %d characters of text", len(textContent))
+		})
+	}
+}
+
+// Flag to update golden files instead of testing against them
+var updateGolden = flag.Bool("update_golden", false, "update golden files for TestHTMLProcessingWithGolden")
+
+// TestHTMLProcessingWithGolden verifies that HTML files are processed correctly
+// by comparing the output with golden files.
+func TestHTMLProcessingWithGolden(t *testing.T) {
+	// Find all HTML test files
+	testFiles, err := filepath.Glob("testdata/*.html")
+	if err != nil {
+		t.Fatalf("Failed to list test files: %v", err)
+	}
+	if len(testFiles) == 0 {
+		t.Fatal("No test HTML files found in testdata directory")
+	}
+
+	// Process each file and compare with golden
+	for _, testFile := range testFiles {
+		t.Run(filepath.Base(testFile), func(t *testing.T) {
+			// Determine golden file path
+			goldenFile := testFile + ".golden"
+
+			// Open and process the HTML file
+			f, err := os.Open(testFile)
+			if err != nil {
+				t.Fatalf("Failed to open test file: %v", err)
+			}
+
+			// Extract text from HTML
+			textContent, err := extractTextFromHTML(f)
+			f.Close()
+			if err != nil {
+				t.Fatalf("Failed to extract text: %v", err)
+			}
+
+			// Update golden files if requested
+			if *updateGolden {
+				err := os.WriteFile(goldenFile, []byte(textContent), 0644)
+				if err != nil {
+					t.Fatalf("Failed to update golden file: %v", err)
+				}
+				t.Logf("Updated golden file: %s", goldenFile)
+				return
+			}
+
+			// Read golden file
+			golden, err := os.ReadFile(goldenFile)
+			if err != nil {
+				t.Fatalf("Failed to read golden file (run with -update flag to create): %v", err)
+			}
+
+			// Compare content
+			if textContent != string(golden) {
+				t.Errorf("Processed HTML doesn't match golden file.\nExpected: %d characters\nGot: %d characters\n"+
+					"(Run with -update flag to update golden files)", len(golden), len(textContent))
+			}
 		})
 	}
 }

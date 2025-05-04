@@ -46,3 +46,20 @@ After building, you can run it directly:
 ```bash
 ./ottawa-data
 ```
+
+## Testing
+
+The code includes tests to verify the HTML processing functionality:
+
+```bash
+# Run all tests
+go test ./cmd/ottawa-data/...
+
+# Run only the golden file comparison tests
+go test ./cmd/ottawa-data -run TestHTMLProcessingWithGolden
+
+# Update the golden files if the HTML processing logic changes
+go test ./cmd/ottawa-data -run TestHTMLProcessingWithGolden -update_golden
+```
+
+The golden file tests compare the output of processed HTML against known-good reference outputs stored in `.golden` files in the testdata directory.
