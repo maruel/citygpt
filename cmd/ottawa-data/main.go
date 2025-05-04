@@ -16,6 +16,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"sync/atomic"
 
 	"github.com/maruel/citygpt/internal/htmlparse"
 	"golang.org/x/net/html"
@@ -99,8 +101,11 @@ func isValidContentURL(link string) bool {
 
 // NOTE: HTML parsing functionality has been moved to internal/htmlparse package
 
-// downloadAndSaveTexts downloads content from links and saves the text
+// downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
 func downloadAndSaveTexts(linksFile, outputDir string) error {
+	// Number of workers to process URLs in parallel
+	const numWorkers = 8
+
 	// Ensure output directory exists
 	err := os.MkdirAll(outputDir, 0o755)
 	if err != nil {
@@ -131,37 +136,90 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 	}
 	total := len(validLinks)
 
-	// Process each valid link
-	for index, fullURL := range validLinks {
-		fmt.Printf("Fetching (%d/%d): %s\n", index+1, total, fullURL)
-		resp, err := http.Get(fullURL)
-		if err != nil {
-			return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
-		}
-		if resp.StatusCode != http.StatusOK {
-			_ = resp.Body.Close()
-			return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
-		}
-		textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
+	// Channel to distribute work
+	jobs := make(chan string, total)
+	// Channel to collect errors from workers
+	errorCh := make(chan error, total)
+
+	// Use WaitGroup to wait for all workers to finish
+	var wg sync.WaitGroup
+	// Mutex to protect progress output
+	var mu sync.Mutex
+	// Atomic counter for progress tracking
+	var processed atomic.Int32
+
+	// Start workers
+	for w := 0; w < numWorkers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for fullURL := range jobs {
+				// Process the URL and save text
+				err := processURL(fullURL, outputDir)
+				if err != nil {
+					// Send error to error channel
+					errorCh <- err
+					return
+				}
+
+				// Update progress
+				count := processed.Add(1)
+				mu.Lock()
+				fmt.Printf("Fetched (%d/%d): %s\n", count, total, fullURL)
+				mu.Unlock()
+			}
+		}()
+	}
+
+	// Send all URLs to the workers
+	for _, url := range validLinks {
+		jobs <- url
+	}
+	close(jobs)
+
+	// Wait for all workers to finish
+	wg.Wait()
+
+	// Check if any errors occurred
+	select {
+	case err := <-errorCh:
+		return err
+	default:
+		// No errors
+	}
+
+	return nil
+}
+
+// processURL downloads text from a single URL and saves it
+func processURL(fullURL, outputDir string) error {
+	resp, err := http.Get(fullURL)
+	if err != nil {
+		return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+	}
+	if resp.StatusCode != http.StatusOK {
 		_ = resp.Body.Close()
-		if err != nil {
-			return fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
-		}
-		// Generate a safe filename
-		parsedURL, err := url.Parse(fullURL)
-		if err != nil {
-			return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
-		}
-		filename := strings.TrimPrefix(parsedURL.Path, "/")
-		filename = strings.ReplaceAll(filename, "/", "_")
-		if filename == "" {
-			filename = "index"
-		}
-		filename = url.PathEscape(filename) + ".txt"
-		filePath := filepath.Join(outputDir, filename)
-		if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
-			return fmt.Errorf("failed to write file %s: %w", filePath, err)
-		}
+		return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+	}
+	textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
+	_ = resp.Body.Close()
+	if err != nil {
+		return fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
+	}
+	// Generate a safe filename
+	parsedURL, err := url.Parse(fullURL)
+	if err != nil {
+		return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
+	}
+	filename := strings.TrimPrefix(parsedURL.Path, "/")
+	filename = strings.ReplaceAll(filename, "/", "_")
+	if filename == "" {
+		filename = "index"
+	}
+	filename = url.PathEscape(filename) + ".txt"
+	filePath := filepath.Join(outputDir, filename)
+	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
+		return fmt.Errorf("failed to write file %s: %w", filePath, err)
 	}
 	return nil
 }
