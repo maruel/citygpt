@@ -135,10 +135,12 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read links file: %w", err)
 	}
+
+	// First, count the total number of valid links
 	scanner := bufio.NewScanner(bytes.NewReader(content))
+	var validLinks []string
 	for scanner.Scan() {
-		link := scanner.Text()
-		link = strings.TrimSpace(link)
+		link := strings.TrimSpace(scanner.Text())
 		if link == "" {
 			continue
 		}
@@ -147,14 +149,16 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 		if strings.HasPrefix(link, "/") {
 			fullURL = "https://ottawa.ca" + link
 		}
-
-		// Skip links not under BaseURL or with bad extensions
-		if !isValidContentURL(fullURL) {
-			fmt.Printf("Skipping link: %s\n", fullURL)
-			continue
+		if isValidContentURL(fullURL) {
+			validLinks = append(validLinks, fullURL)
 		}
+	}
+	total := len(validLinks)
 
-		fmt.Printf("Fetching: %s\n", fullURL)
+	// Process each valid link
+	for index, fullURL := range validLinks {
+		index := index + 1 // Make it 1-based for user display
+		fmt.Printf("Fetching (%d/%d): %s\n", index, total, fullURL)
 
 		// Download the content
 		resp, err := http.Get(fullURL)
