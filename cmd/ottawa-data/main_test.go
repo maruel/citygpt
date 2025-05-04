@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/maruel/citygpt/internal/htmlparse"
 )
 
 func TestExtractTextFromHTML(t *testing.T) {
@@ -26,7 +28,7 @@ func TestExtractTextFromHTML(t *testing.T) {
 				t.Fatalf("Failed to open test file: %v", err)
 			}
 			defer f.Close()
-			textContent, err := extractTextFromHTML(f)
+			textContent, err := htmlparse.ExtractTextFromHTML(f)
 			if err != nil {
 				t.Fatalf("Failed to extract text: %v", err)
 			}
@@ -71,7 +73,7 @@ func TestHTMLProcessingWithGolden(t *testing.T) {
 			}
 
 			// Extract text from HTML
-			textContent, err := extractTextFromHTML(f)
+			textContent, err := htmlparse.ExtractTextFromHTML(f)
 			f.Close()
 			if err != nil {
 				t.Fatalf("Failed to extract text: %v", err)

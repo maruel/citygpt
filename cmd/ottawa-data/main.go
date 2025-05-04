@@ -11,13 +11,13 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/maruel/citygpt/internal/htmlparse"
 	"golang.org/x/net/html"
 )
 
@@ -97,45 +97,7 @@ func isValidContentURL(link string) bool {
 	return strings.HasPrefix(link, baseURL)
 }
 
-// extractTextFromHTML extracts and cleans text content from HTML
-func extractTextFromHTML(r io.Reader) (string, error) {
-	doc, err := html.Parse(r)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse HTML: %w", err)
-	}
-	var textBuilder strings.Builder
-	// Function to recursively extract text content
-	var extractText func(*html.Node)
-	extractText = func(n *html.Node) {
-		// Skip code blocks, pre blocks, and script elements
-		if n.Type == html.ElementNode {
-			tagName := strings.ToLower(n.Data)
-			// Skip elements that typically contain code or styling
-			if tagName == "pre" || tagName == "code" || tagName == "script" ||
-				tagName == "style" || tagName == "iframe" || tagName == "svg" ||
-				tagName == "canvas" || tagName == "noscript" {
-				return
-			}
-		}
-
-		if n.Type == html.TextNode {
-			text := strings.TrimSpace(n.Data)
-			if text != "" {
-				textBuilder.WriteString(text)
-				textBuilder.WriteString("\n")
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			extractText(c)
-		}
-	}
-	extractText(doc)
-
-	// Post-process to remove JSON blocks and any remaining HTML tags
-	text := strings.TrimSpace(textBuilder.String())
-	text = stripHTMLAndJSONBlocks(text)
-	return text, nil
-}
+// NOTE: HTML parsing functionality has been moved to internal/htmlparse package
 
 // downloadAndSaveTexts downloads content from links and saves the text
 func downloadAndSaveTexts(linksFile, outputDir string) error {
@@ -180,7 +142,7 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 			_ = resp.Body.Close()
 			return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 		}
-		textContent, err := extractTextFromHTML(resp.Body)
+		textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
 		_ = resp.Body.Close()
 		if err != nil {
 			return fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
