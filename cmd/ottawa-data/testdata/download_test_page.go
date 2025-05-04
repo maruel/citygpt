@@ -3,7 +3,8 @@
 // that can be found in the LICENSE file.
 
 // This tool downloads an HTML page from Ottawa's website and saves it unprocessed
-// to generate a test case.
+// to generate a test case. It also generates the golden file containing the processed HTML
+// to use as a reference for comparing extracted text in tests.
 package main
 
 import (
@@ -12,7 +13,75 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"golang.org/x/net/html"
 )
+
+// extractTextFromHTML extracts and cleans text content from HTML
+// This is a duplicate of the function in main.go to ensure consistent processing
+func extractTextFromHTML(r io.Reader) (string, error) {
+	doc, err := html.Parse(r)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse HTML: %w", err)
+	}
+	var textBuilder strings.Builder
+	// Function to recursively extract text content
+	var extractText func(*html.Node)
+	extractText = func(n *html.Node) {
+		// Skip code blocks, pre blocks, and script elements
+		if n.Type == html.ElementNode {
+			tagName := strings.ToLower(n.Data)
+			// Skip elements that typically contain code or styling
+			if tagName == "pre" || tagName == "code" || tagName == "script" ||
+				tagName == "style" || tagName == "iframe" || tagName == "svg" ||
+				tagName == "canvas" || tagName == "noscript" {
+				return
+			}
+		}
+
+		if n.Type == html.TextNode {
+			text := strings.TrimSpace(n.Data)
+			if text != "" {
+				textBuilder.WriteString(text)
+				textBuilder.WriteString("\n")
+			}
+		}
+
+		// Recursively process child nodes
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			extractText(c)
+		}
+	}
+
+	extractText(doc)
+	return strings.TrimSpace(textBuilder.String()), nil
+}
+
+// processHTMLFile processes an HTML file and generates its golden file
+func processHTMLFile(htmlFilePath string) error {
+	// Open the HTML file
+	htmlFile, err := os.Open(htmlFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to open HTML file: %w", err)
+	}
+	defer htmlFile.Close()
+
+	// Extract text from the HTML
+	textContent, err := extractTextFromHTML(htmlFile)
+	if err != nil {
+		return fmt.Errorf("failed to extract text: %w", err)
+	}
+
+	// Write the extracted text to the golden file
+	goldenFilePath := htmlFilePath + ".golden"
+	if err = os.WriteFile(goldenFilePath, []byte(textContent), 0644); err != nil {
+		return fmt.Errorf("failed to write golden file: %w", err)
+	}
+
+	fmt.Printf("Successfully generated golden file: %s\n", goldenFilePath)
+	return nil
+}
 
 func mainImpl() error {
 	const targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z/atv-orv-and-snowmobile-law-no-2019-421"
@@ -29,14 +98,39 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
+
+	// Save the raw HTML file
 	filename := filepath.Base(targetURL) + ".html"
-	if err = os.WriteFile(filepath.Join("testdata", filename), content, 0o644); err != nil {
+	htmlFilePath := filename // Since we're already in the testdata directory
+	if err = os.WriteFile(htmlFilePath, content, 0o644); err != nil {
 		return err
 	}
 	fmt.Printf("Successfully saved unprocessed HTML to %s\n", filename)
-	fmt.Printf("This file can be used as test data for ottawa-data\n")
-	fmt.Printf("\nReminder: Don't forget to add the new file to git:\n")
-	fmt.Printf("git add %s\n", filename)
+
+	// Process the HTML file and generate the golden file
+	if err := processHTMLFile(htmlFilePath); err != nil {
+		return err
+	}
+
+	// Also process any other HTML files in the current directory
+	htmlFiles, err := filepath.Glob("*.html")
+	if err != nil {
+		return fmt.Errorf("failed to list HTML files: %w", err)
+	}
+	for _, htmlFile := range htmlFiles {
+		// Skip the file we just downloaded as we've already processed it
+		if htmlFile == htmlFilePath {
+			continue
+		}
+		
+		fmt.Printf("Processing existing HTML file: %s\n", htmlFile)
+		if err := processHTMLFile(htmlFile); err != nil {
+			return err
+		}
+	}
+
+	fmt.Printf("\nReminder: Don't forget to add the new files to git:\n")
+	fmt.Printf("git add %s %s.golden\n", htmlFilePath, htmlFilePath)
 	return nil
 }
 

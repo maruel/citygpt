@@ -57,9 +57,14 @@ go test ./cmd/ottawa-data/...
 
 # Run only the golden file comparison tests
 go test ./cmd/ottawa-data -run TestHTMLProcessingWithGolden
+```
 
-# Update the golden files if the HTML processing logic changes
-go test ./cmd/ottawa-data -run TestHTMLProcessingWithGolden -update_golden
+To update or generate new golden files:
+
+```bash
+# From the root directory
+cd cmd/ottawa-data/testdata
+go run download_test_page.go
 ```
 
 The golden file tests compare the output of processed HTML against known-good reference outputs stored in `.golden` files in the testdata directory.
