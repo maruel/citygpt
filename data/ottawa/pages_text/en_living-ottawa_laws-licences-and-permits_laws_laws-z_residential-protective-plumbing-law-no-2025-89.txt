@@ -1,31 +1,5 @@
-Residential Protective Plumbing (By-law No. 2025-89) | City of Ottawa
-City of Ottawa
-English
-Français
-Home
-Living in Ottawa
-By-laws, licences and permits
-By-laws
-By-law A-Z
-Residential Protective Plumbing (By-law No. 2025-89)
-Residential Protective Plumbing (By-law No. 2025-89)
-Disclaimer
-By-laws contained in this section have been prepared for research and reference purposes only. Original by-laws are available for consultation at the City of Ottawa Archives and the Ottawa Public Library Main branch. For legal purposes, certified copies of by-laws may be obtained from the City of Ottawa Archives.
-City Archives
-James Bartleman Centre
-100 Tallwood Dr. (corner of Woodroffe Ave.)
-Ottawa, Ontario
-Telephone: 613-580-2857
-Email:
-archives@ottawa.ca
-Ottawa Public Library
-120 Metcalfe St., Ottawa Room
-Ottawa, Ontario
-Telephone: 613-580-2940
-Introduction
 A by-law of the City of Ottawa for the granting of rebates for the installation of protective plumbing devices to reduce the risk of basement or cellar flooding from City sewer backup for residential units and to repeal by-law 2016-376.
 The Council of the City of Ottawa enacts as follows:
-Section 1 - Definitions
 ln this by-law:
 "Chief Building Official"
 means the Chief Building Official of the City or an authorized representative;
@@ -57,143 +31,79 @@ means a City sewer system in which municipal sewage is collected and 
 means a sewer intended to carry only stormwater, surface runoff from streets and adjacent property, and flow from foundation drains and ditches;
 "work"
 means the installation of the protective plumbing and any repairs thereto.
-Section 2 - Eligibility
-The provisions of this bylaw apply only to eligible applicant( s) and properties that meet ail of the following conditions:
-The applicant's property must be:
-a residential unit within the City of Ottawa;
-built prior to January 1, 2004 for protective plumbing work related to the private storm sewer services; or
-built prior to January 1, 2012 for protective plumbing work related to private sanitary sewer services.
-the work for which the applicant submits a rebate application must not have been performed by the City of Ottawa;
-the work for which the applicant submits a rebate application must not be for the purpose of maintaining, repairing or replacing existing protective plumbing devices; and,
-the work must be completed and the rebate application must be received within 12 months of the Building Permit issue date for the work.
-Section 3 to 4 - Application
-Section 3
-To commence the rebate process, the owner of an eligible property as described in Section 2 must apply to and receive approval from the City, by filing with the General Manager the following documentation:
-a completed, legible, signed application in the prescribed form;
-a copy of the registered deed or transfer of land or tax bill confirming the applicant(s) as the registered owner(s) of the property;
-an itemized list of cost and scope of work in the prescribed form prepared by a licensed plumber; and,
-the completed acknowledgements referred to in Section 4 below.
-Section 4
-The applicant(s) shall, in the prescribed form:
-acknowledge that the installation of protective plumbing is not an admission by the City of City liability;
-acknowledge that based on the City's review of the work, additional work may be required to comply with the Ontario Building Code Act, as amended, and applicable City of Ottawa by-laws and Sewer Design Guideline, in addition to any special requirements described in Section 6 below;
-acknowledge that the applicant is solely responsible for any and all costs associated with the work;
-acknowledge that the City will only rebate up to a maximum of each of the individual rebates as set out in Schedule A;
-acknowledge that should the cost of the work be less than the amount of the maximum available rebate, the City shall rebate the lesser of the two (2) amounts;
-acknowledge that prior application(s) specific to the property, including those by previous owners, may limit rebates; and,
-agree that the City will not be held responsible for the failure of the protective plumbing for any reason whatsoever, including but not limited to:
-inadequate or improper maintenance by or arranged by the property owner;
-any modifications by or arranged by current or futüre property owners;
-non-disclosure of maintenance requirements to future property owners; or
-power interruptions.
-Section 5 to 6 - Amount of rebate and payment
-Section 5
+1. The provisions of this bylaw apply only to eligible applicant( s) and properties that meet ail of the following conditions:
+  1. The applicant's property must be:
+    1. a residential unit within the City of Ottawa;
+    1. built prior to January 1, 2004 for protective plumbing work related to the private storm sewer services; or
+    1. built prior to January 1, 2012 for protective plumbing work related to private sanitary sewer services.
+  1. the work for which the applicant submits a rebate application must not have been performed by the City of Ottawa;
+  1. the work for which the applicant submits a rebate application must not be for the purpose of maintaining, repairing or replacing existing protective plumbing devices; and,
+  1. the work must be completed and the rebate application must be received within 12 months of the Building Permit issue date for the work.
+
+### Section 3
+
+1. To commence the rebate process, the owner of an eligible property as described in Section 2 must apply to and receive approval from the City, by filing with the General Manager the following documentation:
+  1. a completed, legible, signed application in the prescribed form;
+  1. a copy of the registered deed or transfer of land or tax bill confirming the applicant(s) as the registered owner(s) of the property;
+  1. an itemized list of cost and scope of work in the prescribed form prepared by a licensed plumber; and,
+  1. the completed acknowledgements referred to in Section 4 below.
+
+### Section 4
+
+1. The applicant(s) shall, in the prescribed form:
+  1. acknowledge that the installation of protective plumbing is not an admission by the City of City liability;
+  1. acknowledge that based on the City's review of the work, additional work may be required to comply with the Ontario Building Code Act, as amended, and applicable City of Ottawa by-laws and Sewer Design Guideline, in addition to any special requirements described in Section 6 below;
+  1. acknowledge that the applicant is solely responsible for any and all costs associated with the work;
+  1. acknowledge that the City will only rebate up to a maximum of each of the individual rebates as set out in Schedule A;
+  1. acknowledge that should the cost of the work be less than the amount of the maximum available rebate, the City shall rebate the lesser of the two (2) amounts;
+  1. acknowledge that prior application(s) specific to the property, including those by previous owners, may limit rebates; and,
+  1. agree that the City will not be held responsible for the failure of the protective plumbing for any reason whatsoever, including but not limited to:
+    1. inadequate or improper maintenance by or arranged by the property owner;
+    1. any modifications by or arranged by current or futüre property owners;
+    1. non-disclosure of maintenance requirements to future property owners; or
+    1. power interruptions.
+
+### Section 5
+
 Approved rebates shall be granted in the amount as set out in Schedule A.
-Section 6
-The General Manager shall pay the approved rebates in one payment and only after the applicant has:
-submitted a complete, legible, signed application in the prescribed form;
-submitted invoices for the completed work indicating payment in full;
-submitted copies of any and all permits; and
-submitted copies of any and all inspections and testing reports prepared in association with the work.
-Section 7 - Review and Approval
-The General Manager and, where required, the Chief Building Official, will review the rebate application, and the General Manager is authorized to approve a rebate application subject to the provisions of this by-law and the following criteria:
-the property is an eligible property in accordance with Section 2 above;
-the application satisfies the requirements set out in Section 3 above;
-the applicant satisfies the acknowledgement requirements set out in Section 4 above;
-the applicant agrees that the protective plumbing has been installed in a manner and within the scope of work described in Section 3 and in accordance with the
-Ontario Building Code Act,
-as amended, and
-any applicable City of Ottawa by-laws and Sewer Design Guideline requirements; and
-the applicant has obtained the required permits.
-Section 8 and 9 - Priority
-Section 8
+1. The General Manager shall pay the approved rebates in one payment and only after the applicant has:
+  1. submitted a complete, legible, signed application in the prescribed form;
+  1. submitted invoices for the completed work indicating payment in full;
+  1. submitted copies of any and all permits; and
+  1. submitted copies of any and all inspections and testing reports prepared in association with the work.
+
+1. The General Manager and, where required, the Chief Building Official, will review the rebate application, and the General Manager is authorized to approve a rebate application subject to the provisions of this by-law and the following criteria:
+  1. the property is an eligible property in accordance with Section 2 above;
+  1. the application satisfies the requirements set out in Section 3 above;
+  1. the applicant satisfies the acknowledgement requirements set out in Section 4 above;
+  1. the applicant agrees that the protective plumbing has been installed in a manner and within the scope of work described in Section 3 and in accordance with theOntario Building Code Act,as amended, and
+  1. any applicable City of Ottawa by-laws and Sewer Design Guideline requirements; and
+  1. the applicant has obtained the required permits.
+
+### Section 8
+
 Rebate allocations shall be considered by the City on a first come first served basis to a limit not to exceed the annual budget allocation for any given calendar year.
-Section 9
 An applicant who does not receive a rebate in any year because of insufficient funds in the current program will be notified and advised by the General Manager to resubmit the application in the following year.
-Section 10 to 11 - Limitations
-Section 10
-No rebate shall be approved in the event that:
-the applicant or the property do not meet the eligibility criteria set out in Section 2;
-the applicant does not obtain the requisite building permit(s) in advance of the work being undertaken;
-the proposed work contravene the Ontario Building Code Act, City by-laws or Sewer Design Guidelines in effect at the time of the implementation of the work;
-the work is for the purpose of maintaining, repairing or replacing existing protective plumbing device(s); or,
-the applicant has applied for and has been approved for a grant or rebate for the work through other municipal or provincial programs.
-Section 11
+### Section 10
+
+1. No rebate shall be approved in the event that:
+  1. the applicant or the property do not meet the eligibility criteria set out in Section 2;
+  1. the applicant does not obtain the requisite building permit(s) in advance of the work being undertaken;
+  1. the proposed work contravene the Ontario Building Code Act, City by-laws or Sewer Design Guidelines in effect at the time of the implementation of the work;
+  1. the work is for the purpose of maintaining, repairing or replacing existing protective plumbing device(s); or,
+  1. the applicant has applied for and has been approved for a grant or rebate for the work through other municipal or provincial programs.
+
 Nothing in this by-law shall affect the City's ability to install protective plumbing device(s) or undertake protective plumbing work on private property through other programs or projects.
-Section 12 - Non-compliance
 If a complete application is received prior to the coming into force of this by-law, the application will be reviewed pursuant to the provisions of By-law 2016-376.
-Section 13 - Status of pending applications
 If a complete application is received prior to the coming into force of this by-law, the application will be reviewed pursuant to the provisions of By-law 2016-376.
-Section 14 - Repeal
 By-law 2016-376, and any amendments thereto, are repealed as of the in-force date of this by-law.
-Section 15 - In force date
 This by-law shall corne into force and will take effect on April 1, 2025.
-Section 16 - Short title
 This by-law may be referred to as the Residential Protective Plumbing By-law.
-Schedule A - Rebate Schedule
 The City will grant rebate up to a maximum of each of the individual rebates available in accordance with the following schedule:
-Protective Plumbing Device or Associated
-Work
-Rebate
-Amount
-Building Permit (Plumbing work
-only)
-100 percent of the current permit f
-ee
-Indoor Sanitary or Storm backwater
-valve
-$1,000
-Outdoor storm backwater valve
-only
-$2,500
-Primary or Secondary Sump Pump with battery backup power in an existing sump pit
-$1,500
-Primary or Secondary Sump Pump with battery backup power and construction of a sump pit
-$3,000
-Contact us
-Online
-En ligne
-By phone
-Par téléphone
-In-person
-En personne
-About us
-Accessibilité
-Avertissement
-Confidentialité
-Accessibility
-Disclaimer
-Privacy
-Protocoles
-Protocols
-Follow us
-Facebook
-Facebook
-Instagram
-Instagram
-X Platform
-Plateforme X
-YouTube
-YouTube
-Cyberabonnements
-eSubscriptions
-Report or Request
-Parking issues
-Problèmes de stationnement
-Garbage collection
-La collecte des déchets
-Sidewalk and road maintenance
-Entretien des trottoirs et routes
-Property damage
-Entretien des propriétés
-Problem with the website
-Un problème concernant le site Web
-Web experience survey
-×
-Would you like to participate in a 2-3 minute web experience survey to help us improve our website?
-
-If YES, a new window will open in the background so you can come back to it when you are finished on the website.
-
-Thank you for considering to help out.
-Yes
-No
+| Protective Plumbing Device or Associated | Rebate |
+| ------- | ------- |
+| Building Permit (Plumbing workonly) | 100 percent of the current permit fee |
+| Indoor Sanitary or Storm backwatervalve | $1,000 |
+| Outdoor storm backwater valveonly | $2,500 |
+| Primary or Secondary Sump Pump with battery backup power in an existing sump pit | $1,500 |
+| Primary or Secondary Sump Pump with battery backup power and construction of a sump pit | $3,000 |

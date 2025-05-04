@@ -1,28 +1,3 @@
-Transit (By-law No. 2007-268) | City of Ottawa
-City of Ottawa
-English
-Français
-Home
-Living in Ottawa
-By-laws, licences and permits
-By-laws
-By-law A-Z
-Transit (By-law No. 2007-268)
-Transit (By-law No. 2007-268)
-Disclaimer
-By-laws contained in this section have been prepared for research and reference purposes only. Original by-laws are available for consultation at the City of Ottawa Archives and the Ottawa Public Library Main branch. For legal purposes, certified copies of by-laws may be obtained from the City of Ottawa Archives.
-City Archives
-James Bartleman Centre
-100 Tallwood Dr. (corner of Woodroffe Ave.)
-Ottawa, Ontario
-Telephone: 613-580-2857
-Email:
-archives@ottawa.ca
-Ottawa Public Library
-120 Metcalfe St., Ottawa Room
-Ottawa, Ontario
-Telephone: 613-580-2940
-Transit By-Law 2007-268
 Amending By-Law text highlighted as follows:
 AMENDING BY-LAW 2012-195
 AMENDING BY-LAW 2014-152
@@ -33,7 +8,6 @@ AMENDING BY-LAW 2022-7
 AMENDING BY-LAW 2022-176 (fare changes, updated annually)
 A by-law of the City of Ottawa respecting public transit. (Note: Chapter 3 entitled “Public Transit” of the Regional Regulatory Code of the old Regional Municipality of Ottawa-Carleton, as amended, is repealed.)
 The Council of the City of Ottawa enacts as follows:
-Selection 1 - Definitions
 In this by-law:
 “authorized vendor” means a person who has entered into an agreement with the City of Ottawa to sell tickets, vouchers, transit passes or any other fare medium on behalf of the City;
 “bicycle” means any device which has one or more wheels and is propelled by human power and upon which any person may ride, and includes a unicycle and a tricycle;
@@ -44,10 +18,11 @@ Cannabis Act
 “crosswalk” or “pedestrian crossover” means that part of a highway at an intersection that is included within the connections of the lateral lines of the sidewalks on opposite sides of the highway measured from the curbs or, in the absence of curbs, from the edges of the roadway; or any portion of a roadway at an intersection or elsewhere distinctly indicated for pedestrian crossing by signs or by lines or other markings on the surface; this definition used in both parts of the by-law;
 “Director” means the General Manger of the Transportation Services Department of the City of Ottawa, or authorized representative;
 “electric kick scooter” means a vehicle that has,
-two wheels placed along the same longitudinal axis, one placed at the front of the kick-scooter and one at the rear,
-a platform for standing between the two wheels,
-a steering handlebar that acts directly on the steerable wheel, and
-an electric motor not exceeding 500 watts that provides a maximum speed of 24 kilometres per hour;
+1. two wheels placed along the same longitudinal axis, one placed at the front of the kick-scooter and one at the rear,
+1. a platform for standing between the two wheels,
+1. a steering handlebar that acts directly on the steerable wheel, and
+1. an electric motor not exceeding 500 watts that provides a maximum speed of 24 kilometres per hour;
+
 “electronic cigarette” means a vaporizer or inhalant-type device, whether called an electronic cigarette or any other name, that contains a power source and heating element designed to heat tobacco, nicotine, cannabis or any other substance, and produces a vapour intended to be inhaled by the user of the device;
 “emergency” means a situation caused by the forces of nature, an accident, an intentional act or otherwise that constitutes a danger of major proportions to life and property;
 “exclusive bus lane system” means a portion of a highway or provincial highway designated for exclusivee bus travel, either at all times or at certain times of the day;
@@ -55,9 +30,10 @@ an electric motor not exceeding 500 watts that provides a maximum speed of 24 ki
 “front bench seat” means the inward-facing bench or benches at the front of the vehicle;
 “municipal law enforcement officer” means a person appointed by the Council of the City to enforce either the transit fare provisions of this by-law and who is known as a Transit Fare Enforcement Officer or a person appointed by the Council of the City to enforce the transit security, traffic and transit fare provisions of this by-law and who is known as a Transit Special Constable;
 “O-Train facility” means that portion of the passenger transportation system that includes,
-light rail tracks,
-light rail rights-of-way, including tunnels and bridges, and
-areas reserved exclusively for City transit personnel;
+1. light rail tracks,
+1. light rail rights-of-way, including tunnels and bridges, and
+1. areas reserved exclusively for City transit personnel;
+
 and includes the O-Train lines and rights of way;
 “mobility aid” means a device used to facilitate the transport, in a seated posture, of a person with a disability;
 “official sign” means a sign approved by the Ontario Ministry of Transportation;
@@ -71,46 +47,50 @@ and includes the O-Train lines and rights of way;
 “POP vehicle” means those transit vehicles that require production of proof of payment by a passenger;
 “POP Zone” means any part of the passenger transportation system designated as a proof of payment zone pursuant to this by-law;
 “power-assisted bicycle” means,
-a pedal-driven bicycle of conventional exposed fork-and-frame bicycle design and appearance that does not resemble a motor scooter or motorcycle and that,
-has two or three wheels,
-is fitted at all times with pedals that are always operable to propel the bicycle,
-is capable at all times of being propelled on level ground solely by using muscular power to operate the pedals,
-has steering handlebars,
-has wheels that have a width of not less than 35 millimetres and a diameter of not less than 350 millimetres,
-has one or more electric motors that, singly or in combination, have a continuous rated output power not exceeding 500 watts and that is incapable of providing propulsion assistance when the bicycle attains a speed of 32 kilometres per hour or more, and
-weighs not more than 55 kilograms,
-a vehicle that has the appearance of a motor scooter, with a seat and an open frame that may be stepped through and a platform on which the rider’s feet may rest and that,
-meets the description in subclauses (a) (i) to (vi), and
-weighs not more than 120 kilograms,
-a vehicle that has the appearance of a motorcycle, with a saddle designed to be straddled and a footrest, pedals or pegs where the rider’s feet may remain secure, and that meets the description in subclauses (b) (i) and (ii);
+1. a pedal-driven bicycle of conventional exposed fork-and-frame bicycle design and appearance that does not resemble a motor scooter or motorcycle and that,
+  1. has two or three wheels,
+  1. is fitted at all times with pedals that are always operable to propel the bicycle,
+  1. is capable at all times of being propelled on level ground solely by using muscular power to operate the pedals,
+  1. has steering handlebars,
+  1. has wheels that have a width of not less than 35 millimetres and a diameter of not less than 350 millimetres,
+  1. has one or more electric motors that, singly or in combination, have a continuous rated output power not exceeding 500 watts and that is incapable of providing propulsion assistance when the bicycle attains a speed of 32 kilometres per hour or more, and
+  1. weighs not more than 55 kilograms,
+1. a vehicle that has the appearance of a motor scooter, with a seat and an open frame that may be stepped through and a platform on which the rider’s feet may rest and that,
+  1. meets the description in subclauses (a) (i) to (vi), and
+  1. weighs not more than 120 kilograms,
+1. a vehicle that has the appearance of a motorcycle, with a saddle designed to be straddled and a footrest, pedals or pegs where the rider’s feet may remain secure, and that meets the description in subclauses (b) (i) and (ii);
+
 “Priority Seating Card” means a serially numbered card issued to a person with a disability by the Director containing a photograph of the person with a disability;
 “proof of payment” or “POP” means a valid transit pass, valid transfer slip or other authorized receipt, a valid transit employee identification card, a valid U-Pass, a Smartcard with a valid period pass or a record of a valid e-purse deduction for the trip, an Attendant Card, or other card, receipt for fare payment or fare instrument acceptable to the Director, and does not include a photograph, scan or other reproduction, whether hard copy or digital, of any of the aforementioned;
 “proper authority” means a police officer, a special constable or a municipal law enforcement officer appointed to enforce the conduct, traffic, fare or other provisions of this by-law;
 “remotely piloted aircraft or drone” means a navigable aircraft, other than a balloon, rocket or kite, that is operated by a pilot that is not on board;
 “service animal” means:
-an animal that can be readily identified as one that is being used by the person for reasons relating to the person’s disability, as a result of visual indicators such as the vest or harness worn by the animal; or
-an animal for which the person provides documentation from one of the following regulated health professionals confirming that the person requires the animal for reasons relating to the disability:
-A member of the College of Audiologists and Speech-Language Pathologists of Ontario.
-A member of the College of Chiropractors of Ontario.
-A member of the College of Nurses of Ontario.
-A member of the College of Occupational Therapists of Ontario.
-A member of the College of Optometrists of Ontario.
-A member of the College of Physicians and Surgeons of Ontario.
-A member of the College of Physiotherapists of Ontario.
-A member of the College of Psychologists of Ontario.
-A member of the College of Registered Psychotherapists and Registered Mental Health Therapists of Ontario;
+1. an animal that can be readily identified as one that is being used by the person for reasons relating to the person’s disability, as a result of visual indicators such as the vest or harness worn by the animal; or
+1. an animal for which the person provides documentation from one of the following regulated health professionals confirming that the person requires the animal for reasons relating to the disability:
+  1. A member of the College of Audiologists and Speech-Language Pathologists of Ontario.
+  1. A member of the College of Chiropractors of Ontario.
+  1. A member of the College of Nurses of Ontario.
+  1. A member of the College of Occupational Therapists of Ontario.
+  1. A member of the College of Optometrists of Ontario.
+  1. A member of the College of Physicians and Surgeons of Ontario.
+  1. A member of the College of Physiotherapists of Ontario.
+  1. A member of the College of Psychologists of Ontario.
+  1. A member of the College of Registered Psychotherapists and Registered Mental Health Therapists of Ontario;
+
 “Smartcard” means the Presto card or other fare instrument in the form of a card onto which funds or period passes of varying classes can be loaded electronically and used to pay the fare for a trip on a transit vehicle by means of tapping the card on an electronic reader provided for the purpose on the transit vehicle, on fare gates, or at other designated locations;
 “Service Animal Card” means,
-a serially numbered card, issued by the Director to a person with a disability who requires the assistance of a service animal, which card contains a photograph of the person with a disability and a photograph of the service animal,
-an identification card issued pursuant to section 4 of the Blind Persons’ Rights Act, R.S.O. 1990, c. B.7, as amended, or
-such other form of identification as authorized by the Director;
+1. a serially numbered card, issued by the Director to a person with a disability who requires the assistance of a service animal, which card contains a photograph of the person with a disability and a photograph of the service animal,
+1. an identification card issued pursuant to section 4 of the Blind Persons’ Rights Act, R.S.O. 1990, c. B.7, as amended, or
+1. such other form of identification as authorized by the Director;
+
 “smoke” means to hold, or otherwise have control over any lighted tobacco, lighted cannabis, or any other lighted substance that produces vapour, smoke, or gases that may be inhaled or exhaled, and includes use of a cigarette, pipe, water pipe, or any other smoking equipment;
 “smoking product” means any substance whose primary purpose is to be burned or heated to produce vapours, gases, or smoke, which may be inhaled, and shall include but is not limited to tobacco, non-tobacco herbal shisha, cannabis or any other substance;
 “stand” or “standing” when prohibited, means the halting of a vehicle, whether occupied or not, except for the purpose of and while actually engaged in receiving or discharging passengers;
 “transit pass” means either
-a photo identification card plus a renewable voucher or a one-part photo ID card and voucher, both of which are issued by the City and indicate a fare category
-a U-Pass, or
-a monthly or other fare instrument issued by the Director in accordance with          the applicable policies of the City for a specific class of user;
+1. a photo identification card plus a renewable voucher or a one-part photo ID card and voucher, both of which are issued by the City and indicate a fare category
+1. a U-Pass, or
+1. a monthly or other fare instrument issued by the Director in accordance with          the applicable policies of the City for a specific class of user;
+
 “transit property” means all property owned, leased, or used by the City for the purposes of providing a passenger transportation system and includes the Transitway, the O-Train lines, the O-Train rights of way, the transit station platform areas, the platforms, the transit stations, the transit vehicles, the transit shelters, the bus stops, the park and ride lots, and the properties and buildings located at 1500 St-Laurent Boulevard including the North and South garages, 645, 681, 707, 731, 747, 767, 799, 805, 875, 899 and 925 Belfast Road, 2550 Queensview Drive, 164 Colonnade Road, 3101 Albion Road, and 745 and 755 Industrial Road;
 “transit shelter” means a fully enclosed or partially enclosed waiting area which is intended for use by passengers waiting to use the passenger transportation system and which is located at the side of a highway;
 “transit station” means any building or structure owned, used, or occupied by the City for transit purposes which is open to the public;
@@ -119,20 +99,20 @@ a monthly or other fare instrument issued by the Director in accordance with  �
 “transitway” means that portion of the property owned, leased or used by the City that is designated exclusively for bus travel and includes the transit stations and the transit station platform areas;
 “U-Pass” means the fare instrument in the form of a card approved by the Director and issued to eligible students of applicable post-secondary institutions as part of the Council-approved Universal Transit Pass program;
 “vape” means any of the following:
-inhaling vapour from an electronic cigarette;
-exhaling vapour from an electronic cigarette;
-holding or otherwise having control of an activated electronic cigarette;
+1. inhaling vapour from an electronic cigarette;
+1. exhaling vapour from an electronic cigarette;
+1. holding or otherwise having control of an activated electronic cigarette;
+
 “water pipe” means a device, whether called a water pipe, hookah or any other name, that burns or heats a smoking product with which the vapour, smoke or gases may pass through liquid prior to being inhaled, and excludes an electronic cigarette as defined under the
 Smoke-Free Ontario Act, 2017
 , S.O. 2017, c. 26, Sch. 3, as amended, and any regulation passed under it, or any successor legislation thereto.
-Section 2 - Interpretation
-This by-law includes the Schedules annexed hereto and the Schedules are hereby declared to form part of this by-law.
-If any section, subsection or part or parts thereof are declared by any Court of Law to be bad, illegal or ultra vires, such section, subsection or part or parts shall be deemed to be severable and all parts hereof are declared to be separate and independent and enacted as such.
-This by-law is gender-neutral and, accordingly, any reference to one gender includes the other.
-Words in the singular include the plural and words in the plural include the singular.
-Headings are inserted for convenience of reference purposes only, form no part of this by-law and shall not affect in any way the meaning or interpretation of the provisions of this by-law.
-Unless otherwise defined, the words and phrases used in this by-law have their
-Section 3 - Exclusive  Authority for Passenger Transportation
+1. This by-law includes the Schedules annexed hereto and the Schedules are hereby declared to form part of this by-law.
+1. If any section, subsection or part or parts thereof are declared by any Court of Law to be bad, illegal or ultra vires, such section, subsection or part or parts shall be deemed to be severable and all parts hereof are declared to be separate and independent and enacted as such.
+1. This by-law is gender-neutral and, accordingly, any reference to one gender includes the other.
+1. Words in the singular include the plural and words in the plural include the singular.
+1. Headings are inserted for convenience of reference purposes only, form no part of this by-law and shall not affect in any way the meaning or interpretation of the provisions of this by-law.
+1. Unless otherwise defined, the words and phrases used in this by-law have their
+
 No person shall operate a passenger transportation system in the City unless the person is authorized to do so by the Director.
 4.                     Section 3 does not apply with respect to the following types of passenger transportation systems:
 (a)        buses used to transport pupils, including buses owned or operated by a school board, private school or charitable organization; 5
@@ -189,7 +169,6 @@ No person shall operate a passenger transportation system in the City unless the
 7.                     Nothing in Section 3 affects any rights existing on January 1, 1972 of a person licensed under the
 Public Vehicles Act
 to operate a passenger transportation system.
-Section 4 - Fares and Transfers
 Regulation of Fares and POP Transfers
 8.         (1)        No person shall board, ride upon or otherwise use a transit vehicle of the City        unless;
 (a)        such person has tendered for payment of the fare the exact amount established by the City;
@@ -228,11 +207,9 @@ Authorized Vendors
 16.                   No person shall sell tickets or vouchers, transit passes or any other fare medium established from time to time unless the person is an authorized vendor of the City.
 Service Animal Card
 17.                   Any person with a disability who wishes to travel on a transit vehicle or enter a     transit property and who requires the assistance of a service animal, may obtain a             Service Animal Card.
-Section 5 - Priority Seating
 Entitlement
 18.       (1)       A person with a disability, an expectant mother, a person with a visible need for    priority seating, a person with a child in a carriage or stroller, a person with a          Priority Seating Card or a person with a Service Animal Card is entitled to priority      seating on a front bench seat but is not guaranteed a seat.
 (2)       No person, who is not described in subsection (1), shall fail to surrender a front bench seat to a person entitled to priority seating.
-Section 6 - Conduct
 General Prohibitions
 19.       (1)       No person shall:
 (a)        ride on, stand on or hold on to the exterior of any transit vehicle;
@@ -317,7 +294,6 @@ Damage to Transit Property
 21.                   No person shall cause or attempt to cause any damage to any transit property.
 Lost Property
 22.                   No person shall remove from any transit vehicle or transit station any article left thereon through apparent inadvertence, but such article shall be left in the possession of the City or its employees for disposition according to City policy.
-Section 7 - Transitway
 Operation of Vehicles
 23.                   No person shall operate or cause or permit to be operated any vehicle on a transitway save and except the following:
 (a)        a vehicle owned or operated by the City and authorized by the Director;
@@ -361,7 +337,6 @@ TRANSIT SECURITY VEHICLES
 Highway Traffic Act
 , those motor vehicles     used by the City for transit law enforcement purposes may carry roof-mounted lights that cast a red and blue light to the front.
 (2)       Such lights shall only be activated and used on a transitway and exclusive bus lane systems of the City.
-Section 8 - Park and Ride Parking Lots
 Establishment
 28.       The parking lots indicated on Schedule “B” to this Part are hereby designated as Park and Ride Lots.
 Designated Parking Spaces And Hours of Operation
@@ -372,7 +347,6 @@ Permit
 30.                   No person shall park a vehicle in areas in a Park and Ride Lot that are designated for reserved parking unless they have first obtained a parking permit from the City.
 Fees
 31.                   Fees for the parking permit shall be established by City Council from time to time and shall be as indicated on Schedule “B”.
-Section 9 - Enforcement
 Refusal of Service
 32.       (1)       In this Section, “objectionable conduct” includes but is not limited to the conduct described in Section 19.
 (2)       A proper authority may refuse passage on the transit system to:
@@ -403,7 +377,6 @@ ENACTED AND PASSED
 this 13th day of June, 2007.
 City Clerk
 Mayor
-Schedule “A” Regulation for Fares on a Transitway
 SCHEDULE “A” REGULATIONS FOR OPERATION OF VEHICLES ON A TRANSITWAY
 DEFINITIONS
 1.                     In this Schedule:
@@ -580,231 +553,72 @@ RIGHT-OF-WAY FOR EMERGENCY VEHICLES
 VEHICLES – STOPPING AT RAILWAY CROSSING SIGNAL
 58.       (1)       When approaching a railway crossing on the transitway at a time when a clearly    visible electrical or mechanical signal device or a flagman is giving warning of the           approaching of a railway train, no driver of a motor vehicle or a transit vehicle shall fail to stop the vehicle not less than 5 metres from the nearest rail of the railway and to proceed only when it is safe to do so.
 (2)       No person shall drive a vehicle through, around or under a crossing gate or barrier at a railway crossing while the gate or barrier is closed or is being opened or closed.
-Schedule “B” Park and Ride Lots and Associated Fees
-SCHEDULE “B”
-PARK AND RIDE LOTS AND ASSOCIATED FEES
-Name of Lot
-Address
-Monthly Fee
-Hours of Operation
-Trim
-1201 Trim Road
-no charge*
-03:00 – 03:00
-Place d’Orléans
-900 Champlain Street
-no charge*
-03:00 – 03:00
-Telesat
-1582 Telesat Court
-$63.25**
-03:00 – 03:00
-Greenboro
-2120 Bank Street
-no charge*
-03:00 – 03:00
-Fallowfield
-3325 Fallowfield Road
-no charge*
-03:00 – 03:00
-Baseline
-1420 Woodroffe Avenue
-$28.00*
-03:00 – 03:00
-Eagleson (West)
-102 Eagleson Road
-no charge*
-03:00 – 03:00
-Eagleson (East)
-101 Eagleson Road
-no charge*
-03:00 – 03:00
-Terry Fox
-195 Roland Michener Drive
-no charge
-03:00 – 03:00
-Jeanne d’Arc
-1490 Youville Drive
-$28.00*
-03:00 – 03:00
-Strandherd
-3680 Strandherd Drive
-no charge
-03:00 – 03:00
-Millennium
-245 Millennium Boulevard
-no charge
-03:00 – 03:00
-Riverview
-650 Earl Armstrong Road
-no charge
-03:00 – 03:00
-Leitrim
-4600 Gilligan Road
-no charge
-03:00 – 03:00
-Nepean Woods
-3311 Woodroffe Avenue
-no charge
-03:00 – 03:00
-Ray Friel
-1585 Tenth Line Road
-$28.00*
-03:00 – 03:00
-Innovation
-5025 Innovation Drive
-no charge
-03:00 – 03:00
-Chapel Hill
-2925 Navan Road
-no charge
-03:00 – 03:00
-Canadian Tire Centre
-101 Cyclone Taylor Boulevard
-no charge
-05:45 – 18:30
+|  |  |  |  |
+| ------- | ------- | ------- | ------- |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+
 * Does not guarantee a space unless the person purchases a Gold Permit at a cost of $63.25 per month, where available, which Gold Permit guarantees a space in the lot for which it was issued.
 ** This lot is for Gold Permit Holders only.
-Schedule "C" Fares for Translation
 SCHEDULE “C”
 FARES FOR TRANSIT SERVICES
 Pay-per-month fares (passes)
-Fare Category
-Service Type
-Rate ($)
-Adult
-All
-125.50
-Youth
-All
-96.75
-EquiPass
-All
-58.25
-Senior
-All
-47.75
-Community
-All
-43.25
-Access
-All
-43.25
+|  |  |  |
+| ------- | ------- | ------- |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+
 Pay-per-ride fares
-Fare Category
-Service Type
-Payment Type
-Rate ($)
-Adult
-All
-e-Purse/ParaPurse/credit/debit
-3.70
-Adult
-All
-Cash
-3.75
-Senior
-All
-e-Purse/ParaPurse/credit/debit
-2.80
-Senior
-All
-Cash
-2.85
-Community
-All
-e-Purse/ParaPurse
-1.75
-EquiPass
-All
-e-Purse/ParaPurse
-1.75
-Child (8-12)
-All
-e-Purse/ParaPurse/credit/debit
-1.85
-Child (8-12)
-All
-Cash
-1.90
-All
-Para Transpo with Access Pass
-Cash/credit/debit
-2.50
-All
-Para Transpo Rural
-Cash/credit/debit/ticket
-10.00
+|  |  |  |  |
+| ------- | ------- | ------- | ------- |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+
 Other charges
-Rate ($)
-Presto smartcard
-6.00
-Presto smartcard (new registration for EquiPass/EquiFare discount)
-0.00
-Bikesecure parking key fob
-6.00
-Bikesecure parking monthly permit
-10.00
-Day pass
-11.25
-Family Pass (weekends/holidays, months of July and August)
-11.25
-3-Day pass
-27.75
-5-Day pass
-44.50
-7-Day pass
-52.75
-U-Pass (per semester)
-223.48
-Charter service – First three hours
-600.00
-Charter service – Each additional hour
-200.00
-Contact us
-Online
-En ligne
-By phone
-Par téléphone
-In-person
-En personne
-About us
-Accessibilité
-Avertissement
-Confidentialité
-Accessibility
-Disclaimer
-Privacy
-Protocoles
-Protocols
-Follow us
-Facebook
-Facebook
-Instagram
-Instagram
-X Platform
-Plateforme X
-YouTube
-YouTube
-Cyberabonnements
-eSubscriptions
-Report or Request
-Parking issues
-Problèmes de stationnement
-Garbage collection
-La collecte des déchets
-Sidewalk and road maintenance
-Entretien des trottoirs et routes
-Property damage
-Entretien des propriétés
-Problem with the website
-Un problème concernant le site Web
-Web experience survey
-×
-Would you like to participate in a 2-3 minute web experience survey to help us improve our website?
-
-If YES, a new window will open in the background so you can come back to it when you are finished on the website.
-
-Thank you for considering to help out.
-Yes
-No
+|  |  |
+| ------- | ------- |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |

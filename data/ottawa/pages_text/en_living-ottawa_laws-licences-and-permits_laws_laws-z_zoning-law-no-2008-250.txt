@@ -1,39 +1,14 @@
-Zoning (By-law No. 2008-250) | City of Ottawa
-City of Ottawa
-English
-Français
-Home
-Living in Ottawa
-By-laws, licences and permits
-By-laws
-By-law A-Z
-Zoning (By-law No. 2008-250)
-Zoning (By-law No. 2008-250)
-Disclaimer
-By-laws contained in this section have been prepared for research and reference purposes only. Original by-laws are available for consultation at the City of Ottawa Archives and the Ottawa Public Library Main branch. For legal purposes, certified copies of by-laws may be obtained from the City of Ottawa Archives.
-City Archives
-James Bartleman Centre
-100 Tallwood Dr. (corner of Woodroffe Ave.)
-Ottawa, Ontario
-Telephone: 613-580-2857
-Email:
-archives@ottawa.ca
-Ottawa Public Library
-120 Metcalfe St., Ottawa Room
-Ottawa, Ontario
-Telephone: 613-580-2940
 Recent changes to the
 Planning Act
 through Bill 23 may impact how the following provisions are applied.
 The City of Ottawa Zoning By-law is made available on the web site for information, however confirmation on the zoning provisions should be sought through the City’s development information officers (DIO), by contacting 311 and asking for the DIO for the geographic area in question.
-Zoning By-law 2008-250 Consolidation
-Zoning By-law 2008-250 Consolidation
-Zoning By-law 2008-250 Consolidation
-Part 15 - Exceptions
-Part 17 - Schedules
-Rural Area and Greenbelt Zoning By-law Sections
-Minister's Zoning Orders
-Minister's Zoning Orders
+- Zoning By-law 2008-250 Consolidation
+- Part 15 - Exceptions
+- Part 17 - Schedules
+- Rural Area and Greenbelt Zoning By-law Sections
+
+## Minister's Zoning Orders
+
 The Planning Act authorizes the Minister of Municipal Affairs and Housing (MMAH) to make a minister’s zoning order (MZO) for regulating the use of land, buildings and structures anywhere in Ontario. If there is a conflict between an MZO and a municipal zoning by-law, the MZO prevails.
 For more information on MZOs, please see the MMAH
 Citizen’s Guide to Land Use Planning
@@ -41,10 +16,9 @@ or contact an MMAH
 Municipal Services Office
 .
 Below is a list of MZOs currently in place in Ottawa. This information is provided for convenience only. MZOs are issued by the Province and the City is not responsible for ensuring their accuracy.
-Minister’s Zoning Orders in the City of Ottawa
-4085 Strandherd Drive:
+- 4085 Strandherd Drive:
 O.Reg. 126/23
-Zoning Codes Explanation
+
 Each property is designated by a zone code that is formed from one or more parts; a number of examples are provided below, however, for a more in-depth explanation of the parts of the zone code, refer to Sections 29 through 46 -
 Interpreting Zoning Information
 , found under Part 1 of the City's Zoning By-law.
@@ -65,7 +39,6 @@ Part 15
 of the by-law. Urban exceptions are found in section 239 and those with an "r" are in the rural exceptions section 240.
 Rural Area and Greenbelt
 The City of Ottawa Zoning By-law contains zoning designations for all areas of the City, however, a content section has been created to provide easy access to those sections that are applicable to the Rural and Greenbelt portions of the by-law.
-Using the Zoning By-law Consolidation
 This Consolidation is updated on a regular basis, subsequent to every Council meeting where zoning amendments are enacted by Ottawa City Council. The
 Consolidation’s Disclaimer
 , is updated by indicating the last date that the Consolidation was revised.
@@ -90,54 +63,6 @@ Development Information Officers
 In order to provide effective service to clients, the Development Information service is changing, as of August 1, 2023, in-person service will be available by appointment only.  If you require the services of a Development Information Officer, please call 613-580-2424 ext.23434 or email
 dioinquiry@ottawa.ca(link opens email application)
 , include the subject address, proposed use, and other pertinent information relevant to the inquiry.  Upon receipt of the inquiry, a phone call or an email response will be provided within 2 to 3 business days, in the event more information is required there will be options to allow for further discussion.
-Non-Conforming Rights - What are they?
 The Ontario Planning Act governs how Zoning By-laws can be used for regulating the use and development of land. It also provides for what is known as non-conforming rights (also more generally know as "grandfathering").
 What this means is: if you as a property owner have a use on your land which is legally established, that met the Zoning By-law regulations that were in effect at the time the use was established and then a new Zoning By-law is passed which has the effect of no longer permitting the use on your property, then you will have non-conforming rights to continue the use on your property. If the use is eventually discontinued, you would lose the non-conforming rights and will not be able to re-establish the use which is no longer permitted.
 Similarly, if a new Zoning By-law is passed that changes the regulations, and the development on your property does not meet the regulations (for example such as height or setbacks), this means that your building is considered to be non-complying.
-Contact us
-Online
-En ligne
-By phone
-Par téléphone
-In-person
-En personne
-About us
-Accessibilité
-Avertissement
-Confidentialité
-Accessibility
-Disclaimer
-Privacy
-Protocoles
-Protocols
-Follow us
-Facebook
-Facebook
-Instagram
-Instagram
-X Platform
-Plateforme X
-YouTube
-YouTube
-Cyberabonnements
-eSubscriptions
-Report or Request
-Parking issues
-Problèmes de stationnement
-Garbage collection
-La collecte des déchets
-Sidewalk and road maintenance
-Entretien des trottoirs et routes
-Property damage
-Entretien des propriétés
-Problem with the website
-Un problème concernant le site Web
-Web experience survey
-×
-Would you like to participate in a 2-3 minute web experience survey to help us improve our website?
-
-If YES, a new window will open in the background so you can come back to it when you are finished on the website.
-
-Thank you for considering to help out.
-Yes
-No

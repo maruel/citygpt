@@ -21,6 +21,7 @@ import (
 
 	"github.com/maruel/citygpt/internal/htmlparse"
 	"golang.org/x/net/html"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -105,90 +106,52 @@ func isValidContentURL(link string) bool {
 func downloadAndSaveTexts(linksFile, outputDir string) error {
 	// Number of workers to process URLs in parallel
 	const numWorkers = 8
-
-	// Ensure output directory exists
 	err := os.MkdirAll(outputDir, 0o755)
 	if err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
-	// Read links from file
 	content, err := os.ReadFile(linksFile)
 	if err != nil {
 		return fmt.Errorf("failed to read links file: %w", err)
 	}
-
-	// First, count the total number of valid links
-	scanner := bufio.NewScanner(bytes.NewReader(content))
 	var validLinks []string
-	for scanner.Scan() {
+	for scanner := bufio.NewScanner(bytes.NewReader(content)); scanner.Scan(); {
 		link := strings.TrimSpace(scanner.Text())
 		if link == "" {
 			continue
 		}
 		// Construct full URL from relative link
-		fullURL := link
 		if strings.HasPrefix(link, "/") {
-			fullURL = "https://ottawa.ca" + link
+			link = "https://ottawa.ca" + link
 		}
-		if isValidContentURL(fullURL) {
-			validLinks = append(validLinks, fullURL)
+		if isValidContentURL(link) {
+			validLinks = append(validLinks, link)
 		}
 	}
 	total := len(validLinks)
-
-	// Channel to distribute work
 	jobs := make(chan string, total)
-	// Channel to collect errors from workers
-	errorCh := make(chan error, total)
-
-	// Use WaitGroup to wait for all workers to finish
-	var wg sync.WaitGroup
-	// Mutex to protect progress output
+	var eg errgroup.Group
 	var mu sync.Mutex
-	// Atomic counter for progress tracking
 	var processed atomic.Int32
-
-	// Start workers
-	for range make([]struct{}, numWorkers) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+	for range numWorkers {
+		eg.Go(func() error {
 			for fullURL := range jobs {
-				// Process the URL and save text
-				err := processURL(fullURL, outputDir)
-				if err != nil {
-					// Send error to error channel
-					errorCh <- err
-					return
+				if err := processURL(fullURL, outputDir); err != nil {
+					return err
 				}
-
-				// Update progress
 				count := processed.Add(1)
 				mu.Lock()
 				fmt.Printf("Fetched (%d/%d): %s\n", count, total, fullURL)
 				mu.Unlock()
 			}
-		}()
+			return nil
+		})
 	}
-
-	// Send all URLs to the workers
 	for _, url := range validLinks {
 		jobs <- url
 	}
 	close(jobs)
-
-	// Wait for all workers to finish
-	wg.Wait()
-
-	// Check if any errors occurred
-	select {
-	case err := <-errorCh:
-		return err
-	default:
-		// No errors
-	}
-
-	return nil
+	return eg.Wait()
 }
 
 // processURL downloads text from a single URL and saves it

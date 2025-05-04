@@ -1,195 +1,91 @@
-Licensing (By-law No. 2002-189) | City of Ottawa
-City of Ottawa
-English
-Français
-Home
-Living in Ottawa
-By-laws, licences and permits
-By-laws
-By-law A-Z
-Licensing (By-law No. 2002-189)
-Licensing (By-law No. 2002-189)
-Disclaimer
-By-laws contained in this section have been prepared for research and reference purposes only. Original by-laws are available for consultation at the City of Ottawa Archives and the Ottawa Public Library Main branch. For legal purposes, certified copies of by-laws may be obtained from the City of Ottawa Archives.
-City Archives
-James Bartleman Centre
-100 Tallwood Dr. (corner of Woodroffe Ave.)
-Ottawa, Ontario
-Telephone: 613-580-2857
-Email:
-archives@ottawa.ca
-Ottawa Public Library
-120 Metcalfe St., Ottawa Room
-Ottawa, Ontario
-Telephone: 613-580-2940
 A by-law of the City of Ottawa respecting the licensing, regulating and governing of certain businesses.
 The Council of the City of Ottawa enacts as follows:
-Amendments
 This is a consolidation of the City of Ottawa Licensing By-law (2002-189). This version contains the following amending By-laws:
-By-law
-2002-319
-By-law
-2002-320
-By-law
-2002-373
-By-law
-2002-374
-By-law
-2002-443
-By-law
-2003-236
-By-law
-2003-311
-By-law
-2004-139
-By-law
-2004-209
-By-law
-2004-317
-By-law
-2004-353
-By-law
-2004-488
-By-law
-2004-491
-By-law
-2004-494
-By-law
-2005-58
-By-law
-2005-119
-By-law
-2005-324
-By-law
-2005-325
-By-law
-2005-327
-By-law
-2005-356
-By-law
-2005-357
-By-law
-2005-414
-By-law
-2005-415
-By-law
-2005-538
-By-law
-2006-81
-By-law
-2006-165
-By-law
-2007-9
-By-law
-2007-35
-By-law
-2007-81
-By-law
-2007-120
-By-law
-2007-222
-By-law
-2007-248
-By-law
-2007-509
-By-law
-2008-53
-By-law
-2008-95
-By-law
-2008-96
-By-law
-2008-143
-By-law
-2008-237
-By-law
-2008-306
-By-law
-2008-487
-By-law
-2009-151
-By-law
-2009-152
-By-law
-2009-153
-By-law
-2009-203
-By-law
-2009-259
-By-law
-2010-96
-By-law
-2010-184
-By-law
-2010-263
-By-law
-2011-73
-By-law
-2011-107
-By-law
-2011-241
-By-law
-2011-380
-By-law
-2012-93
-By-law
-2012-258
-By-law
-2012-468
-By-law
-2013-107
-By-law
-2013-384
-By-law
-2016-200
-By-law
-2016-272
-By-law
-2018-10
-By-law
-2018-125
-By-law
-2018-302
-By-law
-2019-172
-By-law
-2019-381
-By-law
-2020-88
-By-law
-2020-198
-By-law
-2021-302
-By-law
-2021-315
-By-law
-2021-316
-By-law
-2021-317
-By-law
-2021-339
-By-law
-2021-369
-By-law
-2022-126
-By-law
-2022-269
-By-law
-2023-203
-By-law
-2023-227
-By-law
-2023-318
-By-law
-2023-516
-By-law
-2024-24
-By-law
-2024-107
-By-law 2024-418
-By-law 2024-474
-Definitions and Interpretation
-Section 1 - Definitions
+- By-law2002-319
+- By-law2002-320
+- By-law2002-373
+- By-law2002-374
+- By-law2002-443
+- By-law2003-236
+- By-law2003-311
+- By-law2004-139
+- By-law2004-209
+- By-law2004-317
+- By-law2004-353
+- By-law2004-488
+- By-law2004-491
+- By-law2004-494
+- By-law2005-58
+- By-law2005-119
+- By-law2005-324
+- By-law2005-325
+- By-law2005-327
+- By-law2005-356
+- By-law2005-357
+- By-law2005-414
+- By-law2005-415
+- By-law2005-538
+- By-law2006-81
+- By-law2006-165
+- By-law2007-9
+- By-law2007-35
+- By-law2007-81
+- By-law2007-120
+- By-law2007-222
+- By-law2007-248
+- By-law2007-509
+- By-law2008-53
+- By-law2008-95
+- By-law2008-96
+- By-law2008-143
+- By-law2008-237
+- By-law2008-306
+- By-law2008-487
+- By-law2009-151
+- By-law2009-152
+- By-law2009-153
+- By-law2009-203
+- By-law2009-259
+- By-law2010-96
+- By-law2010-184
+- By-law2010-263
+- By-law2011-73
+- By-law2011-107
+- By-law2011-241
+- By-law2011-380
+- By-law2012-93
+- By-law2012-258
+- By-law2012-468
+- By-law2013-107
+- By-law2013-384
+- By-law2016-200
+- By-law2016-272
+- By-law2018-10
+- By-law2018-125
+- By-law2018-302
+- By-law2019-172
+- By-law2019-381
+- By-law2020-88
+- By-law2020-198
+- By-law2021-302
+- By-law2021-315
+- By-law2021-316
+- By-law2021-317
+- By-law2021-339
+- By-law2021-369
+- By-law2022-126
+- By-law2022-269
+- By-law2023-203
+- By-law2023-227
+- By-law2023-318
+- By-law2023-516
+- By-law2024-24
+- By-law2024-107
+- By-law 2024-418
+- By-law 2024-474
+
+### Section 1 - Definitions
+
 In this by-law:
 "
 A-frame sign
@@ -227,9 +123,9 @@ adult entertainment performer
 " means any person other than a licensed adult entertainment owner or adult entertainment operator who provides at or in an adult entertainment parlour live entertainment or services designed to appeal to erotic or sexual appetites or inclinations;
 (By-law 2004-353)
 “adult entertainment store” means,
-any premises or part thereof in which the principal business carried on is the provision of either or both adult magazines or adult videos, or
-any premises or part thereof in which the provision of adult videos or adult magazines is incidental to the carrying on of a business not referred to in clause (a).
-(By-law 2005-414; amended by By-law 2006-81)
+1. any premises or part thereof in which the principal business carried on is the provision of either or both adult magazines or adult videos, or
+1. any premises or part thereof in which the provision of adult videos or adult magazines is incidental to the carrying on of a business not referred to in clause (a).(By-law 2005-414; amended by By-law 2006-81)
+
 “adult magazine”
 means any magazine the content of which is designed or held out as designed to appeal to erotic or sexual appetites or inclinations, through the pictorial, photographic or other graphic depiction of subject matter distinguished or characterized by the portrayal of one (1) or more persons involved or engaging in specified sexual activities or by an emphasis on the display of human specified body area;
 (By-law 2005-414; amended by By-law 2006-81)
@@ -239,20 +135,20 @@ means any video the content of which is designed or held out as designed to appe
 "
 all night dance event
 " means an event for gain or profit:
-that offers live or pre-recorded music or both,
-where any part of the event takes place between the hours of 0300 and 0900, and
-where the principal activities include listening and dancing to music.
-(By-law 2002-374)
+1. that offers live or pre-recorded music or both,
+1. where any part of the event takes place between the hours of 0300 and 0900, and
+1. where the principal activities include listening and dancing to music.(By-law 2002-374)
+
 "
 amusement place
 " means a place, building or structure or part thereof to which the public has access where entertainment or amusement facilities are provided and includes:
-premises equipped with five (5) of more arcade machines or video display devices,
-a bowling alley,
-premises, including a proprietary club, with five (5) or more billiard, pool or bagatelle tables,
-a golf driving range,
-a roller skating or ice skating facility, and
-a public hall.
-(By-law 2002-373)
+1. premises equipped with five (5) of more arcade machines or video display devices,
+1. a bowling alley,
+1. premises, including a proprietary club, with five (5) or more billiard, pool or bagatelle tables,
+1. a golf driving range,
+1. a roller skating or ice skating facility, and
+1. a public hall.(By-law 2002-373)
+
 "
 animal
 " means any member of the animal kingdom, other than human;
@@ -285,9 +181,9 @@ means a room used or designed for use primarily for sleeping;
 "
 boarding kennel
 " means any premises or part thereof where:
-more than three (3) dogs over the age of twenty (20) weeks, or
-more than five (5) cats over the age of twenty (20) weeks, are boarded, raised or trained, for any period of time that includes an overnight stay, for remuneration;
-(By-law 2013-107)
+1. more than three (3) dogs over the age of twenty (20) weeks, or
+1. more than five (5) cats over the age of twenty (20) weeks, are boarded, raised or trained, for any period of time that includes an overnight stay, for remuneration;(By-law 2013-107)
+
 “body-rub”
 includes the kneading, manipulating, rubbing, massaging, touching, or stimulating by any means, of a person’s body or part thereof but does not include medical or therapeutic treatment performed or offered by a person otherwise duly qualified, licensed or registered so to do under the laws of the Province of Ontario;
 (By-law 2005-415)
@@ -390,9 +286,9 @@ drop fee
 (By-law 2021-315; repealed by By-law 2024-107)
 “dwelling unit”
 means a residential unit that:
-is used or intended for use a residential premises by one household and not more than three roomers or boarders; and
-contains no more than four bedrooms;
-(By-law 2018-302)
+1. is used or intended for use a residential premises by one household and not more than three roomers or boarders; and
+1. contains no more than four bedrooms;(By-law 2018-302)
+
 "
 eating establishment
 " means a premises where meals or meal portions are prepared or sold for human consumption in a form that will permit immediate consumption on the premises or elsewhere and without limiting the generality of the foregoing includes premises serving or selling food to the general public such as restaurants, cafes, cafeterias, dining rooms, lunch counters, catering services and ice cream parlours but does not include a refreshment vehicle;
@@ -414,14 +310,14 @@ entertainment
 "
 exhibition
 " means an event:
-that is organized by a promoter,
-that is held indoors or outdoors or both,
-that is held on private or public property,
-that has a theme or general subject,
-that is comprised of five (5) or more participating individuals who are vending on their own behalf,
-at which persons contract for display space from the promoter of the event for the purpose of offering goods for sale by retail for the duration of the exhibition or a segment of the exhibition, and
-that is open to the public by any means, but does not include a flea market;
-(By-law 2005-356)
+1. that is organized by a promoter,
+1. that is held indoors or outdoors or both,
+1. that is held on private or public property,
+1. that has a theme or general subject,
+1. that is comprised of five (5) or more participating individuals who are vending on their own behalf,
+1. at which persons contract for display space from the promoter of the event for the purpose of offering goods for sale by retail for the duration of the exhibition or a segment of the exhibition, and
+1. that is open to the public by any means, but does not include a flea market;(By-law 2005-356)
+
 "
 exotic animal
 " means an animal that is wild by nature and is not commonly or lawfully kept as a domestic, household pet in Canada and includes prohibited animals;
@@ -448,15 +344,15 @@ flatbed tow truck
 "
 flea market
 " means a place of business or an event:
-that holds itself out to the public as:
-a flea market, or
-a sale that is commonly referred to as a garage sale,
-that is held indoors or outdoors or both,
-that is organized by an owner, operator or promoter,
-at which persons contract for display space from the owner, operator or promoter for the purpose of offering goods for sale by retail,
-that is comprised of five (5) or more participating individuals who are vending on their own behalf, and
-that is open to the public by any means, but does not include an exhibition;
-(By-law 2005-356)
+1. that holds itself out to the public as:
+  1. a flea market, or
+  1. a sale that is commonly referred to as a garage sale,
+1. that is held indoors or outdoors or both,
+1. that is organized by an owner, operator or promoter,
+1. at which persons contract for display space from the owner, operator or promoter for the purpose of offering goods for sale by retail,
+1. that is comprised of five (5) or more participating individuals who are vending on their own behalf, and
+1. that is open to the public by any means, but does not include an exhibition;(By-law 2005-356)
+
 "
 food premises
 " includes a bakeshop, a butcher shop and an eating establishment;
@@ -487,10 +383,10 @@ Highway Traffic Act
 , R.S.O. 1990, Chap. H.8, as amended, and the regulations passed thereunder;
 “household”
 means a person or a group of people who:
-may or may not be related;
-live together as a single housekeeping establishment; and
-exercise a meaningful degree of collective decision-making and responsibility for the management of the interior of the residential unit;
-(By-law 2018-302)
+1. may or may not be related;
+1. live together as a single housekeeping establishment; and
+1. exercise a meaningful degree of collective decision-making and responsibility for the management of the interior of the residential unit;(By-law 2018-302)
+
 "
 inflatable sign
 " means a non-rigid, gas or air filled bag or balloon designed or used as an advertising device;
@@ -498,10 +394,10 @@ inflatable sign
 “
 in-home breeding kennel
 ” means any premises or part thereof where:
-more than three (3) and less than eleven (11) dogs over the age of twenty (20) weeks, or
-more than five (5) and less than eleven (11) cats over the age of twenty (20) weeks, or,
-more than three (3) dogs over the age of twenty (20) weeks or more than five (5) cats over the age of twenty (20) weeks, where the primary housing for the dogs or cats is in an accessory building(s) or structure(s) on the property, are owned and being bred and raised;
-(By-law 2013-107)
+1. more than three (3) and less than eleven (11) dogs over the age of twenty (20) weeks, or
+1. more than five (5) and less than eleven (11) cats over the age of twenty (20) weeks, or,
+1. more than three (3) dogs over the age of twenty (20) weeks or more than five (5) cats over the age of twenty (20) weeks, where the primary housing for the dogs or cats is in an accessory building(s) or structure(s) on the property, are owned and being bred and raised;(By-law 2013-107)
+
 “intersection”
 means the area embraced within the prolongation or connection of the lateral curb lines or, if none, then of the lateral boundary lines of two (2) or more streets which join one another at an angle, whether or not one (1) street crosses the other;
 (By-law 2008-95)
@@ -533,12 +429,12 @@ limousine service
 "
 live entertainment or services designed to appeal to erotic or sexual appetites or inclinations
 " means:
-services of which a principal feature or characteristic is the nudity or partial nudity of any person. For the purposes of this clause "partial nudity" means less than completely or opaquely covered:
-human genitals or human pubic region;
-human buttocks; or
-female breast below a point immediately above the top of the areola;
-services in respect of which the word "nude", "naked", "topless", "bottomless", "sexy" or any other word or any picture, symbol, or representation having like meaning or implication is used in any advertisement;
-(By-law 2004-353)
+1. services of which a principal feature or characteristic is the nudity or partial nudity of any person. For the purposes of this clause "partial nudity" means less than completely or opaquely covered:
+  1. human genitals or human pubic region;
+  1. human buttocks; or
+  1. female breast below a point immediately above the top of the areola;
+1. services in respect of which the word "nude", "naked", "topless", "bottomless", "sexy" or any other word or any picture, symbol, or representation having like meaning or implication is used in any advertisement;(By-law 2004-353)
+
 "
 livestock
 " means cattle, goats, horses, sheep or swine, or the young thereof;
@@ -578,13 +474,14 @@ R.S.O. 1990, c. H.8, as amended, or a trailer from which refreshments are cooked
 "
 mobile sign
 " means a sign that is,
-temporary,
-designed for the manual rearrangement of copy on the sign face, and
-part of, or attached to, a readily relocatable wheeled trailer or frame without wheels, for use in another location,
+1. temporary,
+1. designed for the manual rearrangement of copy on the sign face, and
+1. part of, or attached to, a readily relocatable wheeled trailer or frame without wheels, for use in another location,
+
 but does not include,
-a portable sign, or
-a sign attached to a vehicle where the principle use of that vehicle is the transportation of people, goods or other materials;
-(By-law 2005-357)
+1. a portable sign, or
+1. a sign attached to a vehicle where the principle use of that vehicle is the transportation of people, goods or other materials;(By-law 2005-357)
+
 "
 motor vehicle
 " means a motor vehicle as defined in the
@@ -615,9 +512,9 @@ Old Municipality
 " means the old municipalities of the City of Cumberland, the City of Gloucester, the Township of Goulbourn, the City of Kanata, the City of Nepean, the Township of Osgoode, the City of Ottawa, the Township of Rideau, the Village of Rockcliffe Park, the City of Vanier and the Township of West Carleton and "Old Municipalities" has a similar meaning;
 “oversize dwelling unit”
 means a residential unit that:
-is used or intended for use as a residential premises by one household and not more than three roomers or boarders; and
-contains more than four, but no more than eight bedrooms;
-(By-law 2018-302)
+1. is used or intended for use as a residential premises by one household and not more than three roomers or boarders; and
+1. contains more than four, but no more than eight bedrooms;(By-law 2018-302)
+
 “
 parking enforcement services
 ”
@@ -741,9 +638,9 @@ recovery service
 “
 recreational kennel
 ” means any premises or part thereof where:
-more than three (3) dogs and less than eleven (11) dogs over the age of twenty (20) weeks, or
-more than three (3) dogs over the age of twenty (20) weeks where the primary housing for the dogs is in an accessory building(s) or structure(s) on the property, are owned and raised for non-commercial recreational purposes, such as dog sledding, but are not bred for sale;
-(By-law 2013-107)
+1. more than three (3) dogs and less than eleven (11) dogs over the age of twenty (20) weeks, or
+1. more than three (3) dogs over the age of twenty (20) weeks where the primary housing for the dogs is in an accessory building(s) or structure(s) on the property, are owned and raised for non-commercial recreational purposes, such as dog sledding, but are not bred for sale;(By-law 2013-107)
+
 “refreshment stand”
 means a temporary structure from which refreshments are cooked, carried or offered for sale to the general public and includes a stand, table, booth, trailer, tent, kiosk or other similar structure;
 (By-law 2008-96)
@@ -773,10 +670,10 @@ rickshaw owner
 (By-law 2005-119)
 “rooming house”
 means a residential unit, other than a group home, retirement home or converted retirement home, that:
-is not used or intended for use as a residential premises by a household or
-is intended for use as a residential premises by a household and more than three roomers or boarders; or
-contains more than eight bedrooms;
-(By-law 2008-237; repealed and replaced by By-law 2018-302)
+1. is not used or intended for use as a residential premises by a household or
+1. is intended for use as a residential premises by a household and more than three roomers or boarders; or
+1. contains more than eight bedrooms;(By-law 2008-237; repealed and replaced by By-law 2018-302)
+
 “rooming house, converted”
 (repealed by By-law 2018-302)
 “rooming house owner”
@@ -836,18 +733,18 @@ seller
 “
 service animal
 ” means:
-an animal that can be readily identified as one that is being used by the person for reasons relating to the person’s disability, as a result of visual indicators such as the vest or harness worn by the animal; or
-an animal for which the person provides documentation from one of the following regulated health professionals confirming that the person requires the animal for reasons relating to the disability:
-A member of the College of Audiologists and Speech Language Pathologists of Ontario,
-A member of the College of Chiropractors of Ontario,
-A member of the College of Nurses of Ontario,
-A member of the College of Occupational Therapists of Ontario,
-A member of the College of Optometrists of Ontario,
-A member of the College of Physicians and Surgeons of Ontario,
-A member of the College of Physiotherapists of Ontario,
-A member of the College of Psychologists of Ontario,
-A member of the College of Registered Psychotherapists and Registered Mental Health Therapists of Ontario;
-(By-law 2018-125)
+1. an animal that can be readily identified as one that is being used by the person for reasons relating to the person’s disability, as a result of visual indicators such as the vest or harness worn by the animal; or
+1. an animal for which the person provides documentation from one of the following regulated health professionals confirming that the person requires the animal for reasons relating to the disability:
+  1. A member of the College of Audiologists and Speech Language Pathologists of Ontario,
+  1. A member of the College of Chiropractors of Ontario,
+  1. A member of the College of Nurses of Ontario,
+  1. A member of the College of Occupational Therapists of Ontario,
+  1. A member of the College of Optometrists of Ontario,
+  1. A member of the College of Physicians and Surgeons of Ontario,
+  1. A member of the College of Physiotherapists of Ontario,
+  1. A member of the College of Psychologists of Ontario,
+  1. A member of the College of Registered Psychotherapists and Registered Mental Health Therapists of Ontario;(By-law 2018-125)
+
 "
 shop
 " means a building or part of a building, booth, stall or place or vehicle where goods are exposed, displayed or offered for sale by retail;
@@ -875,11 +772,9 @@ means the Smoking and Vaping By-law (No. 2019-241, as amended), of the City of O
 "
 Snow Plow
 " means;
-a motor vehicle as defined in the
-Highway Traffic Act
-(Ontario) equipped with a snow blower, snow plow or other snow clearing device, and
-a self-propelled vehicle of a design commonly used for snow clearing or snow removal, which may be equipped with a snow blower or other snow clearing device, including but not limited to a tractor, loader, skid steer, or a backhoe;
-(By-law 2002-320; amended by By-law 2024-418)
+1. a motor vehicle as defined in theHighway Traffic Act(Ontario) equipped with a snow blower, snow plow or other snow clearing device, and
+1. a self-propelled vehicle of a design commonly used for snow clearing or snow removal, which may be equipped with a snow blower or other snow clearing device, including but not limited to a tractor, loader, skid steer, or a backhoe;(By-law 2002-320; amended by By-law 2024-418)
+
 "
 Snow Plow Contractor
 " means a person who is engaged in the business of contracting for the clearing or removal of snow on or from private property by means of a snow plow;
@@ -903,9 +798,9 @@ means a premises wherein vapour products are sold by retail as defined in Ontari
 (By-law 2024-474)
 “specified body area”
 means any one or more of the following:
-in the case of a female person, her areolae; and
-in the case of all persons, the genitals and anus;
-(By-law 2005-414)
+1. in the case of a female person, her areolae; and
+1. in the case of all persons, the genitals and anus;(By-law 2005-414)
+
 “specified sexual activity”
 means one or more of the following: actual or simulated sexual intercourse, masturbation, ejaculation, sodomy, bestiality, oral sexual intercourse, direct physical stimulation of unclothed genital organs or flagellation or torture in the context of a sexual relationship or activity;
 (By-law 2005-414)
@@ -928,10 +823,10 @@ temporary limousine
 "
 temporary sign
 " means a sign not permanently installed or affixed to any structure or building and includes:
-an inflatable sign,
-a mobile sign, and a
-portable sign;
-(By-law 2005-357)
+1. an inflatable sign,
+1. a mobile sign, and a
+1. portable sign;(By-law 2005-357)
+
 "
 temporary sign lessor
 " means a person carrying on the business of leasing temporary signs in the City of Ottawa;
@@ -1026,134 +921,103 @@ By-law 2005-414)
 "
 zoning requirements
 " means the zoning requirements set out in a Zoning By-law of an Old Municipality applicable to the geographic area in which the property is located, or any by-law enacted in substitution therefore.
-Section 2 - Interpretation
-This by-law includes the Schedules annexed hereto and the Schedules are hereby declared to form part of this by-law.
-Where the time for doing any act or taking any proceeding expires on a Saturday, Sunday or Public Holiday, the act or proceeding may be done or taken on the next workday.
-Upon the expiration of the time prescribed for the doing of any act or the taking of any proceeding, the Chief License Inspector, the Property Standards and License Appeals Committee, and the Council are divested of all jurisdiction to deal with the application and the times prescribed shall not be enlarged or abridged or attempted to be enlarged or abridged by any of them.
-(By-law 2018-125)
-Where notice is sent by registered mail, the date of service on the applicant is the date of the next work-day following the date of mailing.
-Where any expression of time occurs or where any hour or other period of time is stated the time referred to shall be standard time, provided however, if what is known as "daylight saving time" has been generally adopted in the City for any period of the year, under any statute, order-in-council, by-law, resolution or proclamation, whether the same is effective in law or not, such time shall be the time referred to during such period in any reference to time in this by-law.
-It is declared that if any section, subsection or part or parts thereof be declared by any Court of Law to be bad, illegal or ultra vires, such section, subsection or part or parts shall be deemed to be severable and all parts hereof are declared to be separate and independent and enacted as such.
-Establishment of Property Standards and License Appeals Committee
-Section 3 - Composition
-The Property Standards and License Appeals Committee shall be composed of five (5) citizen members appointed by City Council.
+### Section 2 - Interpretation
+
+1. This by-law includes the Schedules annexed hereto and the Schedules are hereby declared to form part of this by-law.
+1. Where the time for doing any act or taking any proceeding expires on a Saturday, Sunday or Public Holiday, the act or proceeding may be done or taken on the next workday.
+1. Upon the expiration of the time prescribed for the doing of any act or the taking of any proceeding, the Chief License Inspector, the Property Standards and License Appeals Committee, and the Council are divested of all jurisdiction to deal with the application and the times prescribed shall not be enlarged or abridged or attempted to be enlarged or abridged by any of them.(By-law 2018-125)
+1. Where notice is sent by registered mail, the date of service on the applicant is the date of the next work-day following the date of mailing.
+1. Where any expression of time occurs or where any hour or other period of time is stated the time referred to shall be standard time, provided however, if what is known as "daylight saving time" has been generally adopted in the City for any period of the year, under any statute, order-in-council, by-law, resolution or proclamation, whether the same is effective in law or not, such time shall be the time referred to during such period in any reference to time in this by-law.
+1. It is declared that if any section, subsection or part or parts thereof be declared by any Court of Law to be bad, illegal or ultra vires, such section, subsection or part or parts shall be deemed to be severable and all parts hereof are declared to be separate and independent and enacted as such.
+
+### Section 3 - Composition
+
+1. The Property Standards and License Appeals Committee shall be composed of five (5) citizen members appointed by City Council.
 (repealed and replaced by By-law 2023-516)
-Section 4 - Committee coordinator
+
+### Section 4 - Committee coordinator
+
 Repealed.
 (
 amended by By-law 2018-125; repealed by By-law 2023-516)
-Section 5 - Meetings
+### Section 5 - Meetings
+
 Repealed
 (
 amended by By-law 2018-125; repealed by By-law 2023-516)
-Powers
-Section 6 - Property standards and license appeals committee powers
-The Property Standards and License Appeals Committee is authorized to administer the provisions of this by-law.
-(By-law 2018-125)
-The Property Standards and License Appeals Committee is authorized to make the final decision in respect of the revocation or suspension of any license issued or the imposition of conditions on any licensee.
-(By-law 2018-125)
-A majority of the three (3) members of the Property Standards and License Appeals Committee constitutes a quorum.
-(By-law 2018-125)
-The Property Standards and License Appeals Committee, after a hearing, may revoke any or each of the licenses held by a licensee for cause and without limiting the generality of the foregoing for:
-a breach of the law,
-anything which may be in any way adverse to the public interest,
-the belief that the person will not carry on or engage in the business in accordance with the law or with honesty and integrity,
-any other matter which the Property Standards and License Appeals Committee is authorized by law to consider, or
-any violation of the provisions of this by-law.
-(By-law 2018-125)
-The Property Standards and License Appeals Committee may suspend a license for cause for any period that is less than the unexpired part of the period for which it was issued in lieu of revocation as provided in subsection (4).
-(By-law 2018-125)
-The Property Standards and License Appeals Committee may impose conditions as a requirement of obtaining, continuing to hold or renewing the license, including special conditions.
-(By-law 2018-125)
-Section 7 - Chief license inspector's and by-law officer's powers
-The Chief License Inspector is authorized to administer the provisions of this by-law on behalf of the City, including enforcement, together with such other By-law Officers as may be necessary.
-In addition to subsection (1), the Chief License Inspector and such other By-law Officers are appointed by by-law of the City as Municipal Law Enforcement Officers pursuant to section 15 of the Police Services Act, R.S.O. 1990, Chap. P.15, as amended.
-The Chief License Inspector may report to the Property Standards and License Appeals Committee any breaches by the licensee of this by-law with a request to consider the status of the license.
-(By-law 2018-125)
-The Chief License Inspector may suspend any license in an emergency situation for the time and subject to the conditions set out in Section 44.
-The Chief License Inspector is authorized to rectify minor administrative oversights in respect of a license or license application.
-(By-law 2008-306)
-Section 8 - Inspection powers
-The Chief License Inspector is hereby authorized to:
-inspect:
-as much of any place or premise as is used for the carrying on of the business,
-any books, records or other documents of or relating to any such business, or
-each motor vehicle operated, provided or used in the business,
-require that each motor vehicle operated, provided or used in the business be submitted for inspection, and
-ensure that each licensee produces his or her motor vehicle for inspection at the time and place designated by the Chief License Inspector.
-In addition to the inspection for motor vehicles referred to in subsection (1), motor vehicles shall be inspected in accordance with the Schedule regulating the business in which motor vehicles are operated, provided or used.
-Upon the demand of the Chief License Inspector, the driver of any class of motor vehicle that is regulated under this by-law shall surrender for reasonable inspection, his or her driver's license issued under section 32 of the said
-Highway Traffic Act
-or under the law of another jurisdiction and the permit for the vehicle issued under section 7 of the said
-Highway Traffic Act
-or under the law of another jurisdiction.
-The Chief License Inspector may at any time of the day or night enter into any adult entertainment establishment to determine whether this by-law is being complied with and for this purpose make such examinations, investigations and inquiries as are necessary.
-(
-By-law No. 2004-353; amended by
-By-law 2005-414)
-The Chief of Police or the Chief License Inspector is hereby authorized to inspect:
-as much of a place or premises as is used for the carrying on of the business of a second-hand goods shop, and
-any goods, wares, merchandise, articles, books, records or other documents of or relating to the second-hand goods shop.
-(By-law 2006-165)
-No person shall obstruct, hinder or otherwise interfere with any of the inspections referred to in this section.
-Licenses
-Section 9 - Business licenses
+### Section 6 - Property standards and license appeals committee powers
+
+1. The Property Standards and License Appeals Committee is authorized to administer the provisions of this by-law.(By-law 2018-125)
+1. The Property Standards and License Appeals Committee is authorized to make the final decision in respect of the revocation or suspension of any license issued or the imposition of conditions on any licensee.(By-law 2018-125)
+1. A majority of the three (3) members of the Property Standards and License Appeals Committee constitutes a quorum.(By-law 2018-125)
+1. The Property Standards and License Appeals Committee, after a hearing, may revoke any or each of the licenses held by a licensee for cause and without limiting the generality of the foregoing for:
+  1. a breach of the law,
+  1. anything which may be in any way adverse to the public interest,
+  1. the belief that the person will not carry on or engage in the business in accordance with the law or with honesty and integrity,
+  1. any other matter which the Property Standards and License Appeals Committee is authorized by law to consider, or
+  1. any violation of the provisions of this by-law.(By-law 2018-125)
+1. The Property Standards and License Appeals Committee may suspend a license for cause for any period that is less than the unexpired part of the period for which it was issued in lieu of revocation as provided in subsection (4).(By-law 2018-125)
+1. The Property Standards and License Appeals Committee may impose conditions as a requirement of obtaining, continuing to hold or renewing the license, including special conditions.(By-law 2018-125)
+
+### Section 7 - Chief license inspector's and by-law officer's powers
+
+1. The Chief License Inspector is authorized to administer the provisions of this by-law on behalf of the City, including enforcement, together with such other By-law Officers as may be necessary.
+1. In addition to subsection (1), the Chief License Inspector and such other By-law Officers are appointed by by-law of the City as Municipal Law Enforcement Officers pursuant to section 15 of the Police Services Act, R.S.O. 1990, Chap. P.15, as amended.
+1. The Chief License Inspector may report to the Property Standards and License Appeals Committee any breaches by the licensee of this by-law with a request to consider the status of the license.(By-law 2018-125)
+1. The Chief License Inspector may suspend any license in an emergency situation for the time and subject to the conditions set out in Section 44.
+1. The Chief License Inspector is authorized to rectify minor administrative oversights in respect of a license or license application.(By-law 2008-306)
+
+### Section 8 - Inspection powers
+
+1. The Chief License Inspector is hereby authorized to:
+  1. inspect:
+    1. as much of any place or premise as is used for the carrying on of the business,
+    1. any books, records or other documents of or relating to any such business, or
+    1. each motor vehicle operated, provided or used in the business,
+  1. require that each motor vehicle operated, provided or used in the business be submitted for inspection, and
+  1. ensure that each licensee produces his or her motor vehicle for inspection at the time and place designated by the Chief License Inspector.
+1. In addition to the inspection for motor vehicles referred to in subsection (1), motor vehicles shall be inspected in accordance with the Schedule regulating the business in which motor vehicles are operated, provided or used.
+1. Upon the demand of the Chief License Inspector, the driver of any class of motor vehicle that is regulated under this by-law shall surrender for reasonable inspection, his or her driver's license issued under section 32 of the saidHighway Traffic Actor under the law of another jurisdiction and the permit for the vehicle issued under section 7 of the saidHighway Traffic Actor under the law of another jurisdiction.
+  1. The Chief License Inspector may at any time of the day or night enter into any adult entertainment establishment to determine whether this by-law is being complied with and for this purpose make such examinations, investigations and inquiries as are necessary.(By-law No. 2004-353; amended byBy-law 2005-414)
+  1. The Chief of Police or the Chief License Inspector is hereby authorized to inspect:
+    1. as much of a place or premises as is used for the carrying on of the business of a second-hand goods shop, and
+    1. any goods, wares, merchandise, articles, books, records or other documents of or relating to the second-hand goods shop.(By-law 2006-165)
+1. No person shall obstruct, hinder or otherwise interfere with any of the inspections referred to in this section.
+
+### Section 9 - Business licenses
+
 There shall be taken out by:
-every auctioneer,
-every driving instructor and every driving school operator,
-every person who owns or operates a public garage;
-(By-law 2002-319)
-every snow plow contractor;
-(By-law 2002-320)
-every person who owns or operates an amusement place; (
-By-law 2002-373)
-every person who promotes an all night dance event;
-(By-law 2002-374)
-every person who owns or operates a food premises;
-(By-law 2002-443)
-every person who promotes an exotic animal entertainment event;
-(By-law 2003-236)
-every person who owns and operates an exotic animal rescue and education establishment;
-(By-law 2003-236)
-repealed
-(By-law 2004-209 and later repealed by By-law 2016-272)
-;
-every adult entertainment owner and every adult entertainment operator;
-(By-law 2004-353)
-every tobacco product retailer;
-every vapour product retailer
-every tobacco and vapour products retailer;
-(In effect November 30, 2024)
-every person who owns or operates a second-hand goods shop;
-(By-law 2005-324)
-every person who owns or operates a salvage yard;
-(By-law 2005-325)
-every rickshaw owner;
-(By-law 2005-119)
-every rickshaw operator;
-(By-law 2005-119)
-every person who promotes an exhibition;
-(By-law 2005-356)
-every person who owns, operates or promotes a flea market;
-(By-law 2005-356)
-every temporary sign lessor;
-(By-law 2005-357)
-every person who owns or operates an adult entertainment store;
-(By-law 2005-414)
-every person who owns or operates a body-rub parlour;
-(By-law 2005-415)
-every Itinerant Seller;
-(By-law 2008-95)
-every mobile refreshment vehicle operator;
-(By-law 2008-96)
-every mobile canteen operator;
-(By-law 2008-96)
-every mobile refreshment cart operator;
-(By-law 2008-96)
-every refreshment stand operator;
-(By-law 2008-96)
-every owner of a rooming house;
-(By-law 2008-237)
+1. every auctioneer,
+1. every driving instructor and every driving school operator,
+1. every person who owns or operates a public garage;(By-law 2002-319)
+1. every snow plow contractor;(By-law 2002-320)
+1. every person who owns or operates an amusement place; (By-law 2002-373)
+1. every person who promotes an all night dance event;(By-law 2002-374)
+1. every person who owns or operates a food premises;(By-law 2002-443)
+1. every person who promotes an exotic animal entertainment event;(By-law 2003-236)
+1. every person who owns and operates an exotic animal rescue and education establishment;(By-law 2003-236)
+1. repealed(By-law 2004-209 and later repealed by By-law 2016-272);
+1. every adult entertainment owner and every adult entertainment operator;(By-law 2004-353)
+1. 
+  1. every tobacco product retailer;
+  1. every vapour product retailer
+  1. every tobacco and vapour products retailer;(In effect November 30, 2024)
+1. every person who owns or operates a second-hand goods shop;(By-law 2005-324)
+1. every person who owns or operates a salvage yard;(By-law 2005-325)
+1. every rickshaw owner;(By-law 2005-119)
+1. every rickshaw operator;(By-law 2005-119)
+1. every person who promotes an exhibition;(By-law 2005-356)
+1. every person who owns, operates or promotes a flea market;(By-law 2005-356)
+1. every temporary sign lessor;(By-law 2005-357)
+1. every person who owns or operates an adult entertainment store;(By-law 2005-414)
+1. every person who owns or operates a body-rub parlour;(By-law 2005-415)
+1. every Itinerant Seller;(By-law 2008-95)
+1. every mobile refreshment vehicle operator;(By-law 2008-96)
+1. every mobile canteen operator;(By-law 2008-96)
+1. every mobile refreshment cart operator;(By-law 2008-96)
+1. every refreshment stand operator;(By-law 2008-96)
+1. every owner of a rooming house;(By-law 2008-237)
+
 (27) every rural itinerant seller;
 (By-law 2009-151)
 (28)
@@ -1192,368 +1056,347 @@ By-law 2021-315; repealed by By-law 2024-107)
 (37) repealed;
 (By-law 2021-315; repealed by By-law 2024-107)
 a license authorizing them respectively to carry on business in the City;
-Section 10 - Licenses required
+### Section 10 - Licenses required
+
 No person shall carry on or engage in a business referred to in Section 9 until he or she has procured a license so to do.
-Application and issuance
-Section 11 - Application for a license
-The following types of applications for the issuance of a license may be made:
-an original license, and
-the renewal of a license.
-On the application for an original license or the renewal of a license respecting any of the businesses set out in Section 9, the applicant shall:
-complete the prescribed forms,
-furnish to the City such information as the City may direct to be furnished,
-if a corporation, file copies of the letters of incorporation or other incorporating documents, duly certified by the proper government official or department, together with an annual return which contains a list of all shareholders of the corporation,
-if a partnership, provide the names and addresses of each member of the partnership as well as the name under which they carry on or intend to carry on business,
-file the completed application with payment in full of the processing fee, the late fee, if applicable, any outstanding additional fees, if applicable and the license fee as set out in Section 15, all in accordance with the City of Ottawa Policies and Procedures for Cash Handling issued by the City Treasurer.
-(By-law 2004-488)
-With respect to the payment required by clause (e) of subsection (2),
-(amended By-law 2004-491)
-the processing fee payment and the late fee are non-refundable in whole or in part, and
-the license fee payment shall,
-if the license is granted, be applied toward the payment of the license fee for the license period in respect of which the license is issued, and
-if the license is not granted, returned to the applicant in accordance with subsection (3) of Section 21.
-Despite subsection (2), the licensee shall, on the renewal of the license,
-apply,
-on or before the expiry date set out on the license,
-up to and including the fifteenth day after the said expiry date,
-file, where applicable, any or all of the following:
-proof of insurance,
-a safety standards certificate, except in the case of a new vehicle obtained directly from a motor vehicle agency within three (3) months from the effective date of the motor vehicle registration, or
-leasing agreement for the motor vehicle, and
-exhibit, where applicable, Ontario Motor Vehicle Registration Permits for the license period for which the renewal is applied for, issued pursuant to the Highway Traffic Act.
-In the event of a licensee not renewing the license on or before its expiration, the licensee may renew the license by making application therefor as hereinbefore provided up to and including the fifteenth day after the expiration of the license and shall pay at the time of issuance of the license the license fee and the late fee set out in Section 15.
+### Section 11 - Application for a license
+
+1. The following types of applications for the issuance of a license may be made:
+  1. an original license, and
+  1. the renewal of a license.
+1. On the application for an original license or the renewal of a license respecting any of the businesses set out in Section 9, the applicant shall:
+  1. complete the prescribed forms,
+  1. furnish to the City such information as the City may direct to be furnished,
+  1. if a corporation, file copies of the letters of incorporation or other incorporating documents, duly certified by the proper government official or department, together with an annual return which contains a list of all shareholders of the corporation,
+  1. if a partnership, provide the names and addresses of each member of the partnership as well as the name under which they carry on or intend to carry on business,
+  1. file the completed application with payment in full of the processing fee, the late fee, if applicable, any outstanding additional fees, if applicable and the license fee as set out in Section 15, all in accordance with the City of Ottawa Policies and Procedures for Cash Handling issued by the City Treasurer.(By-law 2004-488)
+1. With respect to the payment required by clause (e) of subsection (2),(amended By-law 2004-491)
+  1. the processing fee payment and the late fee are non-refundable in whole or in part, and
+  1. the license fee payment shall,
+    1. if the license is granted, be applied toward the payment of the license fee for the license period in respect of which the license is issued, and
+    1. if the license is not granted, returned to the applicant in accordance with subsection (3) of Section 21.
+1. Despite subsection (2), the licensee shall, on the renewal of the license,
+  1. apply,
+    1. on or before the expiry date set out on the license,
+    1. up to and including the fifteenth day after the said expiry date,
+  1. file, where applicable, any or all of the following:
+    1. proof of insurance,
+    1. a safety standards certificate, except in the case of a new vehicle obtained directly from a motor vehicle agency within three (3) months from the effective date of the motor vehicle registration, or
+    1. leasing agreement for the motor vehicle, and
+  1. exhibit, where applicable, Ontario Motor Vehicle Registration Permits for the license period for which the renewal is applied for, issued pursuant to the Highway Traffic Act.
+1. In the event of a licensee not renewing the license on or before its expiration, the licensee may renew the license by making application therefor as hereinbefore provided up to and including the fifteenth day after the expiration of the license and shall pay at the time of issuance of the license the license fee and the late fee set out in Section 15.
 (amended by By-law 2023-516)
-In the event of a licensee not renewing the license on or before the fifteenth day after its expiration, the licensee ceases to be a licensee and shall apply for an original license and shall pay at the time of issuance of the license the license fee and the late fee set out in Section 15.
-Despite subsection (2), the Chief License Inspector may waive one or all of the requirements listed in paragraphs (c), (d), (e) or (f) of subsection (2) where the Chief License Inspector determines that the requirements of these paragraphs do not apply.
-(By-law 2003-311)
-Despite clause 11(3)(b)(ii), a refund of the license fee shall not apply where the applicant has outstanding additional fees which exceed the license fee.
-(By-law 2004-488)
-Despite clause 11(3)(b)(ii), where the outstanding additional fee is less than the license fee, the applicant shall receive only a refund of the difference between the license fee and the outstanding additional fee.
-(By-law 2004-488)
-Section 12 - Investigations for issuance of license
-The Chief License Inspector shall, upon receipt of an application referred to in Section 11, make or cause to be made all investigations required by law or by the City relative to such application.
-Despite subsection (1), the Chief License Inspector may renew the license upon being satisfied that, where applicable,
-the Chief of Police has reported in writing as to the good character of the applicant, said report to be within one (1) month of the date of application, and
-there is no report in writing on file to the effect that the licensee has failed to comply with any provision of this by-law or, where applicable, a condition on which the license was issued imposed by the Property Standards and License Appeals Committee for the period for which the license was granted.
-(amended by By-law 2018-125)
-Section 13 - Conditions for issuance of license
-An applicant for an original license, or the renewal of a license, is, subject to the provisions of this by-law, entitled to be issued the license, except where:
-the applicant has not,
-completed the prescribed application forms,
-delivered with the application payment in full of the processing fee, the late fee, if applicable, and the license fee as set out in Section 15 to be paid in respect of such license, or
-complied with the license requirements set out in this by-law for the applicable business,
-the conduct of the applicant affords reasonable grounds for belief that the applicant has not carried on, or will not carry on, his or her business in accordance with the law and with integrity and honesty,
-there are reasonable grounds for belief that the carrying on of the business by the applicant has resulted, or will result, in a breach of this by-law or any other law,
-(
-By-law 2004-488)
-there are reasonable grounds for belief that the carrying on of the business may be adverse to the public interest or
-(
-By-law 2004-488)
-any additional fee imposed on the applicant remains unpaid after the due date on the notice of additional fee is sent to the applicant.
-(
-By-law 2004-488)
-Where two or more persons carry on or engage in partnership in any of the businesses set out in Section 9, the license shall be issued in the name of one partner only, but when the application for license is made, the name and address of each member of the partnership shall be set out therein as well as the name under which they carry on or intend to carry on business.
-Section 14 - Notice of issuance of license
+1. In the event of a licensee not renewing the license on or before the fifteenth day after its expiration, the licensee ceases to be a licensee and shall apply for an original license and shall pay at the time of issuance of the license the license fee and the late fee set out in Section 15.
+1. Despite subsection (2), the Chief License Inspector may waive one or all of the requirements listed in paragraphs (c), (d), (e) or (f) of subsection (2) where the Chief License Inspector determines that the requirements of these paragraphs do not apply.(By-law 2003-311)
+1. Despite clause 11(3)(b)(ii), a refund of the license fee shall not apply where the applicant has outstanding additional fees which exceed the license fee.(By-law 2004-488)
+1. Despite clause 11(3)(b)(ii), where the outstanding additional fee is less than the license fee, the applicant shall receive only a refund of the difference between the license fee and the outstanding additional fee.(By-law 2004-488)
+
+### Section 12 - Investigations for issuance of license
+
+1. The Chief License Inspector shall, upon receipt of an application referred to in Section 11, make or cause to be made all investigations required by law or by the City relative to such application.
+1. Despite subsection (1), the Chief License Inspector may renew the license upon being satisfied that, where applicable,
+  1. the Chief of Police has reported in writing as to the good character of the applicant, said report to be within one (1) month of the date of application, and
+  1. there is no report in writing on file to the effect that the licensee has failed to comply with any provision of this by-law or, where applicable, a condition on which the license was issued imposed by the Property Standards and License Appeals Committee for the period for which the license was granted.(amended by By-law 2018-125)
+
+### Section 13 - Conditions for issuance of license
+
+1. An applicant for an original license, or the renewal of a license, is, subject to the provisions of this by-law, entitled to be issued the license, except where:
+  1. the applicant has not,
+    1. completed the prescribed application forms,
+    1. delivered with the application payment in full of the processing fee, the late fee, if applicable, and the license fee as set out in Section 15 to be paid in respect of such license, or
+    1. complied with the license requirements set out in this by-law for the applicable business,
+  1. the conduct of the applicant affords reasonable grounds for belief that the applicant has not carried on, or will not carry on, his or her business in accordance with the law and with integrity and honesty,
+  1. there are reasonable grounds for belief that the carrying on of the business by the applicant has resulted, or will result, in a breach of this by-law or any other law,(By-law 2004-488)
+  1. there are reasonable grounds for belief that the carrying on of the business may be adverse to the public interest or(By-law 2004-488)
+  1. any additional fee imposed on the applicant remains unpaid after the due date on the notice of additional fee is sent to the applicant.(By-law 2004-488)
+1. Where two or more persons carry on or engage in partnership in any of the businesses set out in Section 9, the license shall be issued in the name of one partner only, but when the application for license is made, the name and address of each member of the partnership shall be set out therein as well as the name under which they carry on or intend to carry on business.
+
+### Section 14 - Notice of issuance of license
+
 If the investigations referred to in Section 12 and the provisions of Section 13 are complied with and the issuance of the license has been approved, the Chief License Inspector may issue the license personally or send it by ordinary mail to the applicant at the address shown on the application.
-Section 15 - Fees
-The fees shall be as set out in Schedule "A" to this by-law.
-The license fee shall be the amount set out in Column 2 of Schedule "A" opposite the description of the license set out in Column 1 of Schedule "A".
-Where an original application for a license is filed after the expiry of the first six months of the license period, the applicant shall pay at the time of issuance of the license one-half of the license fee set out in Schedule "A".
-Where a licensee fails to comply with this by-law or fails to produce the vehicle for a scheduled inspection, and the Chief License Inspector re-schedules the inspection, the licensee shall pay the re-inspection fee set out in Schedule "A".
-Section 15A - Additional fee
-Despite any provision of this by-law, the Chief License Inspector may impose an additional fee, as set out in Schedule "A" to this by-law, on a licensee by way of a notice of additional fee at any time during the term of the license for costs incurred by the municipality attributable to the activities of the business.
-(
-By-law 2004-488)
-The notice of additional fee shall,
-be sent to the licensee by registered mail or served personally at the address last on file with the Chief License Inspector; and
-provide the licensee with sixty (60) days from the date the notice of additional fee is received by the licensee to pay the outstanding amount.
-(
-By-law 2004-488)
-Section 16 - License period
+### Section 15 - Fees
+
+1. The fees shall be as set out in Schedule "A" to this by-law.
+1. The license fee shall be the amount set out in Column 2 of Schedule "A" opposite the description of the license set out in Column 1 of Schedule "A".
+1. Where an original application for a license is filed after the expiry of the first six months of the license period, the applicant shall pay at the time of issuance of the license one-half of the license fee set out in Schedule "A".
+1. Where a licensee fails to comply with this by-law or fails to produce the vehicle for a scheduled inspection, and the Chief License Inspector re-schedules the inspection, the licensee shall pay the re-inspection fee set out in Schedule "A".
+
+### Section 15A - Additional fee
+
+1. Despite any provision of this by-law, the Chief License Inspector may impose an additional fee, as set out in Schedule "A" to this by-law, on a licensee by way of a notice of additional fee at any time during the term of the license for costs incurred by the municipality attributable to the activities of the business.(By-law 2004-488)
+1. The notice of additional fee shall,
+  1. be sent to the licensee by registered mail or served personally at the address last on file with the Chief License Inspector; and
+  1. provide the licensee with sixty (60) days from the date the notice of additional fee is received by the licensee to pay the outstanding amount.(By-law 2004-488)
+
+### Section 16 - License period
+
 Every license issued by the Chief License Inspector shall, unless it is expressed to be for a shorter or longer period of time, be for one (1) year and shall expire in each year on the date set out in Column 3 of Schedule "A" opposite the description of the license set out in Column 1 of Schedule "A".
-Section 16A - License period
+### Section 16A - License period
+
 Despite Section 16, the Chief License Inspector is delegated the authority to:
-approve and extend the timelines for license renewals, beyond the timelines provided in Schedule “A”, under one or more of the following conditions:
-a State of Emergency has been called either at the federal, provincial or municipal level;
-City of Ottawa client service counters have been closed for in excess of five (5) business days; or,
-any other circumstances deemed appropriate by the Chief License Inspector that would impact the ability for licensees to renew licenses or for staff to process renewals, that are beyond the control of licensees or staff and, where requested, licensees may be required to provide proof to the satisfaction of the Chief License Inspector.
-The exercise of delegated authority pursuant to subsection (1) shall be reported to the appropriate Standing Committee at least once in each calendar year.
+1. approve and extend the timelines for license renewals, beyond the timelines provided in Schedule “A”, under one or more of the following conditions:
+  1. a State of Emergency has been called either at the federal, provincial or municipal level;
+  1. City of Ottawa client service counters have been closed for in excess of five (5) business days; or,
+  1. any other circumstances deemed appropriate by the Chief License Inspector that would impact the ability for licensees to renew licenses or for staff to process renewals, that are beyond the control of licensees or staff and, where requested, licensees may be required to provide proof to the satisfaction of the Chief License Inspector.
+1. The exercise of delegated authority pursuant to subsection (1) shall be reported to the appropriate Standing Committee at least once in each calendar year.
 (By-law 2020-88)
-Section 17 - License certificate
-The License Certificate may be the invoice and shall be numbered and include:
-the name of the licensee,
-the business of the licensee,
-the address of the business,
-the category of the business license,
-the date of issuance of the license,
-the date of expiration of the license,
-the make, model, serial number and motor vehicle registration number issued under the Highway Traffic Act, if applicable,
-the word "transfer" and the number of the original license, if applicable.
-Where an original license has been lost or destroyed, the Chief License Inspector, upon receipt of an affidavit to that effect, furnished by the original holder thereof or by some person having personal knowledge of the loss or destruction of the license, may issue a duplicate license to the licensee upon payment of the fee set out in Section 15.
-Section 18 - Issuance of license
+
+### Section 17 - License certificate
+
+1. The License Certificate may be the invoice and shall be numbered and include:
+  1. the name of the licensee,
+  1. the business of the licensee,
+  1. the address of the business,
+  1. the category of the business license,
+  1. the date of issuance of the license,
+  1. the date of expiration of the license,
+  1. the make, model, serial number and motor vehicle registration number issued under the Highway Traffic Act, if applicable,
+  1. the word "transfer" and the number of the original license, if applicable.
+1. Where an original license has been lost or destroyed, the Chief License Inspector, upon receipt of an affidavit to that effect, furnished by the original holder thereof or by some person having personal knowledge of the loss or destruction of the license, may issue a duplicate license to the licensee upon payment of the fee set out in Section 15.
+
+### Section 18 - Issuance of license
+
 Upon issuance of a license, the Chief License Inspector shall furnish to the licensee the license certificate or validation sticker and such other items as set out in this by-law for the applicable business.
-Section 19 - Insurance
-Every proof of insurance required pursuant to the provisions of this by-law shall be kept in force by the licensee for the period for which the license is in effect inclusive of any renewal thereof.
-No licensee who is required to file proof of insurance with the Chief License Inspector shall fail to maintain in force and to renew the same in a timely manner and to pay the premium due thereon.
-The Chief License Inspector shall, upon receipt of notice that a policy of insurance is to expire on a stated date, notify the licensee that unless further proof of insurance is filed on or before that day, his or her license will be suspended coincidently with the expiration of the policy of insurance.
-If a licensee fails to file proof of insurance as required by subsection (3), the Chief License Inspector shall forthwith transmit a report to the Licensee Committee and the License Committee may consider the status of the license in accordance with the provisions of this by-law.
-(
-By-law 2018-125)
-When a licensee decides to suspend business operations and not to keep the insurance required pursuant to the provisions of this by-law in force, the licensee may arrange to deliver his or her license to the Chief License Inspector for safekeeping until he or she decides to carry on the business operation and refile the proof of insurance required pursuant to the provisions of this by-law.
-When a licensee has delivered his or her license pursuant to subsection (5), subsection (4) does not apply and the Chief License Inspector is not required to transmit the report to the License Committee pertaining to the consideration of the status of the license.
-(
-By-law 2018-125)
-No person who has delivered his or her license pursuant to subsection (5) shall carry on the business for which the license was issued without refiling proof of insurance with the Chief License Inspector.
-Section 20 - Transfers
-When a person applies for a transfer of a license, the person to whom the license is to be transferred shall comply with the provisions of this by-law as if he or she was an original applicant.
-When the person to whom the license is to be transferred has furnished satisfactory proof to the Chief License Inspector that he or she meets the requirements of this by-law and that such transfer is not prohibited by any other provision of this by-law, the Chief License Inspector shall issue a license to the transferee upon receipt of the transfer fee set out in Section 15, which license certificate shall comply with the provisions of Section 17.
-Where the licensee dies during the currency of the license, the license may be transferred and the provisions of subsections (1) and (2) apply.
-Where two or more persons carry on or engage in partnership in any of the businesses set out in Section 9, the license shall be issued in the name of one partner only, but when the application for license is made the name and address of each member of the partnership shall be set out therein as well as the name under which they carry on or intend to carry on business.
-The licensee or another member of the partnership may apply in writing to the Chief License Inspector to change the named licensee to another member of the partnership, and provide proof of the members of the partnership; and the application shall be a transfer and the provisions of subsections (1) and (2) apply but the Chief License Inspector does not have to be furnished with satisfactory proof that the premises meet the requirements of the by-law.
-When a licensee proposes to move or relocate his or her premises, the licensee shall apply for a transfer of the license from one premises to the other premises, and the Chief License Inspector, upon being furnished with satisfactory proof that the premises meet the requirements of this by-law and that such transfer is not prohibited by any other provision of this by-law, shall transfer the license upon receipt of the transfer fee set out in Section 15.
-Every person who replaces the motor vehicle for which the license was issued shall apply for a transfer of the license from the one (1) motor vehicle to the replacement motor vehicle and shall, where applicable:
-file,
-proof of insurance, and
-a safety standards certificate, and
-exhibit the Ontario Motor Vehicle Registration Permit for the replacement vehicle,
-and the Chief License Inspector, upon being furnished with satisfactory proof that the motor vehicle meets the requirements of this by-law shall transfer the license upon receipt of the transfer fee set out in Section 15.
-Every person who purchases a business from a licensee shall apply for a transfer of the license in accordance with the provisions of subsections (1) and (2).
-In the event of an applicant for a transfer being refused by the Chief License Inspector, the Chief License Inspector shall give the applicant notice of his or her refusal in writing, said notice to be served personally or by registered mail to the applicant at the address shown on the application.
-An applicant in receipt of a notice given pursuant to subsection (9), may apply in writing to the License Committee for a review of the refusal of the Chief License Inspector to issue the transfer applied for by filing with the Chief License Inspector his or her application for a review and the provisions of Section 21 apply in like manner.
-(
-By-law 2018-125)
-Refusal, revocation and suspension of a license
-Section 21 - Refusal of issuance of license
-The Chief License Inspector shall refuse to issue to the applicant the license applied for if the conditions for issuance in Section 13 have not been met.
-The Chief License Inspector shall give the applicant notice of the refusal to issue the license applied for in writing, said notice to be served personally or by registered mail to the applicant at the address shown on the application.
-The Chief License Inspector shall return the license fee paid at the time of the application in respect of such license after the expiration of fourteen (14) days of having served the notice provided that an application for review of the refusal to issue the license has not been filed.
-Section 22 - Application for review of refusal to issue
+### Section 19 - Insurance
+
+1. Every proof of insurance required pursuant to the provisions of this by-law shall be kept in force by the licensee for the period for which the license is in effect inclusive of any renewal thereof.
+1. No licensee who is required to file proof of insurance with the Chief License Inspector shall fail to maintain in force and to renew the same in a timely manner and to pay the premium due thereon.
+1. The Chief License Inspector shall, upon receipt of notice that a policy of insurance is to expire on a stated date, notify the licensee that unless further proof of insurance is filed on or before that day, his or her license will be suspended coincidently with the expiration of the policy of insurance.
+1. If a licensee fails to file proof of insurance as required by subsection (3), the Chief License Inspector shall forthwith transmit a report to the Licensee Committee and the License Committee may consider the status of the license in accordance with the provisions of this by-law.(By-law 2018-125)
+1. When a licensee decides to suspend business operations and not to keep the insurance required pursuant to the provisions of this by-law in force, the licensee may arrange to deliver his or her license to the Chief License Inspector for safekeeping until he or she decides to carry on the business operation and refile the proof of insurance required pursuant to the provisions of this by-law.
+1. When a licensee has delivered his or her license pursuant to subsection (5), subsection (4) does not apply and the Chief License Inspector is not required to transmit the report to the License Committee pertaining to the consideration of the status of the license.(By-law 2018-125)
+1. No person who has delivered his or her license pursuant to subsection (5) shall carry on the business for which the license was issued without refiling proof of insurance with the Chief License Inspector.
+
+### Section 20 - Transfers
+
+1. When a person applies for a transfer of a license, the person to whom the license is to be transferred shall comply with the provisions of this by-law as if he or she was an original applicant.
+1. When the person to whom the license is to be transferred has furnished satisfactory proof to the Chief License Inspector that he or she meets the requirements of this by-law and that such transfer is not prohibited by any other provision of this by-law, the Chief License Inspector shall issue a license to the transferee upon receipt of the transfer fee set out in Section 15, which license certificate shall comply with the provisions of Section 17.
+1. Where the licensee dies during the currency of the license, the license may be transferred and the provisions of subsections (1) and (2) apply.
+1. Where two or more persons carry on or engage in partnership in any of the businesses set out in Section 9, the license shall be issued in the name of one partner only, but when the application for license is made the name and address of each member of the partnership shall be set out therein as well as the name under which they carry on or intend to carry on business.
+1. The licensee or another member of the partnership may apply in writing to the Chief License Inspector to change the named licensee to another member of the partnership, and provide proof of the members of the partnership; and the application shall be a transfer and the provisions of subsections (1) and (2) apply but the Chief License Inspector does not have to be furnished with satisfactory proof that the premises meet the requirements of the by-law.
+1. When a licensee proposes to move or relocate his or her premises, the licensee shall apply for a transfer of the license from one premises to the other premises, and the Chief License Inspector, upon being furnished with satisfactory proof that the premises meet the requirements of this by-law and that such transfer is not prohibited by any other provision of this by-law, shall transfer the license upon receipt of the transfer fee set out in Section 15.
+1. Every person who replaces the motor vehicle for which the license was issued shall apply for a transfer of the license from the one (1) motor vehicle to the replacement motor vehicle and shall, where applicable:
+  1. file,
+    1. proof of insurance, and
+    1. a safety standards certificate, and
+  1. exhibit the Ontario Motor Vehicle Registration Permit for the replacement vehicle,and the Chief License Inspector, upon being furnished with satisfactory proof that the motor vehicle meets the requirements of this by-law shall transfer the license upon receipt of the transfer fee set out in Section 15.
+1. Every person who purchases a business from a licensee shall apply for a transfer of the license in accordance with the provisions of subsections (1) and (2).
+1. In the event of an applicant for a transfer being refused by the Chief License Inspector, the Chief License Inspector shall give the applicant notice of his or her refusal in writing, said notice to be served personally or by registered mail to the applicant at the address shown on the application.
+1. An applicant in receipt of a notice given pursuant to subsection (9), may apply in writing to the License Committee for a review of the refusal of the Chief License Inspector to issue the transfer applied for by filing with the Chief License Inspector his or her application for a review and the provisions of Section 21 apply in like manner.(By-law 2018-125)
+
+### Section 21 - Refusal of issuance of license
+
+1. The Chief License Inspector shall refuse to issue to the applicant the license applied for if the conditions for issuance in Section 13 have not been met.
+1. The Chief License Inspector shall give the applicant notice of the refusal to issue the license applied for in writing, said notice to be served personally or by registered mail to the applicant at the address shown on the application.
+1. The Chief License Inspector shall return the license fee paid at the time of the application in respect of such license after the expiration of fourteen (14) days of having served the notice provided that an application for review of the refusal to issue the license has not been filed.
+
+### Section 22 - Application for review of refusal to issue
+
 An applicant in receipt of a notice of refusal given pursuant to Section 21 may, within fourteen (14) days of having been served the notice, apply in writing for a review of the refusal to issue the license applied for by filing the request for a review with the Chief License Inspector, and the provisions of Sections 24 to 28 shall apply.
-Section 23 - Report for review of status of license
+### Section 23 - Report for review of status of license
+
 The Chief License Inspector may report to the
 Property Standards and License Appeals Committee
 any breaches by the licensee of this by-law with a request to consider the status of the license.
 (By-law 2018-125)
-Section 24 - Date of review hearing
-The Chief License Inspector,
-upon receipt of the application referred to in Section 22, or
-upon reporting to the Property Standards and License Appeals Committee as set out in Section 23,
+### Section 24 - Date of review hearing
+
+1. The Chief License Inspector,
+  1. upon receipt of the application referred to in Section 22, or
+  1. upon reporting to the Property Standards and License Appeals Committee as set out in Section 23,
+
 shall determine a date with the Committee Coordinator of the Property Standards and License Appeals Committee for the review hearing by the Property Standards and License Appeals Committee which shall be at least fourteen (14) days from receipt of appeal hearing request.
 (By-law 2023-516)
-Section 25 - Notice of review hearing
-Upon determination of the review hearing date, the Chief License Inspector shall give notice in writing to the applicant or licensee, said notice to:
-include a statement,
-as to the time, date, place and purpose of the review hearing, and
-that, if the applicant does not attend the review hearing, the Property Standards and License Appeals Committee may proceed in the absence of the applicant or licensee and the applicant or licensee will not be entitled to any further notice,
+### Section 25 - Notice of review hearing
+
+1. Upon determination of the review hearing date, the Chief License Inspector shall give notice in writing to the applicant or licensee, said notice to:
+  1. include a statement,
+    1. as to the time, date, place and purpose of the review hearing, and
+    1. that, if the applicant does not attend the review hearing, the Property Standards and License Appeals Committee may proceed in the absence of the applicant or licensee and the applicant or licensee will not be entitled to any further notice,
 (By-law 2018-125)
-be served personally or by registered mail to the applicant or licensee at the address last on file with the Chief License Inspector, and
-where the good character, propriety of conduct or competence of a licensee is an issue, contain reasonable information of any allegations with respect thereto.
-Section 26 - Hearing
-The Property Standards and License Appeals Committee shall hold the review hearing at the time, place and date set out in the notice referred to in Section 25.
+  1. be served personally or by registered mail to the applicant or licensee at the address last on file with the Chief License Inspector, and
+  1. where the good character, propriety of conduct or competence of a licensee is an issue, contain reasonable information of any allegations with respect thereto.
+
+### Section 26 - Hearing
+
+1. The Property Standards and License Appeals Committee shall hold the review hearing at the time, place and date set out in the notice referred to in Section 25.
 (By-law 2018-125)
-The applicant or licensee may be represented at the review hearing by counsel, and the applicant or licensee or the counsel shall have the right to adduce evidence, submit argument in support of the application for a license or the status quo of the license and cross-examine witnesses adverse in interest.
-The City shall be represented at the review hearing by either the Chief License Inspector or the City Solicitor, who is entitled to adduce evidence and submit arguments in reply to evidence and argument on behalf of the applicant or licensee.
-At the review hearing, the onus shall be upon the applicant or licensee to show cause why,
-the license applied for should be granted,
-the license should not be suspended or revoked , or
-conditions should not be imposed on the license.
-All review hearings shall be public hearings unless the applicant or licensee requests that the hearing be held in camera and the Property Standards and License Appeals Committee may approve the request by a simple majority in accordance with the Statutory Powers Procedure Act, R.S.O. 1990, Chap. S.22, as amended.
+1. The applicant or licensee may be represented at the review hearing by counsel, and the applicant or licensee or the counsel shall have the right to adduce evidence, submit argument in support of the application for a license or the status quo of the license and cross-examine witnesses adverse in interest.
+1. The City shall be represented at the review hearing by either the Chief License Inspector or the City Solicitor, who is entitled to adduce evidence and submit arguments in reply to evidence and argument on behalf of the applicant or licensee.
+1. At the review hearing, the onus shall be upon the applicant or licensee to show cause why,
+  1. the license applied for should be granted,
+  1. the license should not be suspended or revoked , or
+  1. conditions should not be imposed on the license.
+1. All review hearings shall be public hearings unless the applicant or licensee requests that the hearing be held in camera and the Property Standards and License Appeals Committee may approve the request by a simple majority in accordance with the Statutory Powers Procedure Act, R.S.O. 1990, Chap. S.22, as amended.
 (By-law 2018-125)
-The Property Standards and License Appeals Committee’s decision shall be final and binding.
+1. The Property Standards and License Appeals Committee’s decision shall be final and binding.
 (By-law 2018-125)
-Section 27 - License committee decision
+
+### Section 27 - License committee decision
+
 The Property Standards and License Appeals Committee shall give its decision in writing to the Chief License Inspector within seven (7) business days of the date of the completion of the review hearing.
 (By-law 2023-516)
-Section 28 - Waiver of hearing
-Despite any of the provisions of this by-law, any proceedings may be disposed of by a decision of the Property Standards and License Appeals Committee given,
-without a hearing, or
-without compliance with any other requirements of the Statutory Powers Procedure Act, R.S.O. 1990, Chap. S.22, as amended, or of this by-law incorporating such requirements,
+### Section 28 - Waiver of hearing
+
+1. Despite any of the provisions of this by-law, any proceedings may be disposed of by a decision of the Property Standards and License Appeals Committee given,
+  1. without a hearing, or
+  1. without compliance with any other requirements of the Statutory Powers Procedure Act, R.S.O. 1990, Chap. S.22, as amended, or of this by-law incorporating such requirements,
+
 where the licensee has waived such hearing or compliance.
 (By-law 2018-125)
-Section 29 - Implementation of license committee decision
-The Chief License Inspector shall notify the applicant or licensee of the decision by serving a copy personally or by registered mail to:
-the applicant or licensee at the address shown on the application, or last on file with the Chief License Inspector, or
-the counsel or agent of the applicant or licensee, if any, at the address as stated to the Property Standards and License Appeals Committee.
-(By-law 2018-125)
-.
-If the decision rendered is to grant the applicant the license applied for, the license shall be issued.
-If the decision is to suspend or revoke the license, the licensee shall within twenty-four (24) hours of service of notice by registered mail, or immediately if the notice is personally served, return the license to the Chief License Inspector, and the Chief License Inspector shall have access to any premises or other property of the licensee for the purpose of receiving or taking the same.
-If the decision is to impose conditions on the license, the licensee shall within twenty-four (24) hours of service of notice by registered mail, or immediately if the notice is personally served, advise the Chief License Inspector as to his or her acceptance of the conditions.
-Notification of changes
-Section 30 - Notification on happening of certain events
-Every licensee shall notify or cause to be notified the Chief License Inspector in writing within seven (7) days of the happening of the following events:
-any change in the licensee's address or telephone number,
-sale, transfer or termination of the business,
-retirement,
-in the situation where the licensee provided the name and address of his or her business affiliate or employer, any change in the named business affiliate or employer, or
-any change of address, telephone number or Ontario License Plate Number of a motor vehicle that is registered with the Ontario Ministry of Transportation and any change of motor vehicle ownership and appropriate insurance endorsement.
-In the case of the death of the licensee, the person administering the estate should notify or cause to be notified the Chief License Inspector in writing.
-General regulations
-Section 31 - License availability
-Subject to subsection (3), every person obtaining a license under this by-law shall carry the said license upon his or her person.
-Every licensee shall, when so requested by the Chief License Inspector, produce the license for inspection.
-Every person obtaining a license under this by-law where the same applies to premises shall ensure that his or her license is posted up in some prominent position on the premises, so as to visible to the public.
-Section 32 - False or incorrect information
+### Section 29 - Implementation of license committee decision
+
+1. The Chief License Inspector shall notify the applicant or licensee of the decision by serving a copy personally or by registered mail to:
+  1. the applicant or licensee at the address shown on the application, or last on file with the Chief License Inspector, or
+  1. the counsel or agent of the applicant or licensee, if any, at the address as stated to the Property Standards and License Appeals Committee.
+(By-law 2018-125).
+1. If the decision rendered is to grant the applicant the license applied for, the license shall be issued.
+1. If the decision is to suspend or revoke the license, the licensee shall within twenty-four (24) hours of service of notice by registered mail, or immediately if the notice is personally served, return the license to the Chief License Inspector, and the Chief License Inspector shall have access to any premises or other property of the licensee for the purpose of receiving or taking the same.
+1. If the decision is to impose conditions on the license, the licensee shall within twenty-four (24) hours of service of notice by registered mail, or immediately if the notice is personally served, advise the Chief License Inspector as to his or her acceptance of the conditions.
+
+### Section 30 - Notification on happening of certain events
+
+1. Every licensee shall notify or cause to be notified the Chief License Inspector in writing within seven (7) days of the happening of the following events:
+  1. any change in the licensee's address or telephone number,
+  1. sale, transfer or termination of the business,
+  1. retirement,
+  1. in the situation where the licensee provided the name and address of his or her business affiliate or employer, any change in the named business affiliate or employer, or
+  1. any change of address, telephone number or Ontario License Plate Number of a motor vehicle that is registered with the Ontario Ministry of Transportation and any change of motor vehicle ownership and appropriate insurance endorsement.
+1. In the case of the death of the licensee, the person administering the estate should notify or cause to be notified the Chief License Inspector in writing.
+
+### Section 31 - License availability
+
+1. Subject to subsection (3), every person obtaining a license under this by-law shall carry the said license upon his or her person.
+1. Every licensee shall, when so requested by the Chief License Inspector, produce the license for inspection.
+1. Every person obtaining a license under this by-law where the same applies to premises shall ensure that his or her license is posted up in some prominent position on the premises, so as to visible to the public.
+
+### Section 32 - False or incorrect information
+
 No person shall give false or incorrect information for the purposes of obtaining a license.
-Section 33 - Subject to laws
+### Section 33 - Subject to laws
+
 All licenses are subject to all applicable Acts, regulations and by-laws.
-Section 34 - Property of the city
-No person shall enjoy a vested right in the continuance of a license and upon the issue, cancellation or suspension thereof, the value of a license shall be the property of the City.
-Every decal furnished pursuant to this by-law shall be and remain the property of the City and shall be returned to the City or removed whenever required to do so by the Chief License Inspector.
-Section 35 - Duty to comply
+### Section 34 - Property of the city
+
+1. No person shall enjoy a vested right in the continuance of a license and upon the issue, cancellation or suspension thereof, the value of a license shall be the property of the City.
+1. Every decal furnished pursuant to this by-law shall be and remain the property of the City and shall be returned to the City or removed whenever required to do so by the Chief License Inspector.
+
+### Section 35 - Duty to comply
+
 Every person applying for or holding a license under this by-law shall, in such application or in carrying on or engaging in the business in respect of which the license is issued, observe, comply with and be governed by this by-law.
-Section 36 - No discrimination
+### Section 36 - No discrimination
+
 No person licensed under this by-law shall, because of race, colour or creed, discriminate against any member of the public in the carrying on of the business in respect of which the license is issued.
-Section 37 - Guide dogs
+### Section 37 - Guide dogs
+
 No person licensed under this by-law shall refuse to permit a service animal to enter and remain on his or her premises, or to enter and remain in his or her motor vehicle during the carrying on of the business in respect of which the license is issued.
 (By-law 2018-125)
-Section 38 - Employee acts
+### Section 38 - Employee acts
+
 Every licensee shall be responsible for the act or acts of any of his or her employees or any person associated with the licensee in the carrying on of any of the businesses authorized by his or her license in the same manner and to the same extent as though such act or acts were done by the licensee.
-Section 39 - Conditional licenses
-Every licensee shall comply with every condition imposed upon the license.
-Every licensee who fails to comply with subsection (1) is guilty of an offence.
-Offences and penalties
-Section 40 - Offences
+### Section 39 - Conditional licenses
+
+1. Every licensee shall comply with every condition imposed upon the license.
+1. Every licensee who fails to comply with subsection (1) is guilty of an offence.
+
+### Section 40 - Offences
+
 Every person who contravenes any provision of this by-law is guilty of an offence and upon conviction is liable to a fine as provided for by the
 Provincial Offences Act
 , R.S.O. 1990, Chapter P.33, as amended.
 (By-law 2021-315
 ; amended by By-law 2023-516
 )
-Section 41 - Fines
-Every person who is convicted of an offence under this by-law is liable to a fine of not more than twenty-five thousand ($25,000.00) dollars as provided for in the Municipal Act, 2001, S.O. 2001, Chapter 25, as amended.
+### Section 41 - Fines
+
+1. Every person who is convicted of an offence under this by-law is liable to a fine of not more than twenty-five thousand ($25,000.00) dollars as provided for in the Municipal Act, 2001, S.O. 2001, Chapter 25, as amended.
 (By-law 2023-516)
-Where a corporation is convicted of an offence under this by-law, the maximum penalty that may be imposed on the corporation is fifty thousand ($50,000) dollars and not as provided by subsection (1) in accordance with the Municipal Act.
-Section 41A
-Despite subsection (1) of Section 41, every owner or operator of an adult entertainment establishment who contravenes this by-law and every director of a corporation that owns and operates an adult entertainment establishment who concurs in the contravention by the corporation is guilty of an offence and on conviction is liable to a fine of not more than twenty-five thousand dollars ($25,000.00) or imprisonment for a term not exceeding one year or both as provided for in the
-Municipal Act
-, 2001, S.O. 2001, Chapter 25, as amended.
-(By-law 2005-414)
-Despite subsection (2) of Section 41, where a corporation that owns or operates an adult entertainment establishment is convicted an offence under this by-law, the maximum penalty that may be imposed on the corporation is fifty thousand dollars ($50,000.00) and not as provided in subsection (1) in accordance with the provisions of the Municipal Act, 2001.
-(By-law 2005-414)
-Section 42 - Prohibition order
-When a person has been convicted of an offence under this by-law,
-the Ontario Court of Justice or
-any court of competent jurisdiction thereafter
-may, in addition to any other penalty imposed on the person convicted, make an order prohibiting the continuation or repetition of the offence by the person convicted.
-Section 43 to 46 - License suspension or revocation
-Section 43
+1. Where a corporation is convicted of an offence under this by-law, the maximum penalty that may be imposed on the corporation is fifty thousand ($50,000) dollars and not as provided by subsection (1) in accordance with the Municipal Act.
+
+### Section 41A
+
+1. Despite subsection (1) of Section 41, every owner or operator of an adult entertainment establishment who contravenes this by-law and every director of a corporation that owns and operates an adult entertainment establishment who concurs in the contravention by the corporation is guilty of an offence and on conviction is liable to a fine of not more than twenty-five thousand dollars ($25,000.00) or imprisonment for a term not exceeding one year or both as provided for in theMunicipal Act, 2001, S.O. 2001, Chapter 25, as amended.(By-law 2005-414)
+1. Despite subsection (2) of Section 41, where a corporation that owns or operates an adult entertainment establishment is convicted an offence under this by-law, the maximum penalty that may be imposed on the corporation is fifty thousand dollars ($50,000.00) and not as provided in subsection (1) in accordance with the provisions of the Municipal Act, 2001.(By-law 2005-414)
+
+### Section 42 - Prohibition order
+
+1. When a person has been convicted of an offence under this by-law,
+  1. the Ontario Court of Justice or
+  1. any court of competent jurisdiction thereaftermay, in addition to any other penalty imposed on the person convicted, make an order prohibiting the continuation or repetition of the offence by the person convicted.
+
+### Section 43 to 46 - License suspension or revocation
+
+#### Section 43
+
 In addition to any other penalty, a license issued under the authority of this by-law may be suspended or revoked upon such grounds and in accordance with such procedural provisions as are set out in this by-law.
-Section 44
-With respect to the temporary suspension of a license, summary suspensions may be for a minimum period of twenty-four (24) hours and for a maximum period of fourteen (14) days; if the violation has been corrected after the twenty-four (24) hour period, the license may be reinstated.
-Summary suspensions may be initiated by the Chief License Inspector or By-law Officer in any situation that has resulted or may reasonably be expected to result in an emergency situation and without limiting the generality of the foregoing, these situations may include:
-where the licensee has breached any law,
-where the licensee has done anything that is in any way adverse to the public interest,
-where a motor vehicle is deemed to be mechanically unsafe, including but not limited to body damage with sharp edges, holes in the floor boards, unserviceable tires, doors not closing properly, wire protruding from the seat or any other mechanical defect that would render the motor vehicle unsafe,
-where a cheque is returned marked "NSF" for the payment of a license fee and in such cases, the license shall be suspended until the license fee is paid,
-where there is misuse of a license by a licensee taking a license decal from one vehicle and affixing it to another vehicle which is not approved for licensing purposes,
-where an inspection has been performed on a motor vehicle for transfer of a license and the licensee fails to effect the transfer, the license shall be suspended should the operator carry on business with the replacement vehicle,
-where a leasing agreement has expired and the lessee has failed to renew it, the license may be suspended if the lessor continues to work while the licensing agreement is expired, or
-where a licensee's liability insurance has expired and he or she continues to carry on business for which the license was issued, the license shall be suspended
-(By-law 2003-311)
-Prior to suspending a licence, the Chief Licence Inspector shall provide the licensee with the reasons for the suspension either orally or in writing and an opportunity to respond to them.
-The Chief License Inspector will be advised immediately of all summary suspensions.
-The Property Standards and License Appeals Committee will be advised on a quarterly basis of all suspension actions initiated summarily.
+#### Section 44
+
+1. With respect to the temporary suspension of a license, summary suspensions may be for a minimum period of twenty-four (24) hours and for a maximum period of fourteen (14) days; if the violation has been corrected after the twenty-four (24) hour period, the license may be reinstated.
+1. Summary suspensions may be initiated by the Chief License Inspector or By-law Officer in any situation that has resulted or may reasonably be expected to result in an emergency situation and without limiting the generality of the foregoing, these situations may include:
+  1. where the licensee has breached any law,
+  1. where the licensee has done anything that is in any way adverse to the public interest,
+  1. where a motor vehicle is deemed to be mechanically unsafe, including but not limited to body damage with sharp edges, holes in the floor boards, unserviceable tires, doors not closing properly, wire protruding from the seat or any other mechanical defect that would render the motor vehicle unsafe,
+  1. where a cheque is returned marked "NSF" for the payment of a license fee and in such cases, the license shall be suspended until the license fee is paid,
+  1. where there is misuse of a license by a licensee taking a license decal from one vehicle and affixing it to another vehicle which is not approved for licensing purposes,
+  1. where an inspection has been performed on a motor vehicle for transfer of a license and the licensee fails to effect the transfer, the license shall be suspended should the operator carry on business with the replacement vehicle,
+  1. where a leasing agreement has expired and the lessee has failed to renew it, the license may be suspended if the lessor continues to work while the licensing agreement is expired, or
+  1. where a licensee's liability insurance has expired and he or she continues to carry on business for which the license was issued, the license shall be suspended(By-law 2003-311)
+1. Prior to suspending a licence, the Chief Licence Inspector shall provide the licensee with the reasons for the suspension either orally or in writing and an opportunity to respond to them.
+1. The Chief License Inspector will be advised immediately of all summary suspensions.
+1. The Property Standards and License Appeals Committee will be advised on a quarterly basis of all suspension actions initiated summarily.
 (By-law 2018-125)
-The suspension of a licence pursuant to this section is lifted after the expiration of two (2) weeks from the date of suspension or after the first meeting of the Property Standards and License Appeals Committee after the suspension, whichever occurs first.
+1. The suspension of a licence pursuant to this section is lifted after the expiration of two (2) weeks from the date of suspension or after the first meeting of the Property Standards and License Appeals Committee after the suspension, whichever occurs first.
 (By-law 2018-125)
-Section 45
+
+#### Section 45
+
 Where a license has been suspended or revoked, no person shall refuse to deliver the license to the Chief License Inspector or shall in any way prevent or hinder the Chief License Inspector from receiving or taking the same.
-Section 46
+#### Section 46
+
 No licensee shall operate or carry on the business for which the license was issued while the license is under suspension.
-Administration
-Sections 47 to 54 - Repeals and transition
+### Sections 47 to 54 - Repeals and transition
+
 Former municipal by-laws.
-Section 55 - Effective date
-This by-law shall come into force and take effect on the 1st day of July, 2002.
-Despite subsection (1), for the purposes of applying for an original license for auctioneer licenses for the license period of July 1, 2002 to April 30, 2003, the applicant may apply in June 2002 and the application may be processed as if this by-law was in effect.
-Despite subsection (1), for the purposes of applying for an original license for driving instructor and driving school operator licenses for the license period of July 1, 2002 to June 30, 2003, the applicant may apply in June 2002 and the application may be processed as if this by-law was in effect.
-Section 56 - Short title
+### Section 55 - Effective date
+
+1. This by-law shall come into force and take effect on the 1st day of July, 2002.
+1. Despite subsection (1), for the purposes of applying for an original license for auctioneer licenses for the license period of July 1, 2002 to April 30, 2003, the applicant may apply in June 2002 and the application may be processed as if this by-law was in effect.
+1. Despite subsection (1), for the purposes of applying for an original license for driving instructor and driving school operator licenses for the license period of July 1, 2002 to June 30, 2003, the applicant may apply in June 2002 and the application may be processed as if this by-law was in effect.
+
 This by-law may be referred to as the "Licensing By-law."
 Enacted and passed this 8th day of May, 2002.
-Businesses Regulated by Licensing (By-law No. 2002-189)
-Businesses Regulated by Licensing
-Auctioneers - Schedule No. 1
-Driving School Operators and Driving Instructors - Schedule No. 2
-Public Garages - Schedule No. 3
-Snow Plow Contractors - Schedule No. 4 (By-law 2024-418)
-Amusement Places - Schedule No. 5
-All Night Dance Events - Schedule No. 6
-Food Premises - Schedule No. 7
-Exotic Animal Entertainment Events - Schedule No. 8
-Exotic Animal Rescue & Education Establishments - Schedule No. 9
-Limousine Service - Schedule No. 10
-Adult Entertainment Parlours - Schedule No. 11
-Tobacco and Vapour Product Retailers - Schedule No. 12 (By-law 2024-474)
-Rickshaws - Schedule No. 13
-Second-Hand Goods Shops - Schedule No. 14
-Salvage Yards - Schedule No. 15
-Exhibitions - Schedule No. 16
-Flea Markets - Schedule No. 17
-Temporary Sign Lessors - Schedule No. 18
-Adult Entertainment Stores - Schedule No. 19
-Body-rub Parlours - Schedule No. 20
-Itinerant Sellers - Schedule No. 21
-Mobile Refreshment Vehicles - Schedule No. 22
-Mobile Canteens - Schedule No. 23
-Mobile Refreshment Carts - Schedule No. 24
-Refreshment Stands - Schedule No. 25
-Rooming Houses - Schedule No. 26
-Rural Itinerant Sellers - Schedule No. 27
-Rural Refreshment Vehicles - Schedule No. 28 (By-law 2009-152)
-Pet Shops - Schedule No. 29 (By-law 2011-241)
-Private Parking Enforcement Agencies - Schedule No. 30
-Boarding Kennels - Schedule No. 31 (By-law 2013-107)
-In-home breeding kennels - Schedule No. 32 (By-law 2013-107)
-Recreational kennel - Schedule No. 33 (By-law 2013-107)
-Payday Loan Establishments - Schedule No. 34 (By-law 2019-381)
-Tow Service Operators, Tow Truck Drivers and Vehicle Storage Facility Operators - Schedule No. 35 (added by By-law 2021-315)
-Fees for Harmonized Licenses
-By-law Services Fees and Charges
-Contact us
-Online
-En ligne
-By phone
-Par téléphone
-In-person
-En personne
-About us
-Accessibilité
-Avertissement
-Confidentialité
-Accessibility
-Disclaimer
-Privacy
-Protocoles
-Protocols
-Follow us
-Facebook
-Facebook
-Instagram
-Instagram
-X Platform
-Plateforme X
-YouTube
-YouTube
-Cyberabonnements
-eSubscriptions
-Report or Request
-Parking issues
-Problèmes de stationnement
-Garbage collection
-La collecte des déchets
-Sidewalk and road maintenance
-Entretien des trottoirs et routes
-Property damage
-Entretien des propriétés
-Problem with the website
-Un problème concernant le site Web
-Web experience survey
-×
-Would you like to participate in a 2-3 minute web experience survey to help us improve our website?
-
-If YES, a new window will open in the background so you can come back to it when you are finished on the website.
-
-Thank you for considering to help out.
-Yes
-No
+- Auctioneers - Schedule No. 1
+- Driving School Operators and Driving Instructors - Schedule No. 2
+- Public Garages - Schedule No. 3
+- Snow Plow Contractors - Schedule No. 4 (By-law 2024-418)
+- Amusement Places - Schedule No. 5
+- All Night Dance Events - Schedule No. 6
+- Food Premises - Schedule No. 7
+- Exotic Animal Entertainment Events - Schedule No. 8
+- Exotic Animal Rescue & Education Establishments - Schedule No. 9
+- Limousine Service - Schedule No. 10
+- Adult Entertainment Parlours - Schedule No. 11
+- Tobacco and Vapour Product Retailers - Schedule No. 12 (By-law 2024-474)
+- Rickshaws - Schedule No. 13
+- Second-Hand Goods Shops - Schedule No. 14
+- Salvage Yards - Schedule No. 15
+- Exhibitions - Schedule No. 16
+- Flea Markets - Schedule No. 17
+- Temporary Sign Lessors - Schedule No. 18
+- Adult Entertainment Stores - Schedule No. 19
+- Body-rub Parlours - Schedule No. 20
+- Itinerant Sellers - Schedule No. 21
+- Mobile Refreshment Vehicles - Schedule No. 22
+- Mobile Canteens - Schedule No. 23
+- Mobile Refreshment Carts - Schedule No. 24
+- Refreshment Stands - Schedule No. 25
+- Rooming Houses - Schedule No. 26
+- Rural Itinerant Sellers - Schedule No. 27
+- Rural Refreshment Vehicles - Schedule No. 28 (By-law 2009-152)
+- Pet Shops - Schedule No. 29 (By-law 2011-241)
+- Private Parking Enforcement Agencies - Schedule No. 30
+- Boarding Kennels - Schedule No. 31 (By-law 2013-107)
+- In-home breeding kennels - Schedule No. 32 (By-law 2013-107)
+- Recreational kennel - Schedule No. 33 (By-law 2013-107)
+- Payday Loan Establishments - Schedule No. 34 (By-law 2019-381)
+- Tow Service Operators, Tow Truck Drivers and Vehicle Storage Facility Operators - Schedule No. 35 (added by By-law 2021-315)
