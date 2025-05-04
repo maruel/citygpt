@@ -16,7 +16,7 @@ import (
 // ExtractTextFromHTML extracts and cleans text content from HTML
 // If a div with id="block-mainpagecontent" exists, it only extracts content from that div
 // Otherwise, it extracts all content from the document
-// Returns the text content and the page title (from h1 tag) if found
+// Returns the text content and the page title (from h1 tag or title tag) if found
 func ExtractTextFromHTML(r io.Reader) (string, string, error) {
 	doc, err := html.Parse(r)
 	if err != nil {
@@ -343,20 +343,33 @@ func ExtractTextFromHTML(r io.Reader) (string, string, error) {
 		}
 	}
 
-	// Find the page title from h1 tag
+	// Find the page title from h1 tag or title tag
+	var titleTagContent string
 	var findPageTitle func(*html.Node)
 	findPageTitle = func(n *html.Node) {
-		if n.Type == html.ElementNode && strings.ToLower(n.Data) == "h1" {
-			// Extract the text content of the h1 tag
-			var h1Text string
-			for c := n.FirstChild; c != nil; c = c.NextSibling {
-				if c.Type == html.TextNode {
-					h1Text += c.Data
+		if n.Type == html.ElementNode {
+			// First priority: h1 tag
+			if strings.ToLower(n.Data) == "h1" {
+				// Extract the text content of the h1 tag
+				var h1Text string
+				for c := n.FirstChild; c != nil; c = c.NextSibling {
+					if c.Type == html.TextNode {
+						h1Text += c.Data
+					}
 				}
-			}
-			// Use the first h1 tag found
-			if pageTitle == "" && strings.TrimSpace(h1Text) != "" {
-				pageTitle = strings.TrimSpace(h1Text)
+				// Use the first h1 tag found
+				if pageTitle == "" && strings.TrimSpace(h1Text) != "" {
+					pageTitle = strings.TrimSpace(h1Text)
+				}
+			} else if strings.ToLower(n.Data) == "title" {
+				// Second priority: title tag
+				var titleText string
+				for c := n.FirstChild; c != nil; c = c.NextSibling {
+					if c.Type == html.TextNode {
+						titleText += c.Data
+					}
+				}
+				titleTagContent = strings.TrimSpace(titleText)
 			}
 		}
 
@@ -391,6 +404,11 @@ func ExtractTextFromHTML(r io.Reader) (string, string, error) {
 
 	// Always look for the page title first, regardless of content extraction method
 	findPageTitle(doc)
+
+	// Use title tag content as fallback if no h1 tag was found
+	if pageTitle == "" && titleTagContent != "" {
+		pageTitle = titleTagContent
+	}
 
 	// Try to find the block-mainpagecontent div first
 	if !findAndExtractMainContent(doc) {
