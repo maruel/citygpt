@@ -152,9 +152,7 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 		return fmt.Errorf("failed to read links file: %w", err)
 	}
 
-	links := strings.Split(string(content), "\n")
-
-	for _, link := range links {
+	for _, link := range strings.Split(string(content), "\n") {
 		link = strings.TrimSpace(link)
 		if link == "" {
 			continue
