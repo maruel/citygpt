@@ -6,6 +6,8 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -152,7 +154,9 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 		return fmt.Errorf("failed to read links file: %w", err)
 	}
 
-	for _, link := range strings.Split(string(content), "\n") {
+	scanner := bufio.NewScanner(bytes.NewReader(content))
+	for scanner.Scan() {
+		link := scanner.Text()
 		link = strings.TrimSpace(link)
 		if link == "" {
 			continue
