@@ -16,12 +16,15 @@ import (
 // ExtractTextFromHTML extracts and cleans text content from HTML
 // If a div with id="block-mainpagecontent" exists, it only extracts content from that div
 // Otherwise, it extracts all content from the document
-func ExtractTextFromHTML(r io.Reader) (string, error) {
+// Returns the text content and the page title (from h1 tag) if found
+func ExtractTextFromHTML(r io.Reader) (string, string, error) {
 	doc, err := html.Parse(r)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse HTML: %w", err)
+		return "", "", fmt.Errorf("failed to parse HTML: %w", err)
 	}
 	var textBuilder *strings.Builder = &strings.Builder{}
+	// Track the title from h1 tag
+	var pageTitle string
 	// Function to recursively extract text content
 	var extractText func(*html.Node)
 
@@ -340,6 +343,29 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 		}
 	}
 
+	// Find the page title from h1 tag
+	var findPageTitle func(*html.Node)
+	findPageTitle = func(n *html.Node) {
+		if n.Type == html.ElementNode && strings.ToLower(n.Data) == "h1" {
+			// Extract the text content of the h1 tag
+			var h1Text string
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				if c.Type == html.TextNode {
+					h1Text += c.Data
+				}
+			}
+			// Use the first h1 tag found
+			if pageTitle == "" && strings.TrimSpace(h1Text) != "" {
+				pageTitle = strings.TrimSpace(h1Text)
+			}
+		}
+
+		// Continue searching child nodes
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			findPageTitle(c)
+		}
+	}
+
 	// Find the div with id="block-mainpagecontent"
 	var findAndExtractMainContent func(*html.Node) bool
 	findAndExtractMainContent = func(n *html.Node) bool {
@@ -363,6 +389,9 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 		return false
 	}
 
+	// Always look for the page title first, regardless of content extraction method
+	findPageTitle(doc)
+
 	// Try to find the block-mainpagecontent div first
 	if !findAndExtractMainContent(doc) {
 		// If block-mainpagecontent not found, extract all content
@@ -373,7 +402,7 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 	// Post-process to remove JSON blocks and any remaining HTML tags
 	text := strings.TrimSpace(textBuilder.String())
 	text = StripHTMLAndJSONBlocks(text)
-	return text, nil
+	return text, pageTitle, nil
 }
 
 // StripHTMLAndJSONBlocks removes HTML tags and JSON-like content from the text

@@ -168,7 +168,7 @@ const summarizationPrompt = "You are a helpful assistant that summarizes text co
 
 // processURL downloads text from a single URL and saves it
 func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (internal.Item, error) {
-	out := internal.Item{URL: fullURL}
+	out := internal.Item{URL: fullURL, Title: ""}
 	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
 		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
@@ -187,7 +187,7 @@ func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir st
 	if resp.StatusCode != http.StatusOK {
 		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 	}
-	textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
+	textContent, pageTitle, err := htmlparse.ExtractTextFromHTML(resp.Body)
 	if err != nil {
 		return out, fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
 	}
@@ -195,6 +195,9 @@ func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir st
 	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
 		return out, fmt.Errorf("failed to write file %s: %w", filePath, err)
 	}
+
+	// Set the title from the extracted h1 tag
+	out.Title = pageTitle
 	messages := genai.Messages{
 		genai.NewTextMessage(genai.User, summarizationPrompt),
 		genai.NewTextMessage(genai.User, textContent),

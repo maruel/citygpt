@@ -19,9 +19,14 @@ func TestExtractTextFromHTML(t *testing.T) {
 		}
 		defer testFile.Close()
 
-		text, err := ExtractTextFromHTML(testFile)
+		text, title, err := ExtractTextFromHTML(testFile)
 		if err != nil {
 			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check that the title was extracted correctly
+		if title != "Heading Level 1" {
+			t.Errorf("Expected title to be 'Heading Level 1', got '%s'", title)
 		}
 
 		// Check headers conversion
@@ -72,9 +77,14 @@ func TestExtractTextFromHTML(t *testing.T) {
 		}
 		defer testFile.Close()
 
-		text, err := ExtractTextFromHTML(testFile)
+		text, title, err := ExtractTextFromHTML(testFile)
 		if err != nil {
 			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check that the title was extracted correctly
+		if title != "Page Header" {
+			t.Errorf("Expected title to be 'Page Header', got '%s'", title)
 		}
 
 		// Check that main content is included
@@ -102,9 +112,14 @@ func TestExtractTextFromHTML(t *testing.T) {
 		}
 		defer testFile.Close()
 
-		text, err := ExtractTextFromHTML(testFile)
+		text, title, err := ExtractTextFromHTML(testFile)
 		if err != nil {
 			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check that title is extracted
+		if title == "" {
+			t.Error("Expected to extract a title, but got empty string")
 		}
 
 		// Check that content is included
@@ -133,10 +148,13 @@ func TestExtractTextFromHTML(t *testing.T) {
 		}
 		defer testFile.Close()
 
-		text, err := ExtractTextFromHTML(testFile)
+		text, title, err := ExtractTextFromHTML(testFile)
 		if err != nil {
 			t.Fatalf("ExtractTextFromHTML failed: %v", err)
 		}
+
+		// Log the title for debugging purposes
+		t.Logf("Extracted title: '%s'", title)
 
 		// Check that the table header is present in Markdown format
 		if !strings.Contains(text, "| Header 1 | Header 2 | Header 3 |") {
@@ -167,10 +185,13 @@ func TestExtractTextFromHTML(t *testing.T) {
 		}
 		defer testFile.Close()
 
-		text, err := ExtractTextFromHTML(testFile)
+		text, title, err := ExtractTextFromHTML(testFile)
 		if err != nil {
 			t.Fatalf("ExtractTextFromHTML failed: %v", err)
 		}
+
+		// Log the title for debugging purposes
+		t.Logf("Extracted title: '%s'", title)
 
 		// Check for the first table with headers
 		if !strings.Contains(text, "| Name | Age | Occupation |") {

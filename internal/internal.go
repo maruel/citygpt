@@ -121,5 +121,6 @@ type Index struct {
 type Item struct {
 	URL     string `json:"url"`
 	Name    string `json:"name"`
+	Title   string `json:"title"`
 	Summary string `json:"summary"`
 }

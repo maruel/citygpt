@@ -28,7 +28,7 @@ func TestExtractTextFromHTML(t *testing.T) {
 				t.Fatalf("Failed to open test file: %v", err)
 			}
 			defer f.Close()
-			textContent, err := htmlparse.ExtractTextFromHTML(f)
+			textContent, _, err := htmlparse.ExtractTextFromHTML(f)
 			if err != nil {
 				t.Fatalf("Failed to extract text: %v", err)
 			}
@@ -66,7 +66,7 @@ func TestHTMLProcessingWithGolden(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to open test file: %v", err)
 			}
-			textContent, err := htmlparse.ExtractTextFromHTML(f)
+			textContent, _, err := htmlparse.ExtractTextFromHTML(f)
 			f.Close()
 			if err != nil {
 				t.Fatalf("Failed to extract text: %v", err)

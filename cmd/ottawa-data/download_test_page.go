@@ -29,8 +29,8 @@ func processHTMLFile(htmlFilePath string) error {
 	}
 	defer htmlFile.Close()
 
-	// Extract text from the HTML
-	textContent, err := htmlparse.ExtractTextFromHTML(htmlFile)
+	// Extract text and title from the HTML
+	textContent, _, err := htmlparse.ExtractTextFromHTML(htmlFile)
 	if err != nil {
 		return fmt.Errorf("failed to extract text: %w", err)
 	}
