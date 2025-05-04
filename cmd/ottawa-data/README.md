@@ -1,7 +1,5 @@
 # Ottawa Data Tool
 
-This Go program replaces the original shell script (`extract_links.sh`) and Python script (`download_texts.py`) used to collect data from the Ottawa city website.
-
 ## Functionality
 
 The tool can:
@@ -13,58 +11,7 @@ The tool can:
 ## Usage
 
 ```bash
-# Run both extraction and download (default behavior)
-go run ./cmd/ottawa-data/main.go
-
-# Only extract links without downloading content
-go run ./cmd/ottawa-data/main.go -extract-only
-
-# Only download content using an existing links file
-go run ./cmd/ottawa-data/main.go -download-only
-
-# Specify custom output directory and links file
-go run ./cmd/ottawa-data/main.go -output-dir=custom_dir -links-file=custom_links.txt
+go install ./cmd/ottawa-data
+cd data/ottawa
+ottawa-data
 ```
-
-## Command-line Options
-
-- `-extract-only`: Only extract links without downloading content
-- `-download-only`: Only download content using existing links file
-- `-output-dir`: Directory to save downloaded text files (default: "pages_text")
-- `-links-file`: File to save extracted links (default: "links.txt")
-
-## Building
-
-To build a standalone executable:
-
-```bash
-go build -o ottawa-data ./cmd/ottawa-data
-```
-
-After building, you can run it directly:
-
-```bash
-./ottawa-data
-```
-
-## Testing
-
-The code includes tests to verify the HTML processing functionality:
-
-```bash
-# Run all tests
-go test ./cmd/ottawa-data/...
-
-# Run only the golden file comparison tests
-go test ./cmd/ottawa-data -run TestHTMLProcessingWithGolden
-```
-
-To update or generate new golden files:
-
-```bash
-# From the root directory
-cd cmd/ottawa-data/testdata
-go run download_test_page.go
-```
-
-The golden file tests compare the output of processed HTML against known-good reference outputs stored in `.golden` files in the testdata directory.

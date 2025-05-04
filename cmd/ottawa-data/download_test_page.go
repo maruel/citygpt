@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/maruel/citygpt/internal/htmlparse"
 )
@@ -33,14 +34,12 @@ func processHTMLFile(htmlFilePath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to extract text: %w", err)
 	}
-
-	// Write the extracted text to the golden file
-	goldenFilePath := htmlFilePath + ".golden"
-	if err = os.WriteFile(goldenFilePath, []byte(textContent), 0o644); err != nil {
+	md := strings.TrimSuffix(htmlFilePath, filepath.Ext(htmlFilePath)) + ".md"
+	if err = os.WriteFile(md, []byte(textContent), 0o644); err != nil {
 		return fmt.Errorf("failed to write golden file: %w", err)
 	}
 
-	fmt.Printf("Successfully generated golden file: %s\n", goldenFilePath)
+	fmt.Printf("Successfully generated golden file: %s\n", md)
 	return nil
 }
 
@@ -77,8 +76,6 @@ func mainImpl() error {
 			return err
 		}
 	}
-	fmt.Printf("\nReminder: Don't forget to add the new files to git:\n")
-	fmt.Printf("git add %s %s.golden\n", filename, filename)
 	return nil
 }
 

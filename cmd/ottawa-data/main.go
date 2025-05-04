@@ -179,7 +179,7 @@ func processURL(fullURL, outputDir string) error {
 	if filename == "" {
 		filename = "index"
 	}
-	filename = url.PathEscape(filename) + ".txt"
+	filename = url.PathEscape(filename) + ".md"
 	filePath := filepath.Join(outputDir, filename)
 	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
 		return fmt.Errorf("failed to write file %s: %w", filePath, err)
@@ -188,36 +188,26 @@ func processURL(fullURL, outputDir string) error {
 }
 
 func mainImpl() error {
-	extractOnly := flag.Bool("extract-only", false, "Only extract links without downloading content")
-	downloadOnly := flag.Bool("download-only", false, "Only download content using existing links file")
-	outputDir := flag.String("output-dir", "pages_text", "Directory to save downloaded text files")
+	outputDir := flag.String("output-dir", "pages_text", "Directory to save downloaded markdown files")
 	linksFile := flag.String("links-file", "links.txt", "File to save extracted links")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
 	}
 
-	// If no flags specified, run both extraction and download
-	runExtract := !*downloadOnly
-	runDownload := !*extractOnly
-	if runExtract {
-		fmt.Printf("Extracting links from %s\n", targetURL)
-		links, err := extractLinks(targetURL)
-		if err != nil {
-			return fmt.Errorf("error extracting links: %w", err)
-		}
-
-		if err := writeLinksToFile(links, *linksFile); err != nil {
-			return fmt.Errorf("error writing links to file: %w", err)
-		}
-		fmt.Printf("Extracted %d links to %s\n", len(links), *linksFile)
+	fmt.Printf("Extracting links from %s\n", targetURL)
+	links, err := extractLinks(targetURL)
+	if err != nil {
+		return fmt.Errorf("error extracting links: %w", err)
 	}
+	if err := writeLinksToFile(links, *linksFile); err != nil {
+		return fmt.Errorf("error writing links to file: %w", err)
+	}
+	fmt.Printf("Extracted %d links to %s\n", len(links), *linksFile)
 
-	if runDownload {
-		fmt.Printf("Downloading and processing content from links in %s\n", *linksFile)
-		if err := downloadAndSaveTexts(*linksFile, *outputDir); err != nil {
-			return fmt.Errorf("error downloading texts: %w", err)
-		}
+	fmt.Printf("Downloading and processing content from links in %s\n", *linksFile)
+	if err := downloadAndSaveTexts(*linksFile, *outputDir); err != nil {
+		return fmt.Errorf("error downloading texts: %w", err)
 	}
 	fmt.Println("Process completed successfully")
 	return nil

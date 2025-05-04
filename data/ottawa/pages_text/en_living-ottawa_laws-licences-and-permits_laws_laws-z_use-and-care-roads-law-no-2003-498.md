@@ -217,6 +217,14 @@ The General Manager may:
 1. send a notice by registered mail to the owner or person responsible for the item, structure or material that the object has been removed at the owner's expense;
 
 The City may recover expenses resulting from actions taken in accordance with section 9 by action, or in like manner as municipal taxes.
+## Section 11 and 12 - Temporary closing of highways
+
+The General Manager may temporarily close to traffic any highway by reason of any work or improvement being carried out thereon or by reason of the condition thereof and the General Manager may cause to be erected or kept thereon, any barricade or notice warning the public that the highway is closed to traffic and no person shall enter upon or use a highway so temporarily closed.
+1. Where a highway or part of a highway is closed pursuant to Section 11, the General Manager shall:
+  1. provide and keep in repair a temporary alternative route for public use where possible;
+  1. provide access to lots abutting the highway; and
+  1. erect signs, barricades and other protective and warning devices in accordance with provincial traffic regulations.
+
 ## Schedule A - Species
 
 |  |  |

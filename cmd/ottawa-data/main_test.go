@@ -46,8 +46,6 @@ func TestExtractTextFromHTML(t *testing.T) {
 	}
 }
 
-// Golden file tests for HTML processing
-
 // TestHTMLProcessingWithGolden verifies that HTML files are processed correctly
 // by comparing the output with golden files.
 func TestHTMLProcessingWithGolden(t *testing.T) {
@@ -63,35 +61,23 @@ func TestHTMLProcessingWithGolden(t *testing.T) {
 	// Process each file and compare with golden
 	for _, testFile := range testFiles {
 		t.Run(filepath.Base(testFile), func(t *testing.T) {
-			// Determine golden file path
-			goldenFile := testFile + ".golden"
-
-			// Open and process the HTML file
+			goldenFile := strings.TrimSuffix(testFile, filepath.Ext(testFile)) + ".md"
 			f, err := os.Open(testFile)
 			if err != nil {
 				t.Fatalf("Failed to open test file: %v", err)
 			}
-
-			// Extract text from HTML
 			textContent, err := htmlparse.ExtractTextFromHTML(f)
 			f.Close()
 			if err != nil {
 				t.Fatalf("Failed to extract text: %v", err)
 			}
-
-			// Golden files should be generated using the download_test_page.go tool
-			// See testdata/download_test_page.go for details
-
-			// Read golden file
 			golden, err := os.ReadFile(goldenFile)
 			if err != nil {
 				t.Fatalf("Failed to read golden file (run with -update flag to create): %v", err)
 			}
-
-			// Compare content
 			if textContent != string(golden) {
 				t.Errorf("Processed HTML doesn't match golden file.\nExpected: %d characters\nGot: %d characters\n"+
-					"(Run testdata/download_test_page.go to update golden files)", len(golden), len(textContent))
+					"(Run go generate to update golden files)", len(golden), len(textContent))
 			}
 		})
 	}
