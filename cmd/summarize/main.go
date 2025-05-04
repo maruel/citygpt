@@ -93,7 +93,7 @@ func mainImpl() error {
 		return err
 	}
 	messages := genai.Messages{
-		genai.NewTextMessage(genai.User, "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Please summarize the subject of following text as a single line:"),
+		genai.NewTextMessage(genai.User, "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"),
 		genai.NewTextMessage(genai.User, fileContent),
 	}
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}

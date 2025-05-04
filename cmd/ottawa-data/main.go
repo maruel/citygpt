@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -174,8 +175,7 @@ func processURL(fullURL, outputDir string) error {
 	if err != nil {
 		return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
 	}
-	filename := strings.TrimPrefix(parsedURL.Path, "/")
-	filename = strings.ReplaceAll(filename, "/", "_")
+	filename := path.Base(strings.TrimSuffix(parsedURL.Path, "/"))
 	if filename == "" {
 		filename = "index"
 	}

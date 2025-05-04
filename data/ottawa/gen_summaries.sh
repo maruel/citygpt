@@ -8,7 +8,7 @@ cd "$(dirname $0)"
 cd ./pages_text
 
 rm -f summaries.txt
-for file in *.txt; do
+for file in *.md; do
 	echo "- $file"
 	echo "- $file: $(summarize $file)" >> summaries.txt
 done

@@ -225,59 +225,92 @@ The General Manager may temporarily close to traffic any highway by reason of an
   1. provide access to lots abutting the highway; and
   1. erect signs, barricades and other protective and warning devices in accordance with provincial traffic regulations.
 
-## Schedule A - Species
+## Section 13 to 16 - Highway cleaning and repair
+
+The cleaning and repair of all highways shall be performed under the direction of the General Manager.
+No person hauling earth, sand, stone or other substances on a highway shall so load his vehicle or drive the same as to permit or cause the contents thereof to fall, spill or be deposited on a highway.
+No person in charge of a vehicle shall bring the vehicle, or permit it to be brought upon a highway unless there has been removed from the wheels thereof as completely as is reasonably practicable, all mud, clay, lime, and similar material, or any fertilizer or manure which is likely, if not removed, to cause an obstruction or dangerous condition or nuisance in a highway or cause damage to the surface of the highway.
+No person hauling earth, sand, stone, or other substance shall load or drive his vehicle so as to permit damage to a highway.
+## Section 17 - Administration and enforcement
+
+This by-law shall be administered and enforced by the Chief of Police or designated municipal by-law enforcement officers of the City.
+## Section 18 and 19 - Penalties
+
+Any person who contravenes any provision of this part of this By-law is guilty of an offence and on conviction is liable to a fine to the maximum allowable under the provincial Offences Act.
+When a person has been convicted of an offence under this by-law.
+1. the Ontario Court (Provincial Division) of the City of Ottawa, or
+1. any court of competent jurisdiction thereafter, may, in addition to any penalty imposed on the person convicted, issue an Order prohibiting the continuation or repetition of the offence or the doing of any act or thing by the person convicted directed toward the continuation or repetition of the offence.
+
+## Section 20 - Repeal
+
+The following by-laws or portions of by-laws of the old municipalities are repealed:
+1. Chapter 2, Part 2.2 of the Regional Regulatory Code of the old Regional Municipality of Ottawa-Carleton entitled "Use and Care of Regional Roads", as amended;
+1. By-law Number 165-73 of the old Corporation of the City of Ottawa entitled "A by-law regulating the use and care of streets", as amended;
+1. Except for subsection 4 (1-6) thereof, By-law No. 93-64 of the old Corporation of the City of Nepean entitled "Care of Streets By-law", as amended;
+1. By-law No. 32-99 of the old Corporation of the City of Kanata entitled "Being a by-law of the Corporation of the City of Kanata regulating the use and care of city streets, boulevards and sidewalks", as amended;
+1. By-law No.1503 of the old Corporation of the City of Vanier entitled "Being a by-law regulating the use and care of streets", as amended;
+1. By-law 79/89 of the old Corporation of the Township of Rideau entitled "Being a by-law to regulate the use and care of Township roads", as amended;
+1. By-law No. 29 of 1985 of the old Corporation of the City of Gloucester entitled "A By-law regulating the use and care of city roads and streets", as amended;
+1. By-law No. 22-94 of the old Corporation of the Township of Goulbourn entitled "Being a by-law of the Corporation of the Township of Goulbourn regulating the use and care of streets", as amended; and
+1. By-law No. 2000-11 of the old Corporation of the Village of Rockcliffe Park entitled "A by-law of the Corporation of the Village of Rockcliffe Park regulating the use and care of streets", as amended.
+
+## Section 21 - Short title
+
+This by-law may be referred to as the "Use and Care of Roads By-Law".
+Enacted and passed this 8th day of October, 2003.
+## Schedule A – Species prohibited in the right of way
 
 |  |  |
 | ------- | ------- |
-|  |  |
-| Barberry,Common | Berberis |
-| Barberry,Japanese | Berberis |
-| Buckthorn, European(Common) | Rhamnus |
-| Buckthorn,Glossy | Frangula |
-| Coltsfoot | Tussilago |
-| CommonCrupina | Crupina |
-| Creeping Jenny | Lysimachia |
-| Dame'sRocket | Hesperis |
-|  | Hemerocal/is |
-| Dodder |  |
-| Dog-stranglingVine,Black | Cynanchum louiseae (Vincetoxicum |
-| Dog-stranglingVine | Cynanchum (Vincetoxicum) |
-| EnglishIvy | Hedera |
-| GarlicMustard | Alliaria |
-| GiantHogweed | Herac/eum |
-| Goutweed | Aegopodium |
-| Honeysuckle,Italian | Lonicera |
-| Honeysuckle,Japanese | Lonicera |
-| Honeysuckle,Ornamental | Lonicera tatarica, maackii, morrowii, x be/la, |
-| Knotweed,Bohemian | Reynoutriax |
-| Knotweed,Giant | Reynoutria |
-| Knotweed,Himalayan | Koenigia |
-| Knotweed,Japanese | Reynoutria |
-| JointedGoatgrass | Aegilops |
-| Knapweed |  |
-| Kudzu | Pueraria |
-| Lily of theValley | Convallaria |
-| MiscanthusGrass | Miscanthus sinensis, M. |
-| OrientalBittersweet | Celastrus |
-| Periwinkle | Vinca |
-| Phragmites | Phragmites australis subsp. |
-| Poison-hemlock | Conium |
-| Poison-ivy | Toxicodendron |
-| Ragweed | Ambrosia |
-| Rose,Multiflora | Rosa |
-| SerratedTussock | Nassella |
-| SmoothBedstraw | Galium |
-| Sow-thistle | Sonchus |
-| Spearmint |  |
-| Spurge,Cypress | Euphorbia |
-| Spurge,Japanese | Pachysandra |
-| Spurge,Leafy | Euphorbia |
-| TansyRagwort |  |
-| Thistle,Bull | Cirsium |
-| Thistle,Canada | Cirsium |
-| WildChervil | Anthriscus |
-| WildParsnip | Pastinaca |
-| Winged BurningBush | Euonymus |
-| Wintercreeper | Euonymous |
-| WoollyCupgrass | Erioch/oa |
-| YellowArchangel | Lamiastrum |
+| Common Name |  |
+| Barberry, Common | Berberis vulgaris |
+| Barberry, Japanese | Berberis thunbergia |
+| Buckthorn, European (Common) | Rhamnus cathartica |
+| Buckthorn, Glossy | Frangula alnus |
+| Coltsfoot | Tussilago farfara |
+| Common Crupina | Crupina vulgaris |
+| Creeping Jenny | Lysimachia nummularia |
+| Dame's Rocket | Hesperis matronalis |
+| Daylily | Hemerocallis fulva |
+| Dodder | Cuscuta spp. |
+| Dog-strangling Vine, Black | Cynanchum louiseae (Vincetoxicum nigrum) |
+| Dog-strangling Vine | Cynanchum (Vincetoxicum) rossicum |
+| English Ivy | Hedera helix |
+| Garlic Mustard | Alliaria petiolata |
+| Giant Hogweed | Heracleum mantegazzianum |
+| Goutweed | Aegopodium podagraria |
+| Honeysuckle, Italian | Lonicera caprifolium |
+| Honeysuckle, Japanese | Lonicera japonica |
+| Honeysuckle, Ornamental | Lonicera tatarica, maackii, morrowii, x bella, xylosteum |
+| Knotweed, Bohemian | Reynoutria x bohemica |
+| Knotweed, Giant | Reynoutria sachalinensis |
+| Knotweed, Himalayan | Koenigia polystachya |
+| Knotweed, Japanese | Reynoutria japonica |
+| Jointed Goatgrass | Aegilops cylindrica |
+| Knapweed | Centaurea spp. |
+| Kudzu | Pueraria montana |
+| Lily of the Valley | Convallaria majalis |
+| Miscanthus Grass | Miscanthus sinensis, M. sacchariflorus |
+| Oriental Bittersweet | Celastrus orbiculatus |
+| Periwinkle | Vinca minor |
+| Phragmites | Phragmites australis subsp. australis |
+| Poison-hemlock | Conium maculatum |
+| Poison-ivy | Toxicodendron radicans |
+| Ragweed | Ambrosia spp. |
+| Rose, Multiflora | Rosa multiflora |
+| Serrated Tussock | Nassella trichotoma |
+| Smooth Bedstraw | Galium mollugo |
+| Sow-thistle | Sonchus spp. |
+| Spearmint | Mentha spicata |
+| Spurge, Cypress | Euphorbia cyparissias |
+| Spurge, Japanese | Pachysandra terminalis |
+| Spurge, Leafy | Euphorbia esula |
+| Tansy Ragwort | Senecio jacobaea |
+| Thistle, Bull | Cirsium vulgare |
+| Thistle, Canada | Cirsium arvense |
+| Wild Chervil | Anthriscus sylvestris |
+| Wild Parsnip | Pastinaca sativa |
+| Winged Burning Bush | Euonymus alatus |
+| Wintercreeper | Euonymous fortunei |
+| Woolly Cupgrass | Eriochloa villosa |
+| Yellow Archangel | Lamiastrum galeobdolon |
