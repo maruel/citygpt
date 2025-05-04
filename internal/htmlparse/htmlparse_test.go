@@ -11,6 +11,59 @@ import (
 )
 
 func TestExtractTextFromHTML(t *testing.T) {
+	t.Run("with lists and headers", func(t *testing.T) {
+		// Test with a file that has lists and headers that should be converted to Markdown
+		testFile, err := os.Open("testdata/test_lists_headers.html")
+		if err != nil {
+			t.Fatalf("Failed to open test file: %v", err)
+		}
+		defer testFile.Close()
+
+		text, err := ExtractTextFromHTML(testFile)
+		if err != nil {
+			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check headers conversion
+		headerTests := []struct {
+			level int
+			text  string
+		}{
+			{1, "# Heading Level 1"},
+			{2, "## Heading Level 2"},
+			{3, "### Heading Level 3"},
+			{4, "#### Heading Level 4"},
+			{5, "##### Heading Level 5"},
+			{6, "###### Heading Level 6"},
+		}
+
+		for _, ht := range headerTests {
+			if !strings.Contains(text, ht.text) {
+				t.Errorf("Expected h%d to be converted to '%s'", ht.level, ht.text)
+			}
+		}
+
+		// Check unordered lists
+		if !strings.Contains(text, "- Unordered list item 1") {
+			t.Error("Expected unordered list item to be converted to '- item'")
+		}
+
+		// Check nested unordered lists
+		if !strings.Contains(text, "  - Nested unordered item 1") {
+			t.Error("Expected nested unordered list item to have proper indentation")
+		}
+
+		// Check ordered lists
+		if !strings.Contains(text, "1. Ordered list item 1") {
+			t.Error("Expected ordered list item to be converted to '1. item'")
+		}
+
+		// Check nested ordered lists
+		if !strings.Contains(text, "  1. Nested ordered item 1") {
+			t.Error("Expected nested ordered list item to have proper indentation")
+		}
+	})
+
 	t.Run("with block-mainpagecontent", func(t *testing.T) {
 		// Test with a file that has a block-mainpagecontent div
 		testFile, err := os.Open("testdata/test_mainpagecontent.html")

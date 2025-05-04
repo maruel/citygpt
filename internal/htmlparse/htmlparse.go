@@ -21,7 +21,7 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to parse HTML: %w", err)
 	}
-	var textBuilder strings.Builder
+	var textBuilder *strings.Builder = &strings.Builder{}
 	// Function to recursively extract text content
 	var extractText func(*html.Node)
 
@@ -198,6 +198,80 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 		return mdTable.String()
 	}
 
+	// Helper function to process ordered and unordered lists
+	processList := func(listNode *html.Node, isOrdered bool) string {
+		var listBuilder strings.Builder
+		var processListItems func(*html.Node, string, int)
+
+		// Process list items recursively with indentation
+		processListItems = func(node *html.Node, prefix string, level int) {
+			for li := node.FirstChild; li != nil; li = li.NextSibling {
+				if li.Type == html.ElementNode && strings.ToLower(li.Data) == "li" {
+					indent := strings.Repeat("  ", level-1)
+					listBuilder.WriteString(indent)
+					listBuilder.WriteString(prefix)
+
+					// Process the content of the list item
+					for c := li.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							text := strings.TrimSpace(c.Data)
+							if text != "" {
+								listBuilder.WriteString(text)
+							}
+						} else if c.Type == html.ElementNode && (strings.ToLower(c.Data) != "ol" && strings.ToLower(c.Data) != "ul") {
+							// For non-list elements inside list items
+							tempBuilder := &strings.Builder{}
+							// Save the reference to avoid modifying the original textBuilder
+							savedBuilder := textBuilder
+							textBuilder = tempBuilder
+							extractText(c)
+							text := strings.TrimSpace(tempBuilder.String())
+							if text != "" {
+								listBuilder.WriteString(text)
+							}
+							// Restore the original textBuilder
+							textBuilder = savedBuilder
+						}
+					}
+
+					listBuilder.WriteString("\n")
+
+					// Process nested lists
+					for c := li.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.ElementNode {
+							if strings.ToLower(c.Data) == "ul" {
+								// Nested unordered list
+								for subLi := c.FirstChild; subLi != nil; subLi = subLi.NextSibling {
+									if subLi.Type == html.ElementNode && strings.ToLower(subLi.Data) == "li" {
+										processListItems(c, "- ", level+1)
+										break
+									}
+								}
+							} else if strings.ToLower(c.Data) == "ol" {
+								// Nested ordered list
+								for subLi := c.FirstChild; subLi != nil; subLi = subLi.NextSibling {
+									if subLi.Type == html.ElementNode && strings.ToLower(subLi.Data) == "li" {
+										processListItems(c, "1. ", level+1)
+										break
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		listPrefix := "- "
+		if isOrdered {
+			listPrefix = "1. "
+		}
+
+		processListItems(listNode, listPrefix, 1)
+
+		return listBuilder.String()
+	}
+
 	extractText = func(n *html.Node) {
 		// Skip code blocks, pre blocks, and script elements
 		if n.Type == html.ElementNode {
@@ -217,6 +291,38 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 					textBuilder.WriteString("\n")
 				}
 				return // Skip further processing of the table's children
+			}
+
+			// Handle ordered and unordered lists
+			if tagName == "ul" || tagName == "ol" {
+				isOrdered := tagName == "ol"
+				markdown := processList(n, isOrdered)
+				if markdown != "" {
+					textBuilder.WriteString(markdown)
+					textBuilder.WriteString("\n")
+				}
+				return // Skip further processing of the list's children
+			}
+
+			// Handle headers h1-h6
+			if len(tagName) == 2 && tagName[0] == 'h' && tagName[1] >= '1' && tagName[1] <= '6' {
+				level := int(tagName[1] - '0')
+				headerPrefix := strings.Repeat("#", level) + " "
+
+				// Get the text content of the header
+				var headerText string
+				for c := n.FirstChild; c != nil; c = c.NextSibling {
+					if c.Type == html.TextNode {
+						headerText += strings.TrimSpace(c.Data)
+					}
+				}
+
+				if headerText != "" {
+					textBuilder.WriteString(headerPrefix)
+					textBuilder.WriteString(headerText)
+					textBuilder.WriteString("\n\n")
+				}
+				return // Skip further processing of header's children
 			}
 		}
 
