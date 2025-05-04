@@ -13,9 +13,10 @@ Type=simple
 KillMode=mixed
 Restart=on-success
 TimeoutStopSec=600s
+# -port 1234
 ExecStart=%h/go/bin/citygpt
 ExecStop=/bin/kill -s INT $MAINPID
-Environment=GOTRACEBACK=all
+Environment="GOTRACEBACK=all" "GEMINI_API_KEY=add_me"
 
 [Install]
 WantedBy=default.target

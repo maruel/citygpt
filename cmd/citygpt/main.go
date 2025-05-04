@@ -8,6 +8,7 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"html/template"
@@ -448,12 +449,12 @@ func mainImpl() error {
 		slog.Warn("Could not set up executable watcher", "error", err)
 	}
 
-	// Define flags
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
-
 	flag.Parse()
-
+	if flag.NArg() != 0 {
+		return errors.New("unsupported argument")
+	}
 	c, err := internal.LoadProvider(ctx)
 	if err != nil {
 		return err
@@ -463,7 +464,6 @@ func mainImpl() error {
 		cityData: ottawa.DataFS,
 		appName:  *appName,
 	}
-	slog.Info("Configuration", "app-name", *appName, "port", *port)
 	return s.start(ctx, *port)
 }
 
