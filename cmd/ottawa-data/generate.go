@@ -4,5 +4,5 @@
 
 package main
 
-//go:generate go run ./testdata/download_test_page.go
-// This downloads HTML files to the cmd/ottawa-data/testdata directory
+//go:generate go run download_test_page.go
+// This downloads HTML files to the testdata directory
