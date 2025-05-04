@@ -81,7 +81,7 @@ func mainImpl() error {
 		if htmlFile == htmlFilePath {
 			continue
 		}
-		
+
 		fmt.Printf("Processing existing HTML file: %s\n", htmlFile)
 		if err := processHTMLFile(htmlFile); err != nil {
 			return err
