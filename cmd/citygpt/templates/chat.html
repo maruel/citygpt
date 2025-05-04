@@ -136,6 +136,33 @@ that can be found in the LICENSE file.
 			white-space: pre-wrap;
 			word-wrap: break-word;
 		}
+		
+		.message-content a {
+			color: #2563eb;
+			font-weight: 500;
+			text-decoration: none;
+			border-bottom: 1px solid rgba(37, 99, 235, 0.3);
+			transition: border-color 0.2s, color 0.2s;
+		}
+		
+		.message-content a:hover {
+			color: #1e40af;
+			border-bottom-color: rgba(30, 64, 175, 0.7);
+		}
+		
+		.message-content a:first-child {
+			display: inline-block;
+			padding: 6px 12px;
+			background-color: rgba(37, 99, 235, 0.1);
+			border-radius: 6px;
+			border-bottom: none;
+			margin-bottom: 8px;
+			transition: background-color 0.2s;
+		}
+		
+		.message-content a:first-child:hover {
+			background-color: rgba(37, 99, 235, 0.2);
+		}
 
 		@keyframes fadeIn {
 			from {
@@ -440,7 +467,14 @@ that can be found in the LICENSE file.
 			// Create message content
 			const messageContent = document.createElement('div');
 			messageContent.classList.add('message-content');
-			messageContent.textContent = content; // textContent preserves newlines when white-space: pre-wrap is used
+			
+			// Use innerHTML for assistant messages to support HTML links
+			// Use textContent for user messages for security
+			if (role === 'assistant') {
+				messageContent.innerHTML = content; // innerHTML to support HTML links
+			} else {
+				messageContent.textContent = content; // textContent preserves newlines when white-space: pre-wrap is used
+			}
 
 			// Create message time
 			const messageTime = document.createElement('div');

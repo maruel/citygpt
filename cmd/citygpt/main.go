@@ -140,7 +140,19 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 		return "No response generated"
 	}
-	return resp.Message.Contents[0].Text
+
+	// Add a clickable URL to the best file at the beginning of the response
+	fileURL := "/city-data/" + bestFile.Name
+	if bestFile.URL != "" {
+		fileURL = bestFile.URL
+	}
+
+	formattedResponse := fmt.Sprintf("<a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
+		fileURL,
+		bestFile.Name,
+		resp.Message.Contents[0].Text)
+
+	return formattedResponse
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
