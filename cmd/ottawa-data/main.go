@@ -6,21 +6,26 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
+	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
+	"syscall"
+	"time"
 
+	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/citygpt/internal/htmlparse"
+	"github.com/maruel/genai"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
 )
@@ -101,23 +106,16 @@ func isValidContentURL(link string) bool {
 	return strings.HasPrefix(link, baseURL)
 }
 
-// NOTE: HTML parsing functionality has been moved to internal/htmlparse package
-
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func downloadAndSaveTexts(linksFile, outputDir string) error {
+func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []string, outputDir string) error {
 	// Number of workers to process URLs in parallel
 	const numWorkers = 8
 	err := os.MkdirAll(outputDir, 0o755)
 	if err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
-	content, err := os.ReadFile(linksFile)
-	if err != nil {
-		return fmt.Errorf("failed to read links file: %w", err)
-	}
 	var validLinks []string
-	for scanner := bufio.NewScanner(bytes.NewReader(content)); scanner.Scan(); {
-		link := strings.TrimSpace(scanner.Text())
+	for _, link := range links {
 		if link == "" {
 			continue
 		}
@@ -131,17 +129,20 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 	}
 	total := len(validLinks)
 	jobs := make(chan string, total)
-	var eg errgroup.Group
+	eg, ctx := errgroup.WithContext(ctx)
 	var mu sync.Mutex
 	var processed atomic.Int32
+	data := internal.Index{Version: 1, Created: time.Now()}
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				if err := processURL(fullURL, outputDir); err != nil {
+				s, err := processURL(ctx, c, fullURL, outputDir)
+				if err != nil {
 					return err
 				}
 				count := processed.Add(1)
 				mu.Lock()
+				data.Items = append(data.Items, s)
 				fmt.Printf("Fetched (%d/%d): %s\n", count, total, fullURL)
 				mu.Unlock()
 			}
@@ -152,61 +153,79 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 		jobs <- url
 	}
 	close(jobs)
-	return eg.Wait()
+	err = eg.Wait()
+	d, err2 := json.Marshal(data)
+	if err2 != nil {
+		panic(err2)
+	}
+	if err2 := os.WriteFile(filepath.Join(outputDir, "index.json"), d, 0o644); err == nil {
+		err = err2
+	}
+	return err
 }
 
+const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
+
 // processURL downloads text from a single URL and saves it
-func processURL(fullURL, outputDir string) error {
-	resp, err := http.Get(fullURL)
-	if err != nil {
-		return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		_ = resp.Body.Close()
-		return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
-	}
-	textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
-	_ = resp.Body.Close()
-	if err != nil {
-		return fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
-	}
-	// Generate a safe filename
+func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (internal.Item, error) {
+	out := internal.Item{URL: fullURL}
 	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
-		return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
+		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
 	}
-	filename := path.Base(strings.TrimSuffix(parsedURL.Path, "/"))
+	filename := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
 	if filename == "" {
 		filename = "index"
 	}
-	filename = url.PathEscape(filename) + ".md"
+	filename += ".md"
+	out.Name = filename
+	resp, err := http.Get(fullURL)
+	if err != nil {
+		return out, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+	}
+	textContent, err := htmlparse.ExtractTextFromHTML(resp.Body)
+	if err != nil {
+		return out, fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
+	}
 	filePath := filepath.Join(outputDir, filename)
 	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
-		return fmt.Errorf("failed to write file %s: %w", filePath, err)
+		return out, fmt.Errorf("failed to write file %s: %w", filePath, err)
 	}
-	return nil
+	messages := genai.Messages{
+		genai.NewTextMessage(genai.User, summarizationPrompt),
+		genai.NewTextMessage(genai.User, textContent),
+	}
+	opts := genai.ChatOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
+	r, err := c.Chat(ctx, messages, &opts)
+	if err != nil {
+		return out, err
+	}
+	out.Summary = r.Contents[0].Text
+	return out, nil
 }
 
 func mainImpl() error {
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	defer cancel()
 	outputDir := flag.String("output-dir", "pages_text", "Directory to save downloaded markdown files")
-	linksFile := flag.String("links-file", "links.txt", "File to save extracted links")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
 	}
-
+	c, err := internal.LoadProvider(ctx)
+	if err != nil {
+		return err
+	}
 	fmt.Printf("Extracting links from %s\n", targetURL)
 	links, err := extractLinks(targetURL)
 	if err != nil {
 		return fmt.Errorf("error extracting links: %w", err)
 	}
-	if err := writeLinksToFile(links, *linksFile); err != nil {
-		return fmt.Errorf("error writing links to file: %w", err)
-	}
-	fmt.Printf("Extracted %d links to %s\n", len(links), *linksFile)
-
-	fmt.Printf("Downloading and processing content from links in %s\n", *linksFile)
-	if err := downloadAndSaveTexts(*linksFile, *outputDir); err != nil {
+	if err := downloadAndSaveTexts(ctx, c, links, *outputDir); err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
 	}
 	fmt.Println("Process completed successfully")

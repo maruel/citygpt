@@ -18,6 +18,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"sort"
 	"strings"
 	"syscall"
 	"time"
@@ -58,31 +59,35 @@ type server struct {
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
-// It loads content from summarize.txt instead of listing files.
-// It validates that the response is a valid file in s.cityData and retries up to 3 times with increasing temperature.
+// It loads content from index.json.
+// It validates that the response is a valid file in s.cityData and retries up to 3 times with increasing
+// temperature.
 func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (string, error) {
-	fileContent, err := s.cityData.ReadFile("summaries.txt")
+	// TODO: load once at beginning.
+	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
-		return "", fmt.Errorf("error reading summarize.txt: %w", err)
+		return "", err
 	}
-	allFiles, err := s.getAllFiles()
-	if err != nil {
-		return "", fmt.Errorf("error getting file list for validation: %w", err)
+	data := internal.Index{}
+	if err = json.Unmarshal(raw, &data); err != nil {
+		return "", err
 	}
-	validFiles := make(map[string]bool)
-	for _, file := range allFiles {
-		validFiles[file] = true
+	validFiles := map[string]struct{}{}
+	var content []string
+	for _, item := range data.Items {
+		validFiles[item.Name] = struct{}{}
+		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
 	}
+	sort.Strings(content)
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
 		userMessage,
-		string(fileContent),
+		strings.Join(content, "\n"),
 	)
 	for attempt := range 3 {
 		// Increase temperature with each attempt
 		temperature := 0.1 * float64(attempt+1)
 		slog.Info("Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
-
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
@@ -90,64 +95,22 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (str
 			slog.Warn("Error asking LLM for best file", "attempt", attempt+1, "error", err)
 			continue
 		}
-		if len(resp.Message.Contents) == 0 || resp.Message.Contents[0].Text == "" {
+		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 			slog.Warn("No response from LLM when asking for best file", "attempt", attempt+1)
 			continue
 		}
-
 		response := strings.TrimSpace(resp.Message.Contents[0].Text)
 		slog.Info("LLM suggested file", "file", response)
-
-		// Validate that the response is an actual file in s.cityData
-		if validFiles[response] {
+		if _, ok := validFiles[response]; ok {
 			return response, nil
 		}
-
 		slog.Warn("LLM suggested invalid file", "file", response, "attempt", attempt+1)
 	}
 
 	return "", fmt.Errorf("failed to get a valid file after 3 attempts")
 }
 
-// getAllFiles returns a list of all files in the embedded filesystem.
-func (s *server) getAllFiles() ([]string, error) {
-	var files []string
-	err := fs.WalkDir(s.cityData, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !d.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	})
-	return files, err
-}
-
 func (s *server) generateResponse(ctx context.Context, message string) string {
-	// First, get a list of all files in the embedded FS
-	files, err := s.getAllFiles()
-	if err != nil {
-		slog.Error("Error getting file list", "error", err)
-		return "Sorry, there was an error processing your request."
-	}
-
-	if len(files) == 0 {
-		slog.Warn("No files found in embedded FS")
-		// Fallback to direct response if no files are available
-		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
-		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-		resp, err2 := s.c.Chat(ctx, msgs, &opts)
-		if err2 != nil {
-			slog.Error("Error generating response", "error", err2)
-			return "Sorry, there was an error processing your request."
-		}
-		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			return "No response generated"
-		}
-		return resp.Message.Contents[0].Text
-	}
-
 	bestFile, err := s.askLLMForBestFile(ctx, message)
 	if err != nil {
 		slog.Error("Error asking LLM for best file", "error", err)
@@ -164,9 +127,7 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		}
 		return resp.Message.Contents[0].Text
 	}
-
 	slog.Info("Selected best file for response", "file", bestFile)
-
 	// Read the contents of the selected file
 	fileContent, err := s.cityData.ReadFile(bestFile)
 	if err != nil {
@@ -211,13 +172,11 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
 	response := s.generateResponse(r.Context(), req.Message)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{

@@ -57,7 +57,7 @@ Vehicle
 1. It is declared that if any section, subsection or part or parts thereof be declared by any Court of Law to be bad, illegal or ultra vires, such section, subsection or part or parts shall be deemed to be severable and all parts hereof are declared to be separate and independent and enacted as such.
 1. In this by-law, a word interpreted in the singular number has a corresponding meaning when used in the plural.
 
-## Section 3 - General Prohibitions
+## Section 3 - General prohibitions
 
 1. No person shall, unless otherwise authorized by the provisions of this or any other by-law of the City,
   1. permit oils, chemicals or substances to be deposited or spilled on a highway including such substances deposited as a result of car maintenance activities, car rust prevention measures and the spillage of rust protecting substances and the general spillage of substances from vehicles
@@ -93,7 +93,7 @@ Vehicle
 1. Section 3 does not prohibit the owner of residential land abutting the Highway, or any person with the permission of the owner of residential land abutting the Highway, from altering the Boulevard and Shoulder of a Highway to plant, install or construct Herbaceous Groundcover, a Boulevard Garden or a Free Library Box in accordance with the provisions of this By-law. (2025-161)
 1. Section 3 does not prohibit the owner of land zoned commercial, pursuant to the City's Zoning By-law No. 2008-250 and located within the Urban Area or Serviced Village, from establishing pop-up retail and vending display within the abutting Highway outside of the roadway in accordance with the provisions of this by-law.
 
-## Section 5 - General Requirements
+## Section 5 - General requirements
 
 1. The owner of land zoned residential shall cut the grass, weeds and Herbaceous Groundcover on the Boulevard abutting the owner’s land, whenever the growth of grass, weeds or Herbaceous Groundcover is out of character with the surrounding environment. In the event that the Boulevard abutting the owner’s land contains a Boulevard Garden and/or a Free Library Box, the owner of land shall maintain the Boulevard Garden and/or a Free Library Box on the Boulevard abutting the owners land in accordance with this By-law. (2025-161)
 1. The owner of land shall clear away and remove garbage or other debris from the boulevard abutting the owner's land.
@@ -102,7 +102,7 @@ Vehicle
 1. The City may recover all expenses, including administrative fees, from the owner by action or it may collect them in like manner as municipal tax.
 1. Where applicable, the owner of land shall comply with pre-amalgamation trees by-laws, namely By-law Number 55-93 of The Corporation of the City of Ottawa, Part 7.2 of The Regional Municipality of Ottawa-Carleton's Regulatory Code, and subsection 4(1-6) of By-law No. 93-64 of the Corporation of the Township of Nepean, being its Care of Streets By-law, and any amendment or re-enactment of those by-laws.
 
-## Section 5A – Boulevard Garden Requirements (2025-161)
+## Section 5A – Boulevard garden requirements (2025-161)
 
 1. No person, when installing, constructing, or maintaining a Boulevard Garden, or causing the installation, construction, or maintenance of a Boulevard Garden, shall fail to comply with the following requirements:
   1. No mechanical means are used to install the Boulevard Garden;
@@ -146,7 +146,7 @@ Vehicle
 1. No person shall fail to remove, or ensure the removal of, a Boulevard Garden, including any Raised Garden Bed, Moveable Container, or Plant Support located therein, and reinstate the boulevard to its original condition when required by the City within a reasonable time.
 1. No person who installs and maintains, or permits the installation of, a Boulevard Garden pursuant to the provisions of this By-law, shall have any claim for loss, costs, or damages caused or sustained howsoever against the City, its employees, agents or any person acting on its behalf, or any person authorized to occupy or work within a Highway by reason of damage or removal of the Boulevard Garden, including any Raised Garden Bed, Moveable Container, or Plant Support located therein.
 
-## Section 5B – Free Library Box Requirements (2025-161)
+## Section 5B – Free library box requirements (2025-161)
 
 1. No person, when installing or constructing a Free Library Box, or causing the installation or construction of a Free Library Box within a Boulevard, shall fail to comply with the following requirements:
   1. No mechanical means are used to install the Free Library Box;
@@ -178,7 +178,7 @@ Vehicle
 1. No person shall fail to remove, or ensure the removal of, a Free Library Box and reinstate the boulevard to its original condition when required by the City within a reasonable time.
 1. No person who installs and maintains, or permits the installation of, a Free Library Box pursuant to the provisions of this By-law, shall have any claim for loss, costs, or damages caused or sustained howsoever against the City, its employees, agents or any person acting on its behalf, or any person authorized to occupy or work within a Highway by reason of damage or removal of the Free Library Box.
 
-## Section 5C – Pop-Up Retail Display and Vending Requirements (2025-161)
+## Section 5C – Pop-up retail display and vending requirements (2025-161)
 
 1. No person, when establishing, or permitting the establishment of, a Pop-up Retail Display and Vending within a Highway shall fail to comply with the following requirements:
   1. a two-metre-wide pedestrian clearway is maintained at all times;

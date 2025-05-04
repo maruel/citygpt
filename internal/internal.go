@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/cerebras"
@@ -107,4 +108,18 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		return groq.New("", modelFlag)
 	}
 	return nil, errors.New("set either CEREBRAS_API_KEY or GROQ_API_KEY")
+}
+
+// Index is the content of index.json.
+type Index struct {
+	Version int       `json:"version"`
+	Created time.Time `json:"created"`
+	Items   []Item    `json:"items"`
+}
+
+// Item is one indexed item.
+type Item struct {
+	URL     string `json:"url"`
+	Name    string `json:"name"`
+	Summary string `json:"summary"`
 }
