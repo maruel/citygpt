@@ -71,6 +71,75 @@ func TestExtractTextFromHTML(t *testing.T) {
 			t.Error("Expected content after footer to be extracted")
 		}
 	})
+
+	t.Run("with table content", func(t *testing.T) {
+		// Test with a file that has an HTML table that should be converted to Markdown
+		testFile, err := os.Open("testdata/test_table.html")
+		if err != nil {
+			t.Fatalf("Failed to open test file: %v", err)
+		}
+		defer testFile.Close()
+
+		text, err := ExtractTextFromHTML(testFile)
+		if err != nil {
+			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check that the table header is present in Markdown format
+		if !strings.Contains(text, "| Header 1 | Header 2 | Header 3 |") {
+			t.Error("Expected table header row in Markdown format")
+		}
+
+		// Check for the separator row in Markdown format
+		if !strings.Contains(text, "| ------- | ------- | ------- |") {
+			t.Error("Expected table separator row in Markdown format")
+		}
+
+		// Check for the first data row in Markdown format
+		if !strings.Contains(text, "| Row 1, Cell 1 | Row 1, Cell 2 | Row 1, Cell 3 |") {
+			t.Error("Expected first data row in Markdown format")
+		}
+
+		// Check that text after the table is preserved
+		if !strings.Contains(text, "Text after the table.") {
+			t.Error("Expected text after the table to be extracted")
+		}
+	})
+
+	t.Run("with complex table content", func(t *testing.T) {
+		// Test with a file that has more complex HTML tables
+		testFile, err := os.Open("testdata/test_complex_table.html")
+		if err != nil {
+			t.Fatalf("Failed to open test file: %v", err)
+		}
+		defer testFile.Close()
+
+		text, err := ExtractTextFromHTML(testFile)
+		if err != nil {
+			t.Fatalf("ExtractTextFromHTML failed: %v", err)
+		}
+
+		// Check for the first table with headers
+		if !strings.Contains(text, "| Name | Age | Occupation |") {
+			t.Error("Expected table with headers in Markdown format")
+		}
+
+		// Check for a data row from the first table
+		if !strings.Contains(text, "| John Doe | 28 | Developer |") {
+			t.Error("Expected data row from first table in Markdown format")
+		}
+
+		// Check for the second table (without explicit headers)
+		if !strings.Contains(text, "| Cell 1 | Cell 2 | Cell 3 |") {
+			t.Error("Expected headerless table row in Markdown format")
+		}
+
+		// Verify both tables were processed
+		occurrences := strings.Count(text, "| ------- | ------- | ------- |")
+		if occurrences != 2 {
+			t.Errorf("Expected two table separator rows, found %d", occurrences)
+		}
+	})
 }
 
 func TestStripHTMLAndJSONBlocks(t *testing.T) {

@@ -24,6 +24,180 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 	var textBuilder strings.Builder
 	// Function to recursively extract text content
 	var extractText func(*html.Node)
+
+	// Function to convert HTML table to Markdown
+	processTable := func(tableNode *html.Node) string {
+		var mdTable strings.Builder
+
+		// Helper to process table rows
+		processRow := func(tr *html.Node, cellTag string) []string {
+			var cells []string
+			for td := tr.FirstChild; td != nil; td = td.NextSibling {
+				if td.Type == html.ElementNode && strings.ToLower(td.Data) == cellTag {
+					var cellContent strings.Builder
+					for c := td.FirstChild; c != nil; c = c.NextSibling {
+						if c.Type == html.TextNode {
+							cellContent.WriteString(strings.TrimSpace(c.Data))
+						} else if c.Type == html.ElementNode {
+							// Process nested elements in cells (like <strong>, <em>, etc.)
+							for tc := c.FirstChild; tc != nil; tc = tc.NextSibling {
+								if tc.Type == html.TextNode {
+									cellContent.WriteString(strings.TrimSpace(tc.Data))
+								}
+							}
+						}
+					}
+					cells = append(cells, cellContent.String())
+				}
+			}
+			return cells
+		}
+
+		// Find table headers and rows
+		var headers []string
+		var rows [][]string
+
+		// Process thead if present
+		for thead := tableNode.FirstChild; thead != nil; thead = thead.NextSibling {
+			if thead.Type == html.ElementNode && strings.ToLower(thead.Data) == "thead" {
+				for tr := thead.FirstChild; tr != nil; tr = tr.NextSibling {
+					if tr.Type == html.ElementNode && strings.ToLower(tr.Data) == "tr" {
+						headers = processRow(tr, "th")
+						if len(headers) == 0 {
+							// Some tables use td in thead instead of th
+							headers = processRow(tr, "td")
+						}
+						break
+					}
+				}
+			}
+		}
+
+		// Process tbody
+		for tbody := tableNode.FirstChild; tbody != nil; tbody = tbody.NextSibling {
+			if tbody.Type == html.ElementNode {
+				if strings.ToLower(tbody.Data) == "tbody" {
+					// Check the first row for th elements
+					var firstRow *html.Node
+					for tr := tbody.FirstChild; tr != nil; tr = tr.NextSibling {
+						if tr.Type == html.ElementNode && strings.ToLower(tr.Data) == "tr" {
+							firstRow = tr
+							break
+						}
+					}
+
+					// If we have a first row, check if it contains th elements
+					if firstRow != nil && len(headers) == 0 {
+						headers = processRow(firstRow, "th")
+						// If first row has th elements, it's a header row
+						hasHeaders := len(headers) > 0
+
+						// Process all rows
+						for tr := tbody.FirstChild; tr != nil; tr = tr.NextSibling {
+							if tr.Type == html.ElementNode && strings.ToLower(tr.Data) == "tr" {
+								// Skip the first row if it was a header
+								if hasHeaders && tr == firstRow {
+									continue
+								}
+								cells := processRow(tr, "td")
+								if len(cells) > 0 {
+									rows = append(rows, cells)
+								}
+							}
+						}
+					} else {
+						// No headers or no first row, just process all rows as data
+						for tr := tbody.FirstChild; tr != nil; tr = tr.NextSibling {
+							if tr.Type == html.ElementNode && strings.ToLower(tr.Data) == "tr" {
+								cells := processRow(tr, "td")
+								if len(cells) > 0 {
+									rows = append(rows, cells)
+								}
+							}
+						}
+					}
+				} else if strings.ToLower(tbody.Data) == "tr" {
+					// Handle tables without tbody
+					// If no headers found yet and this is the first row, check for th elements
+					if len(headers) == 0 && len(rows) == 0 {
+						headers = processRow(tbody, "th")
+						if len(headers) == 0 {
+							// No th elements, so it's a regular row
+							cells := processRow(tbody, "td")
+							if len(cells) > 0 {
+								rows = append(rows, cells)
+							}
+						}
+					} else {
+						cells := processRow(tbody, "td")
+						if len(cells) > 0 {
+							rows = append(rows, cells)
+						}
+					}
+				}
+			}
+		}
+
+		// If no rows or cells found, return empty string
+		if len(rows) == 0 && len(headers) == 0 {
+			return ""
+		}
+
+		// Calculate column count based on the row with most cells
+		columnCount := len(headers)
+		for _, row := range rows {
+			if len(row) > columnCount {
+				columnCount = len(row)
+			}
+		}
+
+		// If no headers, create blank ones for the Markdown format
+		if len(headers) == 0 {
+			headers = make([]string, columnCount)
+			for i := range headers {
+				headers[i] = ""
+			}
+		} else if len(headers) < columnCount {
+			// Extend headers if needed
+			for i := len(headers); i < columnCount; i++ {
+				headers = append(headers, "")
+			}
+		}
+
+		// Generate the Markdown table
+
+		// Headers row
+		mdTable.WriteString("|")
+		for _, h := range headers {
+			mdTable.WriteString(" ")
+			mdTable.WriteString(h)
+			mdTable.WriteString(" |")
+		}
+		mdTable.WriteString("\n")
+
+		// Separator row
+		mdTable.WriteString("|")
+		for range headers {
+			mdTable.WriteString(" ------- |")
+		}
+		mdTable.WriteString("\n")
+
+		// Data rows
+		for _, row := range rows {
+			mdTable.WriteString("|")
+			for i := 0; i < columnCount; i++ {
+				mdTable.WriteString(" ")
+				if i < len(row) {
+					mdTable.WriteString(row[i])
+				}
+				mdTable.WriteString(" |")
+			}
+			mdTable.WriteString("\n")
+		}
+
+		return mdTable.String()
+	}
+
 	extractText = func(n *html.Node) {
 		// Skip code blocks, pre blocks, and script elements
 		if n.Type == html.ElementNode {
@@ -33,6 +207,16 @@ func ExtractTextFromHTML(r io.Reader) (string, error) {
 				tagName == "style" || tagName == "iframe" || tagName == "svg" ||
 				tagName == "canvas" || tagName == "noscript" {
 				return
+			}
+
+			// Handle tables by converting them to Markdown
+			if tagName == "table" {
+				markdownTable := processTable(n)
+				if markdownTable != "" {
+					textBuilder.WriteString(markdownTable)
+					textBuilder.WriteString("\n")
+				}
+				return // Skip further processing of the table's children
 			}
 		}
 
