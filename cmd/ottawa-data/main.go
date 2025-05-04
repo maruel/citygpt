@@ -171,33 +171,25 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 
 	// Process each valid link
 	for index, fullURL := range validLinks {
-		index := index + 1 // Make it 1-based for user display
-		fmt.Printf("Fetching (%d/%d): %s\n", index, total, fullURL)
-
-		// Download the content
+		fmt.Printf("Fetching (%d/%d): %s\n", index+1, total, fullURL)
 		resp, err := http.Get(fullURL)
 		if err != nil {
 			return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
 		}
-
 		if resp.StatusCode != http.StatusOK {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 		}
-
-		// Extract text content
 		textContent, err := extractTextFromHTML(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		if err != nil {
 			return fmt.Errorf("failed to extract text from %s: %w", fullURL, err)
 		}
-
 		// Generate a safe filename
 		parsedURL, err := url.Parse(fullURL)
 		if err != nil {
 			return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
 		}
-
 		filename := strings.TrimPrefix(parsedURL.Path, "/")
 		filename = strings.ReplaceAll(filename, "/", "_")
 		if filename == "" {
@@ -205,8 +197,7 @@ func downloadAndSaveTexts(linksFile, outputDir string) error {
 		}
 		filename = url.PathEscape(filename) + ".txt"
 		filePath := filepath.Join(outputDir, filename)
-		err = os.WriteFile(filePath, []byte(textContent), 0o644)
-		if err != nil {
+		if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
 			return fmt.Errorf("failed to write file %s: %w", filePath, err)
 		}
 	}
