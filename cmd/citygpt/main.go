@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	_ "embed"
 	"encoding/json"
 	"errors"
@@ -21,6 +22,7 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -41,12 +43,14 @@ type Message struct {
 
 // ChatRequest represents a chat request from the client.
 type ChatRequest struct {
-	Message string `json:"message"`
+	Message   string `json:"message"`
+	SessionID string `json:"session_id,omitempty"`
 }
 
 // ChatResponse represents a response to the client.
 type ChatResponse struct {
-	Message Message `json:"message"`
+	Message   Message `json:"message"`
+	SessionID string  `json:"session_id,omitempty"`
 }
 
 //go:embed templates/chat.html
@@ -60,11 +64,24 @@ type server struct {
 
 	files   map[string]internal.Item
 	summary string
+
+	// chatHistory stores chat messages for each session
+	chatHistory     map[string][]Message
+	chatHistoryLock sync.RWMutex
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
 //
 // It retries up to 3 times with increasing temperature.
+func generateSessionID() string {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		return fmt.Sprintf("%d", time.Now().UnixNano())
+	}
+	return fmt.Sprintf("%x", b)
+}
+
 func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (internal.Item, error) {
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
@@ -97,8 +114,24 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 	return internal.Item{}, fmt.Errorf("failed to get a valid file after 3 attempts")
 }
 
-func (s *server) genericReply(ctx context.Context, message string) string {
-	msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
+func (s *server) genericReply(ctx context.Context, message string, history []Message) string {
+	// Create genai.Messages with message history
+	msgs := genai.Messages{}
+
+	// Add previous messages from history
+	for _, msg := range history {
+		var role genai.Role
+		if msg.Role == "user" {
+			role = genai.User
+		} else if msg.Role == "assistant" {
+			role = genai.Assistant
+		}
+		msgs = append(msgs, genai.NewTextMessage(role, msg.Content))
+	}
+
+	// Add the current message
+	msgs = append(msgs, genai.NewTextMessage(genai.User, message))
+
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
@@ -111,17 +144,17 @@ func (s *server) genericReply(ctx context.Context, message string) string {
 	return html.EscapeString(resp.Message.Contents[0].Text)
 }
 
-func (s *server) generateResponse(ctx context.Context, message string) string {
+func (s *server) generateResponse(ctx context.Context, message string, history []Message) string {
 	bestFile, err := s.askLLMForBestFile(ctx, message)
 	if err != nil {
 		slog.Error("Error asking LLM for best file", "error", err)
-		return s.genericReply(ctx, message)
+		return s.genericReply(ctx, message, history)
 	}
 	slog.Info("Selected best file for response", "file", bestFile.Name)
 	fileContent, err := s.cityData.ReadFile(bestFile.Name)
 	if err != nil {
 		slog.Error("Error reading selected file", "file", bestFile.Name, "error", err)
-		return s.genericReply(ctx, message)
+		return s.genericReply(ctx, message, history)
 	}
 	// Generate the final response, including the content from the selected file
 	prompt := fmt.Sprintf(
@@ -131,7 +164,23 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		string(fileContent),
 	)
 
-	msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
+	// Create genai.Messages with message history
+	msgs := genai.Messages{}
+
+	// Add previous messages from history
+	for _, msg := range history {
+		var role genai.Role
+		if msg.Role == "user" {
+			role = genai.User
+		} else if msg.Role == "assistant" {
+			role = genai.Assistant
+		}
+		msgs = append(msgs, genai.NewTextMessage(role, msg.Content))
+	}
+
+	// Add the current prompt as the latest message
+	msgs = append(msgs, genai.NewTextMessage(genai.User, prompt))
+
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
@@ -158,13 +207,47 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-	response := s.generateResponse(r.Context(), req.Message)
+
+	// Generate a session ID if one doesn't exist
+	if req.SessionID == "" {
+		req.SessionID = generateSessionID()
+	}
+
+	// Get or initialize chat history for this session
+	s.chatHistoryLock.RLock()
+	history, exists := s.chatHistory[req.SessionID]
+	s.chatHistoryLock.RUnlock()
+
+	if !exists {
+		history = []Message{}
+	}
+
+	// Add user message to history
+	userMessage := Message{
+		Role:    "user",
+		Content: req.Message,
+	}
+	history = append(history, userMessage)
+
+	// Generate response using history
+	response := s.generateResponse(r.Context(), req.Message, history)
+
+	// Create assistant message and add to history
+	assistantMessage := Message{
+		Role:    "assistant",
+		Content: response,
+	}
+	history = append(history, assistantMessage)
+
+	// Update history in the map
+	s.chatHistoryLock.Lock()
+	s.chatHistory[req.SessionID] = history
+	s.chatHistoryLock.Unlock()
+
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{
-		Message: Message{
-			Role:    "assistant",
-			Content: response,
-		},
+		Message:   assistantMessage,
+		SessionID: req.SessionID,
 	})
 }
 
@@ -277,6 +360,8 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
+	// Initialize chat history storage
+	s.chatHistory = make(map[string][]Message)
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
