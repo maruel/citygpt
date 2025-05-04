@@ -106,5 +106,5 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		}
 		return groq.New("", modelFlag)
 	}
-	return nil, errors.New("Set either CEREBRAS_API_KEY or GROQ_API_KEY")
+	return nil, errors.New("set either CEREBRAS_API_KEY or GROQ_API_KEY")
 }

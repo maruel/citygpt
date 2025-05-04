@@ -136,9 +136,9 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		// Fallback to direct response if no files are available
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
 		opts := genai.ChatOptions{Seed: 1, Temperature: 0.01}
-		resp, err := s.c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			slog.Error("Error generating response", "error", err)
+		resp, err2 := s.c.Chat(ctx, msgs, &opts)
+		if err2 != nil {
+			slog.Error("Error generating response", "error", err2)
 			return "Sorry, there was an error processing your request."
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -153,9 +153,9 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		// Fallback to direct response.
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
 		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-		resp, err := s.c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			slog.Error("Error generating response", "error", err)
+		resp, err2 := s.c.Chat(ctx, msgs, &opts)
+		if err2 != nil {
+			slog.Error("Error generating response", "error", err2)
 			return "Sorry, there was an error processing your request."
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -173,9 +173,9 @@ func (s *server) generateResponse(ctx context.Context, message string) string {
 		// Fallback to direct response
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, message)}
 		opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-		resp, err := s.c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			slog.Error("Error generating response", "error", err)
+		resp, err2 := s.c.Chat(ctx, msgs, &opts)
+		if err2 != nil {
+			slog.Error("Error generating response", "error", err2)
 			return "Sorry, there was an error processing your request."
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {

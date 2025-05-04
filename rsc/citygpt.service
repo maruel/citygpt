@@ -1,0 +1,21 @@
+# Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+
+# See https://github.com/maruel/citygpt for more information.
+
+[Unit]
+Description=Runs citygpt automatically upon boot
+Wants=network-online.target
+
+[Service]
+Type=simple
+KillMode=mixed
+Restart=on-success
+TimeoutStopSec=600s
+ExecStart=%h/go/bin/citygpt
+ExecStop=/bin/kill -s INT $MAINPID
+Environment=GOTRACEBACK=all
+
+[Install]
+WantedBy=default.target
