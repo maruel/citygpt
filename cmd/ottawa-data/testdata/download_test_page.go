@@ -55,7 +55,99 @@ func extractTextFromHTML(r io.Reader) (string, error) {
 	}
 
 	extractText(doc)
-	return strings.TrimSpace(textBuilder.String()), nil
+
+	// Post-process to remove JSON blocks and any remaining HTML tags
+	text := strings.TrimSpace(textBuilder.String())
+	text = stripHTMLAndJSONBlocks(text)
+	return text, nil
+}
+
+// stripHTMLAndJSONBlocks removes HTML tags and JSON-like content from the text
+// This is a duplicate of the function in main.go to ensure consistent processing
+func stripHTMLAndJSONBlocks(text string) string {
+	// First, do a simple HTML tag removal for standalone tags
+	lines := strings.Split(text, "\n")
+	var filteredLines []string
+
+	// Track if we're inside a JSON-like block
+	var jsonBlockStartLine int = -1
+	var jsonBlockLines []string
+
+	// Whitelist of programming language constructs that use braces
+	// but should not be treated as JSON
+	codePrefixes := []string{
+		"func ", "function ", "def ", "class ", "if ", "for ", "while ",
+		"switch ", "public ", "private ", "protected ", "void ", "int ",
+	}
+
+	for i, line := range lines {
+		trimmed := strings.TrimSpace(line)
+
+		// Skip empty lines
+		if trimmed == "" {
+			filteredLines = append(filteredLines, "")
+			continue
+		}
+
+		// Check for standalone HTML tags to remove
+		if (strings.HasPrefix(trimmed, "<") && strings.HasSuffix(trimmed, ">")) ||
+			(strings.Contains(trimmed, "</") && strings.Contains(trimmed, ">")) ||
+			(strings.HasPrefix(trimmed, "<!") && strings.HasSuffix(trimmed, ">")) {
+			continue
+		}
+
+		// Skip lines that are likely to be JSON objects
+		if ((strings.HasPrefix(trimmed, "{") && strings.HasSuffix(trimmed, "}")) ||
+			(strings.HasPrefix(trimmed, "[") && strings.HasSuffix(trimmed, "]"))&&
+			strings.Contains(trimmed, ":") && strings.Contains(trimmed, "\"")) {
+			continue
+		}
+
+		// Check if this is code rather than JSON (contains code-like prefixes)
+		isCodeNotJSON := false
+		for _, prefix := range codePrefixes {
+			if strings.Contains(trimmed, prefix) {
+				isCodeNotJSON = true
+				break
+			}
+		}
+
+		// Start detecting multi-line JSON blocks
+		if !isCodeNotJSON && jsonBlockStartLine == -1 && strings.HasPrefix(trimmed, "{") &&
+			!strings.HasSuffix(trimmed, "}") && strings.Contains(trimmed, ":") {
+			jsonBlockStartLine = i
+			jsonBlockLines = append(jsonBlockLines, trimmed)
+			continue
+		}
+
+		// Continue collecting JSON block lines
+		if jsonBlockStartLine != -1 {
+			jsonBlockLines = append(jsonBlockLines, trimmed)
+
+			// Check if this is the end of a JSON block
+			if strings.HasSuffix(trimmed, "}") {
+				// Check the whole block - does it look like JSON?
+				completeBlock := strings.Join(jsonBlockLines, " ")
+				if strings.Count(completeBlock, ":") > 2 && strings.Count(completeBlock, "\"") > 4 {
+					// This looks like a JSON block, skip it
+					jsonBlockStartLine = -1
+					jsonBlockLines = nil
+					continue
+				} else {
+					// Not a JSON block after all, add all the lines
+					filteredLines = append(filteredLines, lines[jsonBlockStartLine:i+1]...)
+					jsonBlockStartLine = -1
+					jsonBlockLines = nil
+					continue
+				}
+			}
+			continue
+		}
+
+		filteredLines = append(filteredLines, line)
+	}
+
+	return strings.Join(filteredLines, "\n")
 }
 
 // processHTMLFile processes an HTML file and generates its golden file
