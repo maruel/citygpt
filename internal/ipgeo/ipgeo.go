@@ -27,9 +27,9 @@ type GeoIPChecker struct {
 	reader *geoip2.Reader
 }
 
-// NewGeoIPChecker creates a new GeoIPChecker using the specified database file
-func NewGeoIPChecker(dbPath string) (*GeoIPChecker, error) {
-	reader, err := geoip2.Open(dbPath)
+// NewGeoIPChecker creates a new GeoIPChecker using the embedded database
+func NewGeoIPChecker() (*GeoIPChecker, error) {
+	reader, err := geoip2.FromBytes(geoIPData)
 	if err != nil {
 		return nil, err
 	}

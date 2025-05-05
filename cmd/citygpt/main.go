@@ -600,7 +600,6 @@ func mainImpl() error {
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
-	geoipDB := flag.String("geoip-db", "", "Path to the MaxMind GeoIP country database file")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unsupported argument")
@@ -618,24 +617,18 @@ func mainImpl() error {
 	}
 
 	// Initialize the IP checker
-	if *geoipDB != "" {
-		ipChecker, err := ipgeo.NewGeoIPChecker(*geoipDB)
-		if err != nil {
-			slog.WarnContext(ctx, "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
-		} else {
-			deferCleanup := func() {
-				if err := ipChecker.Close(); err != nil {
-					slog.WarnContext(ctx, "Failed to close GeoIP database", "error", err)
-				}
-			}
-			defer deferCleanup()
-			s.ipChecker = ipChecker
-			slog.InfoContext(ctx, "GeoIP database loaded successfully, IP restriction enabled")
-		}
+	ipChecker, err := ipgeo.NewGeoIPChecker()
+	if err != nil {
+		slog.WarnContext(ctx, "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
 	} else {
-		// For development or when no database is provided, use a mock checker that allows all IPs
-		slog.InfoContext(ctx, "No GeoIP database provided, using mock IP checker")
-		s.ipChecker = ipgeo.NewMockIPChecker()
+		deferCleanup := func() {
+			if err := ipChecker.Close(); err != nil {
+				slog.WarnContext(ctx, "Failed to close GeoIP database", "error", err)
+			}
+		}
+		defer deferCleanup()
+		s.ipChecker = ipChecker
+		slog.InfoContext(ctx, "GeoIP database loaded successfully, IP restriction enabled")
 	}
 
 	return s.start(ctx, *port)
