@@ -66,7 +66,9 @@ type server struct {
 	summary string
 
 	// chatHistory stores chat messages for each session
-	chatHistory     map[string][]Message
+	chatHistory map[string][]Message
+	// selectedFiles stores the best file selected for each session
+	selectedFiles   map[string]internal.Item
 	chatHistoryLock sync.RWMutex
 }
 
@@ -144,13 +146,48 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 	return html.EscapeString(resp.Message.Contents[0].Text)
 }
 
-func (s *server) generateResponse(ctx context.Context, message string, history []Message) string {
-	bestFile, err := s.askLLMForBestFile(ctx, message)
-	if err != nil {
-		slog.Error("Error asking LLM for best file", "error", err)
-		return s.genericReply(ctx, message, history)
+func (s *server) generateResponse(ctx context.Context, message string, history []Message, sessionID string) string {
+	var bestFile internal.Item
+	var err error
+
+	// Check if this is a follow-up message
+	if len(history) > 0 {
+		s.chatHistoryLock.RLock()
+		selectedFile, exists := s.selectedFiles[sessionID]
+		s.chatHistoryLock.RUnlock()
+
+		if exists {
+			// Use the previously selected file for this session
+			bestFile = selectedFile
+			slog.Info("Using previously selected file for follow-up message", "file", bestFile.Name)
+		} else {
+			// Ask LLM for the best file
+			bestFile, err = s.askLLMForBestFile(ctx, message)
+			if err != nil {
+				slog.Error("Error asking LLM for best file", "error", err)
+				return s.genericReply(ctx, message, history)
+			}
+
+			// Store the selected file for this session
+			s.chatHistoryLock.Lock()
+			s.selectedFiles[sessionID] = bestFile
+			s.chatHistoryLock.Unlock()
+			slog.Info("Selected best file for response", "file", bestFile.Name)
+		}
+	} else {
+		// First message in the conversation, ask LLM for the best file
+		bestFile, err = s.askLLMForBestFile(ctx, message)
+		if err != nil {
+			slog.Error("Error asking LLM for best file", "error", err)
+			return s.genericReply(ctx, message, history)
+		}
+
+		// Store the selected file for this session
+		s.chatHistoryLock.Lock()
+		s.selectedFiles[sessionID] = bestFile
+		s.chatHistoryLock.Unlock()
+		slog.Info("Selected best file for response", "file", bestFile.Name)
 	}
-	slog.Info("Selected best file for response", "file", bestFile.Name)
 	fileContent, err := s.cityData.ReadFile(bestFile.Name)
 	if err != nil {
 		slog.Error("Error reading selected file", "file", bestFile.Name, "error", err)
@@ -230,7 +267,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	history = append(history, userMessage)
 
 	// Generate response using history
-	response := s.generateResponse(r.Context(), req.Message, history)
+	response := s.generateResponse(r.Context(), req.Message, history, req.SessionID)
 
 	// Create assistant message and add to history
 	assistantMessage := Message{
@@ -360,8 +397,9 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
-	// Initialize chat history storage
+	// Initialize chat history and selected files storage
 	s.chatHistory = make(map[string][]Message)
+	s.selectedFiles = make(map[string]internal.Item)
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
