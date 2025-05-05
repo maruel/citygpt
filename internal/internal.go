@@ -13,8 +13,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/user"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -178,4 +180,24 @@ type Item struct {
 	Name    string `json:"name"`
 	Title   string `json:"title"`
 	Summary string `json:"summary"`
+}
+
+// GetConfigDir returns the appropriate configuration directory based on the OS
+func GetConfigDir() (string, error) {
+	// Check if XDG_CONFIG_HOME is set (Linux/Unix)
+	if configHome := os.Getenv("XDG_CONFIG_HOME"); configHome != "" {
+		return configHome, nil
+	}
+	// For Windows, use %APPDATA%\.
+	if runtime.GOOS == "windows" {
+		if appData := os.Getenv("APPDATA"); appData != "" {
+			return appData, nil
+		}
+	}
+	// Default to ~/.config/
+	current, err := user.Current()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current user: %w", err)
+	}
+	return filepath.Join(current.HomeDir, ".config"), nil
 }

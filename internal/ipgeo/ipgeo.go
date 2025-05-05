@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/maruel/citygpt/internal"
 	"github.com/oschwald/maxminddb-golang/v2"
 )
 
@@ -35,11 +36,11 @@ type GeoIPChecker struct {
 
 // NewGeoIPChecker creates a new GeoIPChecker using the database file from user's config directory
 func NewGeoIPChecker() (*GeoIPChecker, error) {
-	homeDir, err := os.UserHomeDir()
+	configDir, err := internal.GetConfigDir()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user home directory: %w", err)
+		return nil, err
 	}
-	dbPath := filepath.Join(homeDir, ".config", "citygpt", "ipinfo_lite.mmdb")
+	dbPath := filepath.Join(configDir, "citygpt", "ipinfo_lite.mmdb")
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("GeoIP database not found at %s. Please download it by following the instructions in the internal/ipgeo/README.md file", dbPath)
 	}

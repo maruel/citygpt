@@ -19,10 +19,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"os/user"
 	"path"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -391,29 +389,6 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// getConfigDir returns the appropriate configuration directory based on the OS
-func getConfigDir() (string, error) {
-	// Check if XDG_CONFIG_HOME is set (Linux/Unix)
-	if configHome := os.Getenv("XDG_CONFIG_HOME"); configHome != "" {
-		return filepath.Join(configHome, "citygpt"), nil
-	}
-
-	// For Windows, use APPDATA
-	if runtime.GOOS == "windows" {
-		if appData := os.Getenv("APPDATA"); appData != "" {
-			return filepath.Join(appData, "citygpt"), nil
-		}
-	}
-
-	// Default to ~/.config/citygpt
-	current, err := user.Current()
-	if err != nil {
-		return "", fmt.Errorf("failed to get current user: %w", err)
-	}
-
-	return filepath.Join(current.HomeDir, ".config", "citygpt"), nil
-}
-
 // loadState loads the server state from disk
 func (s *server) loadState(ctx context.Context) error {
 	s.state.Sessions = map[string]*SessionData{}
@@ -462,10 +437,11 @@ func (s *server) start(ctx context.Context, port string) error {
 			}
 		}()
 	}
-	configDir, err := getConfigDir()
+	configDir, err := internal.GetConfigDir()
 	if err != nil {
 		return fmt.Errorf("failed to determine config directory: %w", err)
 	}
+	configDir = filepath.Join(configDir, "citygpt")
 	if err := os.MkdirAll(configDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}

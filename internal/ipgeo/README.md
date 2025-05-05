@@ -16,6 +16,8 @@ To update your GeoIP database:
 curl -Lo $HOME/.config/citygpt/ipinfo_lite.mmdb https://ipinfo.io/data/ipinfo_lite.mmdb?token=<your_token>
 ```
 
+On Windows, put it in `%APPDATA%\citygpt\ipinfo_lite.mmbd`
+
 ## Note
 
 The GeoIP database is embedded into the application binary during compilation. After updating the database file, you'll need to recompile the application to use the updated data.
