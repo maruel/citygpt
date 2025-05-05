@@ -118,14 +118,13 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
 
 // ProcessHTML from a single URL and saves it
-func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, md, outputDir string) (string, string, error) {
+func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, md string) (string, string, error) {
 	textContent, pageTitle, err := htmlparse.ExtractTextFromHTML(r)
 	if err != nil {
 		return pageTitle, "", fmt.Errorf("failed to extract text: %w", err)
 	}
-	filePath := filepath.Join(outputDir, md)
-	if err = os.WriteFile(filePath, []byte(textContent), 0o644); err != nil {
-		return pageTitle, "", fmt.Errorf("failed to write file %s: %w", filePath, err)
+	if err = os.WriteFile(md, []byte(textContent), 0o644); err != nil {
+		return pageTitle, "", fmt.Errorf("failed to write file %s: %w", md, err)
 	}
 	messages := genai.Messages{
 		genai.NewTextMessage(genai.User, summarizationPrompt),

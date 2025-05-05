@@ -111,7 +111,7 @@ func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir st
 	if resp.StatusCode != http.StatusOK {
 		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 	}
-	out.Title, out.Summary, err = internal.ProcessHTML(ctx, c, resp.Body, md, outputDir)
+	out.Title, out.Summary, err = internal.ProcessHTML(ctx, c, resp.Body, filepath.Join(outputDir, md))
 	return out, err
 }
 

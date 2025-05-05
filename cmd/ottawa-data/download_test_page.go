@@ -44,7 +44,7 @@ func generateGoldens(ctx context.Context, c genai.ChatProvider) error {
 			return err
 		}
 		md := strings.TrimSuffix(htmlFile, filepath.Ext(htmlFile)) + ".md"
-		title, summary, err := internal.ProcessHTML(ctx, c, f, md, "")
+		title, summary, err := internal.ProcessHTML(ctx, c, f, md)
 		_ = f.Close()
 		if err != nil {
 			return err
