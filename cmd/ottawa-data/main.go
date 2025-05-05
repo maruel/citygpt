@@ -118,9 +118,9 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				s, err := internal.ProcessURL(ctx, c, fullURL, outputDir)
-				if err != nil {
-					return err
+				s, err3 := internal.ProcessURL(ctx, c, fullURL, outputDir)
+				if err3 != nil {
+					return err3
 				}
 				count := processed.Add(1)
 				mu.Lock()
