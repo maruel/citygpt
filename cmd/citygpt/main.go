@@ -209,36 +209,29 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
+	clientIP, err := ipgeo.GetRealIP(r)
+	if err != nil {
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "error", err)
+		http.Error(w, "Can't determine IP address", http.StatusPreconditionFailed)
+		return
+	}
 	// Check if the request is from Canada
 	if s.ipChecker != nil {
-		clientIP, err := ipgeo.GetRealIP(r)
+		countryCode, err := s.ipChecker.GetCountry(clientIP)
 		if err != nil {
-			slog.WarnContext(ctx, "citygpt", "msg", "Failed to determine client IP", "error", err)
+			slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "error", err)
+		} else if countryCode != "CA" && countryCode != "local" {
+			slog.InfoContext(ctx, "citygpt", "msg", "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusForbidden)
+			_ = json.NewEncoder(w).Encode(ChatResponse{Message: Message{Role: "assistant", Content: "I'm sorry, I can only be used within Canada"}})
+			return
 		} else {
-			countryCode, err := s.ipChecker.GetCountry(clientIP)
-			if err != nil {
-				slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "error", err)
-			} else if countryCode != "CA" && countryCode != "local" {
-				slog.InfoContext(ctx, "citygpt", "msg", "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
-				w.Header().Set("Content-Type", "application/json")
-
-				// Return the error message as a normal chat response
-				response := ChatResponse{
-					Message: Message{
-						Role:    "assistant",
-						Content: "I'm sorry, I can only be used within Canada",
-					},
-				}
-
-				// Return with a 403 status code
-				w.WriteHeader(http.StatusForbidden)
-				_ = json.NewEncoder(w).Encode(response)
-				return
-			}
+			slog.InfoContext(ctx, "citygpt", "ip", clientIP, "country", countryCode)
 		}
+	} else {
+		slog.InfoContext(ctx, "citygpt", "ip", clientIP)
 	}
-
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)

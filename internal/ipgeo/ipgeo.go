@@ -108,13 +108,11 @@ func (m *MockIPChecker) GetCountry(ip net.IP) (string, error) {
 		return "local", nil
 	}
 
-	ipStr := ip.String()
-	countryCode, exists := m.CountryCodes[ipStr]
+	countryCode, exists := m.CountryCodes[ip.String()]
 	if !exists {
 		// If not explicitly set, default to not Canadian
 		return "XX", nil
 	}
-
 	return countryCode, nil
 }
 
@@ -122,44 +120,34 @@ func (m *MockIPChecker) GetCountry(ip net.IP) (string, error) {
 // taking into account X-Forwarded-For or other proxy headers.
 func GetRealIP(r *http.Request) (net.IP, error) {
 	// Check X-Forwarded-For header (most common proxy header)
-	xForwardedFor := r.Header.Get("X-Forwarded-For")
-	if xForwardedFor != "" {
+	if xForwardedFor := r.Header.Get("X-Forwarded-For"); xForwardedFor != "" {
 		// X-Forwarded-For can contain multiple IPs, the client's IP is the first one
-		ips := strings.Split(xForwardedFor, ",")
-		ipStr := strings.TrimSpace(ips[0])
-		ip := net.ParseIP(ipStr)
+		ip := net.ParseIP(strings.TrimSpace(strings.Split(xForwardedFor, ",")[0]))
 		if ip != nil {
 			return ip, nil
 		}
 	}
 
 	// Check X-Real-IP header (used by some proxies)
-	xRealIP := r.Header.Get("X-Real-IP")
-	if xRealIP != "" {
-		ip := net.ParseIP(xRealIP)
-		if ip != nil {
+	if xRealIP := r.Header.Get("X-Real-IP"); xRealIP != "" {
+		if ip := net.ParseIP(xRealIP); ip != nil {
 			return ip, nil
 		}
 	}
 
 	// If no proxy headers found, get the remote address
-	remoteAddr := r.RemoteAddr
-	if remoteAddr != "" {
+	if remoteAddr := r.RemoteAddr; remoteAddr != "" {
 		// RemoteAddr might be in the format IP:port
-		host, _, err := net.SplitHostPort(remoteAddr)
-		if err == nil {
-			ip := net.ParseIP(host)
-			if ip != nil {
+		if host, _, err := net.SplitHostPort(remoteAddr); err == nil {
+			if ip := net.ParseIP(host); ip != nil {
 				return ip, nil
 			}
 		} else {
 			// If SplitHostPort fails, try parsing the whole RemoteAddr as an IP
-			ip := net.ParseIP(remoteAddr)
-			if ip != nil {
+			if ip := net.ParseIP(remoteAddr); ip != nil {
 				return ip, nil
 			}
 		}
 	}
-
 	return nil, errors.New("could not determine client IP address")
 }
