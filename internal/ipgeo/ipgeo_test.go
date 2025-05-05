@@ -77,44 +77,51 @@ func TestGetRealIP(t *testing.T) {
 func TestMockIPChecker(t *testing.T) {
 	checker := NewMockIPChecker()
 
-	// Add some Canadian IPs to the map
-	checker.CanadianIPs["99.99.99.99"] = true
-	checker.CanadianIPs["88.88.88.88"] = false
+	// Add some country codes to the map
+	checker.CountryCodes["99.99.99.99"] = "CA"
+	checker.CountryCodes["88.88.88.88"] = "US"
+	checker.CountryCodes["77.77.77.77"] = "FR"
 
 	tests := []struct {
 		name     string
 		ipStr    string
-		expected bool
+		expected string
 		wantErr  bool
 	}{
 		{
 			name:     "Canadian IP",
 			ipStr:    "99.99.99.99",
-			expected: true,
+			expected: "CA",
 			wantErr:  false,
 		},
 		{
-			name:     "Non-Canadian IP",
+			name:     "US IP",
 			ipStr:    "88.88.88.88",
-			expected: false,
+			expected: "US",
 			wantErr:  false,
 		},
 		{
-			name:     "Unknown IP defaults to not Canadian",
+			name:     "French IP",
 			ipStr:    "77.77.77.77",
-			expected: false,
+			expected: "FR",
 			wantErr:  false,
 		},
 		{
-			name:     "Local IP considered Canadian",
+			name:     "Unknown IP defaults to XX",
+			ipStr:    "66.66.66.66",
+			expected: "XX",
+			wantErr:  false,
+		},
+		{
+			name:     "Local IP returns 'local'",
 			ipStr:    "127.0.0.1",
-			expected: true,
+			expected: "local",
 			wantErr:  false,
 		},
 		{
-			name:     "Private IP considered Canadian",
+			name:     "Private IP returns 'local'",
 			ipStr:    "192.168.1.1",
-			expected: true,
+			expected: "local",
 			wantErr:  false,
 		},
 	}

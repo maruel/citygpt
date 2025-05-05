@@ -19,9 +19,10 @@ import (
 
 // IPChecker is an interface for services that can check if an IP is from a specified country
 type IPChecker interface {
-	// IsFromCanada checks if the given IP address is from Canada.
-	// Returns true if the IP is from Canada, false otherwise.
-	IsFromCanada(ip net.IP) (bool, error)
+	// IsFromCanada returns the ISO country code for the given IP address.
+	// Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
+	// and "local" for local, private, or unspecified IPs.
+	IsFromCanada(ip net.IP) (string, error)
 }
 
 // GeoIPChecker implements IPChecker using the MaxMind GeoIP database
@@ -54,21 +55,22 @@ func (g *GeoIPChecker) Close() error {
 	return nil
 }
 
-// IsFromCanada checks if the given IP address is from Canada
-func (g *GeoIPChecker) IsFromCanada(ip net.IP) (bool, error) {
+// IsFromCanada returns the ISO country code for the given IP address.
+// Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
+// and "local" for local, private, or unspecified IPs.
+func (g *GeoIPChecker) IsFromCanada(ip net.IP) (string, error) {
 	if g.reader == nil {
-		return false, errors.New("geoip database not initialized")
+		return "", errors.New("geoip database not initialized")
 	}
 	// Skip for private/local IPs
 	if ip == nil || ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
-		// For development purposes, consider local IPs as Canadian
-		return true, nil
+		return "local", nil
 	}
 
 	// TODO: Sounds inefficient.
 	addr, err := netip.ParseAddr(ip.String())
 	if err != nil {
-		return false, err
+		return "", err
 	}
 	var data struct {
 		Country struct {
@@ -76,43 +78,42 @@ func (g *GeoIPChecker) IsFromCanada(ip net.IP) (bool, error) {
 		} `maxminddb:"country"`
 	}
 	if err = g.reader.Lookup(addr).Decode(&data); err != nil {
-		return false, err
+		return "", err
 	}
-	return data.Country.ISOCode == "CA", nil
+	return data.Country.ISOCode, nil
 }
 
 // MockIPChecker is a simple implementation of IPChecker for testing
 type MockIPChecker struct {
-	CanadianIPs map[string]bool
+	CountryCodes map[string]string
 }
 
 // NewMockIPChecker creates a new MockIPChecker
 func NewMockIPChecker() *MockIPChecker {
 	return &MockIPChecker{
-		CanadianIPs: make(map[string]bool),
+		CountryCodes: make(map[string]string),
 	}
 }
 
-// IsFromCanada checks if the given IP is in the Canadian IPs map
-func (m *MockIPChecker) IsFromCanada(ip net.IP) (bool, error) {
+// IsFromCanada returns the ISO country code for the given IP address
+func (m *MockIPChecker) IsFromCanada(ip net.IP) (string, error) {
 	if ip == nil {
-		return false, errors.New("nil IP address")
+		return "", errors.New("nil IP address")
 	}
 
 	// Skip for private/local IPs
 	if ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
-		// For development purposes, consider local IPs as Canadian
-		return true, nil
+		return "local", nil
 	}
 
 	ipStr := ip.String()
-	isCanadian, exists := m.CanadianIPs[ipStr]
+	countryCode, exists := m.CountryCodes[ipStr]
 	if !exists {
 		// If not explicitly set, default to not Canadian
-		return false, nil
+		return "XX", nil
 	}
 
-	return isCanadian, nil
+	return countryCode, nil
 }
 
 // GetRealIP extracts the client's real IP address from an HTTP request,

@@ -218,11 +218,11 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.WarnContext(ctx, "Failed to determine client IP", "error", err)
 		} else {
-			isCanadian, err := s.ipChecker.IsFromCanada(clientIP)
+			countryCode, err := s.ipChecker.IsFromCanada(clientIP)
 			if err != nil {
-				slog.WarnContext(ctx, "Failed to check if IP is Canadian", "ip", clientIP, "error", err)
-			} else if !isCanadian {
-				slog.InfoContext(ctx, "Blocked non-Canadian IP", "ip", clientIP)
+				slog.WarnContext(ctx, "Failed to check IP country code", "ip", clientIP, "error", err)
+			} else if countryCode != "CA" && countryCode != "local" {
+				slog.InfoContext(ctx, "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
 				w.Header().Set("Content-Type", "application/json")
 
 				// Return the error message as a normal chat response
