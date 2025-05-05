@@ -41,7 +41,7 @@ func NewGeoIPChecker() (*GeoIPChecker, error) {
 		return nil, err
 	}
 	dbPath := filepath.Join(configDir, "citygpt", "ipinfo_lite.mmdb")
-	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+	if _, err = os.Stat(dbPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("GeoIP database not found at %s. Please download it by following the instructions in the internal/ipgeo/README.md file", dbPath)
 	}
 	reader, err := maxminddb.Open(dbPath)

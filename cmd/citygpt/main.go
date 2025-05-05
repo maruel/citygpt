@@ -39,8 +39,8 @@ import (
 
 // Message represents a chat message.
 type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role    genai.Role `json:"role"`
+	Content string     `json:"content"`
 }
 
 // ChatRequest represents a chat request from the client.
@@ -117,7 +117,7 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
-			slog.WarnContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "attempt", attempt+1, "error", err)
+			slog.WarnContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "attempt", attempt+1, "err", err)
 			continue
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -136,22 +136,16 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 }
 
 func (s *server) genericReply(ctx context.Context, message string, history []Message) string {
-	msgs := genai.Messages{}
+	msgs := make(genai.Messages, 0, len(history)+1)
 	for _, msg := range history {
-		var role genai.Role
-		if msg.Role == "user" {
-			role = genai.User
-		} else if msg.Role == "assistant" {
-			role = genai.Assistant
-		}
-		msgs = append(msgs, genai.NewTextMessage(role, msg.Content))
+		msgs = append(msgs, genai.NewTextMessage(msg.Role, msg.Content))
 	}
 	msgs = append(msgs, genai.NewTextMessage(genai.User, message))
 
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "err", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -161,15 +155,9 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 }
 
 func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionData) string {
-	msgs := genai.Messages{}
-	for _, m := range sd.Messages {
-		var role genai.Role
-		if m.Role == "user" {
-			role = genai.User
-		} else if m.Role == "assistant" {
-			role = genai.Assistant
-		}
-		msgs = append(msgs, genai.NewTextMessage(role, m.Content))
+	msgs := make(genai.Messages, 0, len(sd.Messages)+1)
+	for _, msg := range sd.Messages {
+		msgs = append(msgs, genai.NewTextMessage(msg.Role, msg.Content))
 	}
 	var err error
 	if len(msgs) > 0 {
@@ -177,13 +165,13 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
 	} else {
 		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
-			slog.ErrorContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "error", err)
+			slog.ErrorContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "err", err)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
 		slog.InfoContext(ctx, "citygpt", "msg", "Selected best file for response", "file", sd.Item.Name)
-		fileContent, err := s.cityData.ReadFile(sd.Item.Name)
-		if err != nil {
-			slog.ErrorContext(ctx, "citygpt", "msg", "Error reading selected file", "file", sd.Item.Name, "error", err)
+		fileContent, err2 := s.cityData.ReadFile(sd.Item.Name)
+		if err2 != nil {
+			slog.ErrorContext(ctx, "citygpt", "msg", "Error reading selected file", "file", sd.Item.Name, "err", err2)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
 		prompt := fmt.Sprintf(
@@ -198,7 +186,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "err", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -211,7 +199,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	clientIP, err := ipgeo.GetRealIP(r)
 	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
 		http.Error(w, "Can't determine IP address", http.StatusPreconditionFailed)
 		return
 	}
@@ -219,7 +207,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	if s.ipChecker != nil {
 		countryCode, err := s.ipChecker.GetCountry(clientIP)
 		if err != nil {
-			slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "error", err)
+			slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
 		} else if countryCode != "CA" && countryCode != "local" {
 			slog.InfoContext(ctx, "citygpt", "msg", "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
 			w.Header().Set("Content-Type", "application/json")
@@ -258,7 +246,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	// Save state after adding a new message.
 	s.stateLock.Lock()
 	if err := s.saveState(); err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state", "err", err)
 	}
 	s.stateLock.Unlock()
 
@@ -365,7 +353,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.New("chat").Parse(htmlTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
 		return
 	}
 
@@ -378,7 +366,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	err = tmpl.Execute(w, data)
 	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "err", err)
 	}
 }
 
@@ -422,11 +410,11 @@ func (s *server) saveState() error {
 func (s *server) start(ctx context.Context, port string) error {
 	var err error
 	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {
-		slog.WarnContext(ctx, "citygpt", "msg", "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
+		slog.WarnContext(ctx, "citygpt", "msg", "Failed to initialize GeoIP database, IP restriction disabled", "err", err)
 	} else {
 		defer func() {
-			if err := s.ipChecker.Close(); err != nil {
-				slog.WarnContext(ctx, "citygpt", "msg", "Failed to close GeoIP database", "error", err)
+			if err2 := s.ipChecker.Close(); err2 != nil {
+				slog.WarnContext(ctx, "citygpt", "msg", "Failed to close GeoIP database", "err", err2)
 			}
 		}()
 	}
@@ -435,11 +423,11 @@ func (s *server) start(ctx context.Context, port string) error {
 		return fmt.Errorf("failed to determine config directory: %w", err)
 	}
 	configDir = filepath.Join(configDir, "citygpt")
-	if err := os.MkdirAll(configDir, 0o755); err != nil {
+	if err = os.MkdirAll(configDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 	s.statePath = filepath.Join(configDir, s.appName+".json")
-	if err := s.loadState(ctx); err != nil {
+	if err = s.loadState(ctx); err != nil {
 		return err
 	}
 	raw, err := s.cityData.ReadFile("index.json")
@@ -481,7 +469,7 @@ func (s *server) start(ctx context.Context, port string) error {
 		slog.InfoContext(ctx, "citygpt", "msg", "Shutdown signal received, gracefully shutting down server...")
 		s.stateLock.Lock()
 		if err := s.saveState(); err != nil {
-			slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state during shutdown", "error", err)
+			slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state during shutdown", "err", err)
 		}
 		s.stateLock.Unlock()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -512,7 +500,7 @@ func watchExecutable(ctx context.Context, cancel context.CancelFunc) error {
 		for range ticker.C {
 			currentStat, err := os.Stat(exePath)
 			if err != nil {
-				slog.WarnContext(ctx, "citygpt", "msg", "Could not stat executable", "error", err)
+				slog.WarnContext(ctx, "citygpt", "msg", "Could not stat executable", "err", err)
 				continue
 			}
 			currentModTime := currentStat.ModTime()
