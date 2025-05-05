@@ -56,6 +56,12 @@ type ChatResponse struct {
 //go:embed templates/chat.html
 var htmlTemplate string
 
+// SessionData holds both the chat messages and selected file for a session
+type SessionData struct {
+	Item     internal.Item // The selected file for the session
+	Messages []Message     // The chat history for the session
+}
+
 // server represents the HTTP server that handles the chat application.
 type server struct {
 	c        genai.ChatProvider
@@ -65,11 +71,9 @@ type server struct {
 	files   map[string]internal.Item
 	summary string
 
-	// chatHistory stores chat messages for each session
-	chatHistory map[string][]Message
-	// selectedFiles stores the best file selected for each session
-	selectedFiles   map[string]internal.Item
-	chatHistoryLock sync.RWMutex
+	// sessions stores both chat messages and selected files for each session
+	sessions     map[string]SessionData
+	sessionsLock sync.RWMutex
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
@@ -152,13 +156,13 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 
 	// Check if this is a follow-up message
 	if len(history) > 0 {
-		s.chatHistoryLock.RLock()
-		selectedFile, exists := s.selectedFiles[sessionID]
-		s.chatHistoryLock.RUnlock()
+		s.sessionsLock.RLock()
+		sessionData, exists := s.sessions[sessionID]
+		s.sessionsLock.RUnlock()
 
 		if exists {
 			// Use the previously selected file for this session
-			bestFile = selectedFile
+			bestFile = sessionData.Item
 			slog.Info("Using previously selected file for follow-up message", "file", bestFile.Name)
 		} else {
 			// Ask LLM for the best file
@@ -169,9 +173,12 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 			}
 
 			// Store the selected file for this session
-			s.chatHistoryLock.Lock()
-			s.selectedFiles[sessionID] = bestFile
-			s.chatHistoryLock.Unlock()
+			s.sessionsLock.Lock()
+			s.sessions[sessionID] = SessionData{
+				Item:     bestFile,
+				Messages: history,
+			}
+			s.sessionsLock.Unlock()
 			slog.Info("Selected best file for response", "file", bestFile.Name)
 		}
 	} else {
@@ -183,9 +190,12 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 		}
 
 		// Store the selected file for this session
-		s.chatHistoryLock.Lock()
-		s.selectedFiles[sessionID] = bestFile
-		s.chatHistoryLock.Unlock()
+		s.sessionsLock.Lock()
+		s.sessions[sessionID] = SessionData{
+			Item:     bestFile,
+			Messages: history,
+		}
+		s.sessionsLock.Unlock()
 		slog.Info("Selected best file for response", "file", bestFile.Name)
 	}
 	fileContent, err := s.cityData.ReadFile(bestFile.Name)
@@ -251,12 +261,13 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get or initialize chat history for this session
-	s.chatHistoryLock.RLock()
-	history, exists := s.chatHistory[req.SessionID]
-	s.chatHistoryLock.RUnlock()
+	s.sessionsLock.RLock()
+	sessionData, exists := s.sessions[req.SessionID]
+	s.sessionsLock.RUnlock()
 
-	if !exists {
-		history = []Message{}
+	history := []Message{}
+	if exists {
+		history = sessionData.Messages
 	}
 
 	// Add user message to history
@@ -276,10 +287,19 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	}
 	history = append(history, assistantMessage)
 
-	// Update history in the map
-	s.chatHistoryLock.Lock()
-	s.chatHistory[req.SessionID] = history
-	s.chatHistoryLock.Unlock()
+	// Update history in the sessions map
+	s.sessionsLock.Lock()
+	if exists {
+		// Keep the existing Item but update Messages
+		sessionData.Messages = history
+		s.sessions[req.SessionID] = sessionData
+	} else {
+		// This should be set by generateResponse, but just in case
+		s.sessions[req.SessionID] = SessionData{
+			Messages: history,
+		}
+	}
+	s.sessionsLock.Unlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{
@@ -397,9 +417,8 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
-	// Initialize chat history and selected files storage
-	s.chatHistory = make(map[string][]Message)
-	s.selectedFiles = make(map[string]internal.Item)
+	// Initialize sessions storage
+	s.sessions = make(map[string]SessionData)
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
