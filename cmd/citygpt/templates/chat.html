@@ -458,11 +458,15 @@ that can be found in the LICENSE file.
 				requestBody.session_id = sessionID;
 			}
 
+			// Get XSRF token from cookie
+			const xsrfToken = getCookie('xsrf_token');
+
 			// Send message to server
 			fetch('/api/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'X-XSRF-Token': xsrfToken || '',
 				},
 				body: JSON.stringify(requestBody),
 			})
@@ -552,6 +556,14 @@ that can be found in the LICENSE file.
 			setTimeout(() => {
 				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
 			}, 100);
+		}
+
+		// Helper function to get a cookie by name
+		function getCookie(name) {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+			return '';
 		}
 
 		// Add a reset button to the UI
