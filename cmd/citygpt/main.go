@@ -56,10 +56,16 @@ type ChatResponse struct {
 //go:embed templates/chat.html
 var htmlTemplate string
 
+type State struct {
+	Sessions map[string]SessionData `json:"sessions"`
+}
+
 // SessionData holds both the chat messages and selected file for a session
 type SessionData struct {
-	Item     internal.Item // The selected file for the session
-	Messages []Message     // The chat history for the session
+	// Item is the selected file for the session.
+	Item internal.Item `json:"item"`
+	// Messages is the chat history for the session.
+	Messages []Message `json:"messages"`
 }
 
 // server represents the HTTP server that handles the chat application.
@@ -71,9 +77,9 @@ type server struct {
 	files   map[string]internal.Item
 	summary string
 
-	// sessions stores both chat messages and selected files for each session
-	sessions     map[string]SessionData
-	sessionsLock sync.RWMutex
+	// state stores both chat messages and selected files for each session
+	state     State
+	stateLock sync.RWMutex
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
@@ -156,10 +162,9 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 
 	// Check if this is a follow-up message
 	if len(history) > 0 {
-		s.sessionsLock.RLock()
-		sessionData, exists := s.sessions[sessionID]
-		s.sessionsLock.RUnlock()
-
+		s.stateLock.RLock()
+		sessionData, exists := s.state.Sessions[sessionID]
+		s.stateLock.RUnlock()
 		if exists {
 			// Use the previously selected file for this session
 			bestFile = sessionData.Item
@@ -173,12 +178,12 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 			}
 
 			// Store the selected file for this session
-			s.sessionsLock.Lock()
-			s.sessions[sessionID] = SessionData{
+			s.stateLock.Lock()
+			s.state.Sessions[sessionID] = SessionData{
 				Item:     bestFile,
 				Messages: history,
 			}
-			s.sessionsLock.Unlock()
+			s.stateLock.Unlock()
 			slog.Info("Selected best file for response", "file", bestFile.Name)
 		}
 	} else {
@@ -190,12 +195,12 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 		}
 
 		// Store the selected file for this session
-		s.sessionsLock.Lock()
-		s.sessions[sessionID] = SessionData{
+		s.stateLock.Lock()
+		s.state.Sessions[sessionID] = SessionData{
 			Item:     bestFile,
 			Messages: history,
 		}
-		s.sessionsLock.Unlock()
+		s.stateLock.Unlock()
 		slog.Info("Selected best file for response", "file", bestFile.Name)
 	}
 	fileContent, err := s.cityData.ReadFile(bestFile.Name)
@@ -261,9 +266,9 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get or initialize chat history for this session
-	s.sessionsLock.RLock()
-	sessionData, exists := s.sessions[req.SessionID]
-	s.sessionsLock.RUnlock()
+	s.stateLock.RLock()
+	sessionData, exists := s.state.Sessions[req.SessionID]
+	s.stateLock.RUnlock()
 
 	history := []Message{}
 	if exists {
@@ -287,19 +292,19 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	}
 	history = append(history, assistantMessage)
 
-	// Update history in the sessions map
-	s.sessionsLock.Lock()
+	// Update history in the state.Sessions map
+	s.stateLock.Lock()
 	if exists {
 		// Keep the existing Item but update Messages
 		sessionData.Messages = history
-		s.sessions[req.SessionID] = sessionData
+		s.state.Sessions[req.SessionID] = sessionData
 	} else {
 		// This should be set by generateResponse, but just in case
-		s.sessions[req.SessionID] = SessionData{
+		s.state.Sessions[req.SessionID] = SessionData{
 			Messages: history,
 		}
 	}
-	s.sessionsLock.Unlock()
+	s.stateLock.Unlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{
@@ -417,8 +422,8 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
-	// Initialize sessions storage
-	s.sessions = make(map[string]SessionData)
+	// Initialize state.Sessions storage
+	s.state.Sessions = make(map[string]SessionData)
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
