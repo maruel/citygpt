@@ -342,9 +342,21 @@ that can be found in the LICENSE file.
 				flex-wrap: wrap;
 			}
 
+			.header-top {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
 			header h1 {
 				font-size: 1.5rem;
 				flex-grow: 1;
+			}
+
+			#reset-button {
+				width: 38px;
+				height: 38px;
 			}
 
 			.nav-links {
@@ -404,6 +416,21 @@ that can be found in the LICENSE file.
 			#reset-button {
 				width: 36px;
 				height: 36px;
+				background: rgba(255, 255, 255, 0.2);
+				border: none;
+				border-radius: 50%;
+				color: white;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background-color 0.3s;
+				flex-shrink: 0;
+				margin-left: 10px;
+			}
+
+			#reset-button:hover {
+				background-color: rgba(255, 255, 255, 0.3);
 			}
 
 			header h1 {
@@ -417,6 +444,9 @@ that can be found in the LICENSE file.
 	<header>
 		<div class="header-top">
 			<h1><i class="fa-solid fa-city"></i> {{.AppName}} Chat</h1>
+			<button id="reset-button" title="Start new conversation">
+				<i class="fa-solid fa-trash"></i>
+			</button>
 		</div>
 		<div class="nav-links">
 			<a href="/" class="active"><i class="fa-solid fa-comments"></i> Chat</a>
@@ -621,59 +651,12 @@ that can be found in the LICENSE file.
 			return '';
 		}
 
-		// Add a reset button to the UI
-		function addResetButton() {
-			const header = document.querySelector('header');
-			const titleContainer = document.querySelector('header h1').parentElement;
-			const resetButton = document.createElement('button');
-			resetButton.id = 'reset-button';
-			resetButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-			resetButton.setAttribute('title', 'Start new conversation');
-			resetButton.style.marginLeft = '10px';
-			resetButton.style.background = 'rgba(255, 255, 255, 0.2)';
-			resetButton.style.border = 'none';
-			resetButton.style.borderRadius = '50%';
-			resetButton.style.width = '40px';
-			resetButton.style.height = '40px';
-			resetButton.style.display = 'flex';
-			resetButton.style.alignItems = 'center';
-			resetButton.style.justifyContent = 'center';
-			resetButton.style.color = 'white';
-			resetButton.style.cursor = 'pointer';
-			resetButton.style.transition = 'background-color 0.3s';
-			resetButton.style.flexShrink = '0';
-			resetButton.addEventListener('mouseenter', () => {
-				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-			});
-			resetButton.addEventListener('mouseleave', () => {
-				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-			});
-			resetButton.addEventListener('click', startNewSession);
 
-			// Insert reset button after the header title, not at end of header
-			if (window.matchMedia('(max-width: 768px)').matches) {
-				header.insertBefore(resetButton, document.querySelector('.nav-links'));
-			} else {
-				header.appendChild(resetButton);
-			}
-
-			// Update button position on window resize
-			window.addEventListener('resize', () => {
-				if (resetButton.parentNode) {
-					resetButton.parentNode.removeChild(resetButton);
-				}
-				if (window.matchMedia('(max-width: 768px)').matches) {
-					header.insertBefore(resetButton, document.querySelector('.nav-links'));
-				} else {
-					header.appendChild(resetButton);
-				}
-			});
-		}
 
 		// Initialize the chat
 		window.addEventListener('DOMContentLoaded', () => {
-			// Add reset button
-			addResetButton();
+			// Add event listener to reset button
+			document.getElementById('reset-button').addEventListener('click', startNewSession);
 
 			// Check if there's an existing session
 			if (sessionID) {
