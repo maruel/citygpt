@@ -110,24 +110,24 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 	for attempt := range 3 {
 		// Increase temperature with each attempt
 		temperature := 0.1 * float64(attempt+1)
-		slog.Info("Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
+		slog.InfoContext(ctx, "Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
-			slog.Warn("Error asking LLM for best file", "attempt", attempt+1, "error", err)
+			slog.WarnContext(ctx, "Error asking LLM for best file", "attempt", attempt+1, "error", err)
 			continue
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			slog.Warn("No response from LLM when asking for best file", "attempt", attempt+1)
+			slog.WarnContext(ctx, "No response from LLM when asking for best file", "attempt", attempt+1)
 			continue
 		}
 		response := strings.TrimSpace(resp.Message.Contents[0].Text)
-		slog.Info("LLM suggested file", "file", response)
+		slog.InfoContext(ctx, "LLM suggested file", "file", response)
 		if selected, ok := s.files[response]; ok {
 			return selected, nil
 		}
-		slog.Warn("LLM suggested invalid file", "file", response, "attempt", attempt+1)
+		slog.WarnContext(ctx, "LLM suggested invalid file", "file", response, "attempt", attempt+1)
 	}
 
 	return internal.Item{}, fmt.Errorf("failed to get a valid file after 3 attempts")
@@ -149,7 +149,7 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.Error("Error generating response", "error", err)
+		slog.ErrorContext(ctx, "Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -171,17 +171,17 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	}
 	var err error
 	if len(msgs) > 0 {
-		slog.Info("Follow up question", "file", sd.Item.Name)
+		slog.InfoContext(ctx, "Follow up question", "file", sd.Item.Name)
 		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
 	} else {
 		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
-			slog.Error("Error asking LLM for best file", "error", err)
+			slog.ErrorContext(ctx, "Error asking LLM for best file", "error", err)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
-		slog.Info("Selected best file for response", "file", sd.Item.Name)
+		slog.InfoContext(ctx, "Selected best file for response", "file", sd.Item.Name)
 		fileContent, err := s.cityData.ReadFile(sd.Item.Name)
 		if err != nil {
-			slog.Error("Error reading selected file", "file", sd.Item.Name, "error", err)
+			slog.ErrorContext(ctx, "Error reading selected file", "file", sd.Item.Name, "error", err)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
 		prompt := fmt.Sprintf(
@@ -196,7 +196,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.Error("Error generating response", "error", err)
+		slog.ErrorContext(ctx, "Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -206,6 +206,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
@@ -232,7 +233,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	// Save state after adding a new message.
 	s.stateLock.Lock()
 	if err := s.saveState(); err != nil {
-		slog.Error("Failed to save state", "error", err)
+		slog.ErrorContext(ctx, "Failed to save state", "error", err)
 	}
 	s.stateLock.Unlock()
 
@@ -335,11 +336,11 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
+	ctx := r.Context()
 	tmpl, err := template.New("chat").Parse(htmlTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.Error("Template parsing error", "error", err)
+		slog.ErrorContext(ctx, "Template parsing error", "error", err)
 		return
 	}
 
@@ -352,7 +353,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	err = tmpl.Execute(w, data)
 	if err != nil {
-		slog.Error("Template execution error", "error", err)
+		slog.ErrorContext(ctx, "Template execution error", "error", err)
 	}
 }
 
@@ -380,10 +381,10 @@ func getConfigDir() (string, error) {
 }
 
 // loadState loads the server state from disk
-func (s *server) loadState() error {
+func (s *server) loadState(ctx context.Context) error {
 	s.state.Sessions = map[string]*SessionData{}
 	if _, err := os.Stat(s.statePath); os.IsNotExist(err) {
-		slog.Info("No existing state file found, starting with empty state", "path", s.statePath)
+		slog.InfoContext(ctx, "No existing state file found, starting with empty state", "path", s.statePath)
 		return nil
 	} else if err != nil {
 		return fmt.Errorf("error checking state file: %w", err)
@@ -395,7 +396,7 @@ func (s *server) loadState() error {
 	if err := json.Unmarshal(data, &s.state); err != nil {
 		return fmt.Errorf("error parsing state file: %w", err)
 	}
-	slog.Info("Loaded state from disk", "sessions", len(s.state.Sessions))
+	slog.InfoContext(ctx, "Loaded state from disk", "sessions", len(s.state.Sessions))
 	return nil
 }
 
@@ -425,9 +426,9 @@ func (s *server) start(ctx context.Context, port string) error {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 	s.statePath = filepath.Join(configDir, s.appName+".json")
-	slog.Info("Using state file", "path", s.statePath)
-	if err := s.loadState(); err != nil {
-		slog.Warn("Failed to load state from disk, starting with empty state", "error", err)
+	slog.InfoContext(ctx, "Using state file", "path", s.statePath)
+	if err := s.loadState(ctx); err != nil {
+		slog.WarnContext(ctx, "Failed to load state from disk, starting with empty state", "error", err)
 	}
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
@@ -460,15 +461,15 @@ func (s *server) start(ctx context.Context, port string) error {
 
 	errorChan := make(chan error, 1)
 	go func() {
-		slog.Info("Server starting", "url", fmt.Sprintf("http://localhost:%s", port))
+		slog.InfoContext(ctx, "Server starting", "url", fmt.Sprintf("http://localhost:%s", port))
 		errorChan <- srv.ListenAndServe()
 	}()
 	select {
 	case <-ctx.Done():
-		slog.Info("main", "message", "Shutdown signal received, gracefully shutting down server...")
+		slog.InfoContext(ctx, "main", "message", "Shutdown signal received, gracefully shutting down server...")
 		s.stateLock.Lock()
 		if err := s.saveState(); err != nil {
-			slog.Error("Failed to save state during shutdown", "error", err)
+			slog.ErrorContext(ctx, "Failed to save state during shutdown", "error", err)
 		}
 		s.stateLock.Unlock()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -476,14 +477,14 @@ func (s *server) start(ctx context.Context, port string) error {
 		if err := srv.Shutdown(shutdownCtx); err != nil {
 			return fmt.Errorf("server shutdown error: %w", err)
 		}
-		slog.Info("Server gracefully stopped")
+		slog.InfoContext(ctx, "Server gracefully stopped")
 		return nil
 	case err := <-errorChan:
 		return fmt.Errorf("server error: %w", err)
 	}
 }
 
-func watchExecutable(cancel context.CancelFunc) error {
+func watchExecutable(ctx context.Context, cancel context.CancelFunc) error {
 	exePath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
@@ -500,13 +501,13 @@ func watchExecutable(cancel context.CancelFunc) error {
 		for range ticker.C {
 			currentStat, err := os.Stat(exePath)
 			if err != nil {
-				slog.Warn("Could not stat executable", "error", err)
+				slog.WarnContext(ctx, "Could not stat executable", "error", err)
 				continue
 			}
 			currentModTime := currentStat.ModTime()
 			currentSize := currentStat.Size()
 			if !currentModTime.Equal(initialModTime) || currentSize != initialSize {
-				slog.Info("Executable file was modified, initiating shutdown...")
+				slog.InfoContext(ctx, "Executable file was modified, initiating shutdown...")
 				cancel()
 				break
 			}
@@ -559,8 +560,8 @@ func mainImpl() error {
 		},
 	}))
 	slog.SetDefault(logger)
-	if err := watchExecutable(cancel); err != nil {
-		slog.Warn("Could not set up executable watcher", "error", err)
+	if err := watchExecutable(ctx, cancel); err != nil {
+		slog.WarnContext(ctx, "Could not set up executable watcher", "error", err)
 	}
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
