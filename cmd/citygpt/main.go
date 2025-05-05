@@ -90,18 +90,17 @@ type server struct {
 	statePath string
 }
 
+func generateSessionID() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return fmt.Sprintf("%d", time.Now().UnixNano())
+	}
+	return fmt.Sprintf("%x", b[:])
+}
+
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
 //
 // It retries up to 3 times with increasing temperature.
-func generateSessionID() string {
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
-	if err != nil {
-		return fmt.Sprintf("%d", time.Now().UnixNano())
-	}
-	return fmt.Sprintf("%x", b)
-}
-
 func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (internal.Item, error) {
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
@@ -207,10 +206,6 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
@@ -452,10 +447,10 @@ func (s *server) start(ctx context.Context, port string) error {
 	s.summary = strings.Join(content, "\n")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", s.handleIndex)
-	mux.HandleFunc("/api/chat", s.handleChat)
-	mux.HandleFunc("/city-data/", s.handleCityData)
-	mux.HandleFunc("/city-data", s.handleCityData)
+	mux.HandleFunc("GET /", s.handleIndex)
+	mux.HandleFunc("POST /api/chat", s.handleChat)
+	mux.HandleFunc("GET /city-data/", s.handleCityData)
+	mux.HandleFunc("GET /city-data", s.handleCityData)
 
 	srv := &http.Server{
 		Addr:              ":" + port,
