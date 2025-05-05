@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
-	"github.com/oschwald/geoip2-golang"
+	"github.com/oschwald/maxminddb-golang/v2"
 )
 
 // IPChecker is an interface for services that can check if an IP is from a specified country
@@ -26,40 +26,28 @@ type IPChecker interface {
 
 // GeoIPChecker implements IPChecker using the MaxMind GeoIP database
 type GeoIPChecker struct {
-	mu     sync.RWMutex
-	reader *geoip2.Reader
+	reader *maxminddb.Reader
 }
 
 // NewGeoIPChecker creates a new GeoIPChecker using the database file from user's config directory
 func NewGeoIPChecker() (*GeoIPChecker, error) {
-	// Get user's home directory
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user home directory: %w", err)
 	}
-
-	// Construct path to mmdb file
 	dbPath := filepath.Join(homeDir, ".config", "citygpt", "ipinfo_lite.mmdb")
-
-	// Check if file exists
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("GeoIP database not found at %s. Please download it by following the instructions in the internal/ipgeo/README.md file", dbPath)
 	}
-
-	// Open the database file
-	reader, err := geoip2.Open(dbPath)
+	reader, err := maxminddb.Open(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open GeoIP database: %w", err)
 	}
-
 	return &GeoIPChecker{reader: reader}, nil
 }
 
 // Close closes the underlying GeoIP database reader
 func (g *GeoIPChecker) Close() error {
-	g.mu.Lock()
-	defer g.mu.Unlock()
-
 	if g.reader != nil {
 		return g.reader.Close()
 	}
@@ -68,25 +56,29 @@ func (g *GeoIPChecker) Close() error {
 
 // IsFromCanada checks if the given IP address is from Canada
 func (g *GeoIPChecker) IsFromCanada(ip net.IP) (bool, error) {
-	g.mu.RLock()
-	defer g.mu.RUnlock()
-
 	if g.reader == nil {
 		return false, errors.New("geoip database not initialized")
 	}
-
 	// Skip for private/local IPs
 	if ip == nil || ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
 		// For development purposes, consider local IPs as Canadian
 		return true, nil
 	}
 
-	record, err := g.reader.Country(ip)
+	// TODO: Sounds inefficient.
+	addr, err := netip.ParseAddr(ip.String())
 	if err != nil {
 		return false, err
 	}
-
-	return record.Country.IsoCode == "CA", nil
+	var data struct {
+		Country struct {
+			ISOCode string `maxminddb:"iso_code"`
+		} `maxminddb:"country"`
+	}
+	if err = g.reader.Lookup(addr).Decode(&data); err != nil {
+		return false, err
+	}
+	return data.Country.ISOCode == "CA", nil
 }
 
 // MockIPChecker is a simple implementation of IPChecker for testing
