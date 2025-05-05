@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
+Use of this source code is governed under the AGPL v3
+that can be found in the LICENSE file.
+-->
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>{{.AppName}} - About</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root {
+			--primary-color: #4361ee;
+			--primary-light: #e6edff;
+			--secondary-color: #3f37c9;
+			--accent-color: #4cc9f0;
+			--light-gray: #e0e0e0;
+			--dark-gray: #555;
+			--background: #fafafa;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: 'Inter', sans-serif;
+			background-color: var(--background);
+			color: #333;
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 20px 0;
+			border-bottom: 1px solid var(--light-gray);
+			margin-bottom: 30px;
+		}
+
+		.logo {
+			font-size: 24px;
+			font-weight: 700;
+			color: var(--primary-color);
+			text-decoration: none;
+		}
+
+		.nav-links a {
+			text-decoration: none;
+			color: var(--dark-gray);
+			margin-left: 20px;
+			transition: color 0.3s;
+		}
+
+		.nav-links a:hover {
+			color: var(--primary-color);
+		}
+
+		.section {
+			margin-bottom: 40px;
+		}
+
+		h1 {
+			font-size: 32px;
+			color: var(--primary-color);
+			margin-bottom: 20px;
+		}
+
+		h2 {
+			font-size: 24px;
+			color: var(--secondary-color);
+			margin-top: 30px;
+			margin-bottom: 15px;
+		}
+
+		p {
+			margin-bottom: 15px;
+		}
+
+		a {
+			color: var(--primary-color);
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		.disclaimer {
+			background-color: #fff3cd;
+			border-left: 4px solid #ffc107;
+			padding: 15px;
+			margin-bottom: 20px;
+		}
+
+		footer {
+			text-align: center;
+			padding: 20px 0;
+			border-top: 1px solid var(--light-gray);
+			margin-top: 50px;
+			color: var(--dark-gray);
+			font-size: 14px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<header>
+			<a href="/" class="logo">{{.AppName}}</a>
+			<div class="nav-links">
+				<a href="/"><i class="fa-solid fa-comments"></i> Chat</a>
+				<a href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
+			</div>
+		</header>
+
+		<div class="section">
+			<h1>About {{.AppName}}</h1>
+			<p>{{.AppName}} is an AI assistant designed to provide information about city bylaws and regulations. It
+				aims to make public information more accessible through conversational AI.</p>
+		</div>
+
+		<div class="section disclaimer">
+			<h2>Disclaimer</h2>
+			<p>Please be aware of the following important information:</p>
+			<ul>
+				<li>{{.AppName}} is based on public information and documents, but it is not an official government
+					service.</li>
+				<li>As an AI model, {{.AppName}} may make mistakes, provide incomplete information, or misinterpret
+					questions.</li>
+				<li>You are using this service at your own risk. Always verify important information with official
+					sources.</li>
+				<li>The information provided should not be considered legal advice.</li>
+			</ul>
+		</div>
+
+		<div class="section">
+			<h2>Privacy Policy</h2>
+			<p>We are committed to protecting your privacy while providing our service. Here's how we handle your data:
+			</p>
+			<ul>
+				<li>We log IP addresses for security and geographic restriction purposes.</li>
+				<li>We do not log or store the content of your conversations beyond what is necessary for the
+					functioning of the service.</li>
+				<li>The service is designed to be used only within Canada and access is restricted accordingly.</li>
+			</ul>
+		</div>
+
+		<div class="section">
+			<h2>Open Source</h2>
+			<p>{{.AppName}} is an open source project. The full source code is available at <a
+					href="https://github.com/maruel/citygpt" target="_blank">https://github.com/maruel/citygpt</a>.</p>
+			<p>The software is licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html"
+					target="_blank">GNU Affero General Public License v3.0 (AGPL-3.0)</a>, which means you are free to
+				use, modify, and distribute the code under the terms of this license.</p>
+		</div>
+
+		<footer>
+			&copy; 2025 {{.AppName}} - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a>
+		</footer>
+	</div>
+</body>
+
+</html>

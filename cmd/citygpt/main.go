@@ -56,7 +56,10 @@ type ChatResponse struct {
 }
 
 //go:embed templates/chat.html
-var htmlTemplate string
+var chatHTMLTemplate string
+
+//go:embed templates/about.html
+var aboutHTMLTemplate string
 
 type State struct {
 	Sessions map[string]*SessionData `json:"sessions"`
@@ -350,7 +353,29 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	tmpl, err := template.New("chat").Parse(htmlTemplate)
+	tmpl, err := template.New("chat").Parse(chatHTMLTemplate)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	// Pass the app name to the template
+	data := struct {
+		AppName string
+	}{
+		AppName: s.appName,
+	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "err", err)
+	}
+}
+
+func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	tmpl, err := template.New("about").Parse(aboutHTMLTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
@@ -449,6 +474,7 @@ func (s *server) start(ctx context.Context, port string) error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", s.handleIndex)
+	mux.HandleFunc("GET /about", s.handleAbout)
 	mux.HandleFunc("POST /api/chat", s.handleChat)
 	mux.HandleFunc("GET /city-data/", s.handleCityData)
 	mux.HandleFunc("GET /city-data", s.handleCityData)
