@@ -7,6 +7,7 @@ require (
 	github.com/maruel/genai v0.0.0-20250503214016-861a3ebf609c
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
+	github.com/oschwald/geoip2-golang v1.11.0
 	golang.org/x/net v0.39.0
 	golang.org/x/sync v0.12.0
 )
@@ -20,7 +21,6 @@ require (
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/maruel/httpjson v0.3.0 // indirect
 	github.com/maruel/roundtrippers v0.2.1 // indirect
-	github.com/oschwald/geoip2-golang v1.11.0 // indirect
 	github.com/oschwald/maxminddb-golang v1.13.0 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	golang.org/x/sys v0.32.0 // indirect
