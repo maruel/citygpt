@@ -2,7 +2,7 @@
 <html lang="en">
 <!--
 Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
-Use of this source code is governed under the Apache License, Version 2.0
+Use of this source code is governed under the AGPL v3
 that can be found in the LICENSE file.
 -->
 
@@ -89,7 +89,8 @@ that can be found in the LICENSE file.
 			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
 			margin-bottom: 20px;
 			scroll-behavior: smooth;
-			min-height: 100px; /* Ensure minimum height even on small screens */
+			min-height: 100px;
+			/* Ensure minimum height even on small screens */
 		}
 
 		.message-row {
@@ -136,7 +137,7 @@ that can be found in the LICENSE file.
 			white-space: pre-wrap;
 			word-wrap: break-word;
 		}
-		
+
 		.message-content a {
 			color: #2563eb;
 			font-weight: 500;
@@ -144,12 +145,12 @@ that can be found in the LICENSE file.
 			border-bottom: 1px solid rgba(37, 99, 235, 0.3);
 			transition: border-color 0.2s, color 0.2s;
 		}
-		
+
 		.message-content a:hover {
 			color: #1e40af;
 			border-bottom-color: rgba(30, 64, 175, 0.7);
 		}
-		
+
 		.message-content a:first-child {
 			display: inline-block;
 			padding: 6px 12px;
@@ -159,7 +160,7 @@ that can be found in the LICENSE file.
 			margin-bottom: 8px;
 			transition: background-color 0.2s;
 		}
-		
+
 		.message-content a:first-child:hover {
 			background-color: rgba(37, 99, 235, 0.2);
 		}
@@ -305,7 +306,8 @@ that can be found in the LICENSE file.
 		@media (max-width: 768px) {
 			.container {
 				padding: 10px;
-				height: calc(100vh - 60px); /* Reduced height for mobile */
+				height: calc(100vh - 60px);
+				/* Reduced height for mobile */
 			}
 
 			header {
@@ -416,7 +418,7 @@ that can be found in the LICENSE file.
 		function loadSessionMessages() {
 			// Clear previous messages first
 			chatContainer.innerHTML = '';
-			
+
 			// Load messages from localStorage if they exist
 			const storedMessages = localStorage.getItem('chatMessages');
 			if (storedMessages) {
@@ -434,7 +436,7 @@ that can be found in the LICENSE file.
 			if (storedMessages) {
 				messages = JSON.parse(storedMessages);
 			}
-			messages.push({ role, content });
+			messages.push({role, content});
 			localStorage.setItem('chatMessages', JSON.stringify(messages));
 		}
 
@@ -451,7 +453,7 @@ that can be found in the LICENSE file.
 			typingIndicator.style.display = 'flex';
 
 			// Prepare request with sessionID if it exists
-			const requestBody = { message };
+			const requestBody = {message};
 			if (sessionID) {
 				requestBody.session_id = sessionID;
 			}
@@ -468,13 +470,13 @@ that can be found in the LICENSE file.
 				.then(data => {
 					// Hide typing indicator
 					typingIndicator.style.display = 'none';
-					
+
 					// Save the session ID if it came back from the server
 					if (data.session_id) {
 						sessionID = data.session_id;
 						localStorage.setItem('sessionID', sessionID);
 					}
-					
+
 					// Add response to chat
 					addMessageToChat(data.message.role, data.message.content);
 				})
@@ -507,7 +509,7 @@ that can be found in the LICENSE file.
 			// Create message content
 			const messageContent = document.createElement('div');
 			messageContent.classList.add('message-content');
-			
+
 			// Use innerHTML for assistant messages to support HTML links
 			// Use textContent for user messages for security
 			if (role === 'assistant') {
@@ -529,7 +531,7 @@ that can be found in the LICENSE file.
 
 			chatContainer.appendChild(messageRow);
 			chatContainer.scrollTop = chatContainer.scrollHeight;
-			
+
 			// Save message to localStorage if needed
 			if (saveToStorage) {
 				saveMessageToStorage(role, content);
@@ -542,10 +544,10 @@ that can be found in the LICENSE file.
 			sessionID = '';
 			localStorage.removeItem('sessionID');
 			localStorage.removeItem('chatMessages');
-			
+
 			// Clear chat UI
 			chatContainer.innerHTML = '';
-			
+
 			// Show welcome message
 			setTimeout(() => {
 				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
@@ -585,7 +587,7 @@ that can be found in the LICENSE file.
 		window.addEventListener('DOMContentLoaded', () => {
 			// Add reset button
 			addResetButton();
-			
+
 			// Check if there's an existing session
 			if (sessionID) {
 				// Load chat history from localStorage
