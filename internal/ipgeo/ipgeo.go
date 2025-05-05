@@ -74,11 +74,11 @@ func (g *GeoIPChecker) GetCountry(ip net.IP) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	country := ""
-	if err = g.reader.Lookup(addr).Decode(&country); err != nil {
+	m := map[string]string{}
+	if err = g.reader.Lookup(addr).DecodePath(&m); err != nil {
 		return "", err
 	}
-	return country, nil
+	return m["country_code"], nil
 }
 
 // MockIPChecker is a simple implementation of IPChecker for testing

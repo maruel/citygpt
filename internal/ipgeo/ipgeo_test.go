@@ -11,6 +11,21 @@ import (
 	"testing"
 )
 
+func TestIPLookup(t *testing.T) {
+	g, err := NewGeoIPChecker()
+	if err != nil {
+		t.Skip(err.Error())
+	}
+	ip := net.IPv4(204, 48, 77, 92)
+	got, err := g.GetCountry(ip)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != "CA" {
+		t.Fatalf("wanted CA, got %s", got)
+	}
+}
+
 func TestGetRealIP(t *testing.T) {
 	tests := []struct {
 		name       string
