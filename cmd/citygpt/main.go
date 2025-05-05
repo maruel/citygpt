@@ -170,8 +170,8 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 		msgs = append(msgs, genai.NewTextMessage(msg.Role, msg.Content))
 	}
 	var err error
-	if len(msgs) > 0 {
-		slog.InfoContext(ctx, "citygpt", "msg", "Follow up question", "file", sd.Item.Name)
+	if len(msgs) > 1 {
+		slog.InfoContext(ctx, "citygpt", "msg", "Follow up question", "file", sd.Item.Name, "msgs", len(msgs))
 		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
 	} else {
 		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
