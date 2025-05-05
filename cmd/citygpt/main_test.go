@@ -97,3 +97,31 @@ func TestAppNameFlag(t *testing.T) {
 		t.Errorf("Custom app name should be CustomName, got %s", s.appName)
 	}
 }
+
+// TestTemplateHeaderTitle verifies that the templates are using the HeaderTitle field correctly
+func TestTemplateHeaderTitle(t *testing.T) {
+	s := server{
+		appName: "TestApp",
+	}
+
+	// Test the About page which we just fixed
+	t.Run("About page should render with HeaderTitle", func(t *testing.T) {
+		req, err := http.NewRequest("GET", "/about", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(s.handleAbout)
+		handler.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		expectedContent := "TestApp About"
+		if !strings.Contains(rr.Body.String(), expectedContent) {
+			t.Errorf("handler returned unexpected body: expected it to contain %q", expectedContent)
+		}
+	})
+}

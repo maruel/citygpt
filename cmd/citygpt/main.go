@@ -427,10 +427,12 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		AppName     string
 		PageTitle   string
+		HeaderTitle string
 		CurrentPage string
 	}{
 		AppName:     s.appName,
 		PageTitle:   "About",
+		HeaderTitle: "About",
 		CurrentPage: "about",
 	}
 	err = tmpl.Execute(w, data)
