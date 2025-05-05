@@ -114,24 +114,24 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 	for attempt := range 3 {
 		// Increase temperature with each attempt
 		temperature := 0.1 * float64(attempt+1)
-		slog.InfoContext(ctx, "Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
+		slog.InfoContext(ctx, "citygpt", "msg", "Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
 		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {
-			slog.WarnContext(ctx, "Error asking LLM for best file", "attempt", attempt+1, "error", err)
+			slog.WarnContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "attempt", attempt+1, "error", err)
 			continue
 		}
 		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			slog.WarnContext(ctx, "No response from LLM when asking for best file", "attempt", attempt+1)
+			slog.WarnContext(ctx, "citygpt", "msg", "No response from LLM when asking for best file", "attempt", attempt+1)
 			continue
 		}
 		response := strings.TrimSpace(resp.Message.Contents[0].Text)
-		slog.InfoContext(ctx, "LLM suggested file", "file", response)
+		slog.InfoContext(ctx, "citygpt", "msg", "LLM suggested file", "file", response)
 		if selected, ok := s.files[response]; ok {
 			return selected, nil
 		}
-		slog.WarnContext(ctx, "LLM suggested invalid file", "file", response, "attempt", attempt+1)
+		slog.WarnContext(ctx, "citygpt", "msg", "LLM suggested invalid file", "file", response, "attempt", attempt+1)
 	}
 
 	return internal.Item{}, fmt.Errorf("failed to get a valid file after 3 attempts")
@@ -153,7 +153,7 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.ErrorContext(ctx, "Error generating response", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -175,17 +175,17 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	}
 	var err error
 	if len(msgs) > 0 {
-		slog.InfoContext(ctx, "Follow up question", "file", sd.Item.Name)
+		slog.InfoContext(ctx, "citygpt", "msg", "Follow up question", "file", sd.Item.Name)
 		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
 	} else {
 		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
-			slog.ErrorContext(ctx, "Error asking LLM for best file", "error", err)
+			slog.ErrorContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "error", err)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
-		slog.InfoContext(ctx, "Selected best file for response", "file", sd.Item.Name)
+		slog.InfoContext(ctx, "citygpt", "msg", "Selected best file for response", "file", sd.Item.Name)
 		fileContent, err := s.cityData.ReadFile(sd.Item.Name)
 		if err != nil {
-			slog.ErrorContext(ctx, "Error reading selected file", "file", sd.Item.Name, "error", err)
+			slog.ErrorContext(ctx, "citygpt", "msg", "Error reading selected file", "file", sd.Item.Name, "error", err)
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
 		prompt := fmt.Sprintf(
@@ -200,7 +200,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
 	if err != nil {
-		slog.ErrorContext(ctx, "Error generating response", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "error", err)
 		return "Sorry, there was an error processing your request."
 	}
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
@@ -216,13 +216,13 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	if s.ipChecker != nil {
 		clientIP, err := ipgeo.GetRealIP(r)
 		if err != nil {
-			slog.WarnContext(ctx, "Failed to determine client IP", "error", err)
+			slog.WarnContext(ctx, "citygpt", "msg", "Failed to determine client IP", "error", err)
 		} else {
 			countryCode, err := s.ipChecker.GetCountry(clientIP)
 			if err != nil {
-				slog.WarnContext(ctx, "Failed to check IP country code", "ip", clientIP, "error", err)
+				slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "error", err)
 			} else if countryCode != "CA" && countryCode != "local" {
-				slog.InfoContext(ctx, "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
+				slog.InfoContext(ctx, "citygpt", "msg", "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
 				w.Header().Set("Content-Type", "application/json")
 
 				// Return the error message as a normal chat response
@@ -267,7 +267,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	// Save state after adding a new message.
 	s.stateLock.Lock()
 	if err := s.saveState(); err != nil {
-		slog.ErrorContext(ctx, "Failed to save state", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state", "error", err)
 	}
 	s.stateLock.Unlock()
 
@@ -374,7 +374,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.New("chat").Parse(htmlTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "Template parsing error", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "error", err)
 		return
 	}
 
@@ -387,7 +387,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	err = tmpl.Execute(w, data)
 	if err != nil {
-		slog.ErrorContext(ctx, "Template execution error", "error", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "error", err)
 	}
 }
 
@@ -418,7 +418,7 @@ func getConfigDir() (string, error) {
 func (s *server) loadState(ctx context.Context) error {
 	s.state.Sessions = map[string]*SessionData{}
 	if _, err := os.Stat(s.statePath); os.IsNotExist(err) {
-		slog.InfoContext(ctx, "No existing state file found, starting with empty state", "path", s.statePath)
+		slog.InfoContext(ctx, "citygpt", "msg", "No existing state file found, starting with empty state", "path", s.statePath)
 		return nil
 	} else if err != nil {
 		return fmt.Errorf("error checking state file: %w", err)
@@ -430,7 +430,7 @@ func (s *server) loadState(ctx context.Context) error {
 	if err := json.Unmarshal(data, &s.state); err != nil {
 		return fmt.Errorf("error parsing state file: %w", err)
 	}
-	slog.InfoContext(ctx, "Loaded state from disk", "sessions", len(s.state.Sessions))
+	slog.InfoContext(ctx, "citygpt", "msg", "Loaded state from disk", "sessions", len(s.state.Sessions), "path", s.statePath)
 	return nil
 }
 
@@ -452,6 +452,16 @@ func (s *server) saveState() error {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
+	var err error
+	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {
+		slog.WarnContext(ctx, "citygpt", "msg", "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
+	} else {
+		defer func() {
+			if err := s.ipChecker.Close(); err != nil {
+				slog.WarnContext(ctx, "citygpt", "msg", "Failed to close GeoIP database", "error", err)
+			}
+		}()
+	}
 	configDir, err := getConfigDir()
 	if err != nil {
 		return fmt.Errorf("failed to determine config directory: %w", err)
@@ -460,9 +470,8 @@ func (s *server) start(ctx context.Context, port string) error {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 	s.statePath = filepath.Join(configDir, s.appName+".json")
-	slog.InfoContext(ctx, "Using state file", "path", s.statePath)
 	if err := s.loadState(ctx); err != nil {
-		slog.WarnContext(ctx, "Failed to load state from disk, starting with empty state", "error", err)
+		return err
 	}
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
@@ -495,15 +504,15 @@ func (s *server) start(ctx context.Context, port string) error {
 
 	errorChan := make(chan error, 1)
 	go func() {
-		slog.InfoContext(ctx, "Server starting", "url", fmt.Sprintf("http://localhost:%s", port))
+		slog.InfoContext(ctx, "citygpt", "msg", "Server starting", "url", fmt.Sprintf("http://localhost:%s", port))
 		errorChan <- srv.ListenAndServe()
 	}()
 	select {
 	case <-ctx.Done():
-		slog.InfoContext(ctx, "main", "message", "Shutdown signal received, gracefully shutting down server...")
+		slog.InfoContext(ctx, "citygpt", "msg", "Shutdown signal received, gracefully shutting down server...")
 		s.stateLock.Lock()
 		if err := s.saveState(); err != nil {
-			slog.ErrorContext(ctx, "Failed to save state during shutdown", "error", err)
+			slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state during shutdown", "error", err)
 		}
 		s.stateLock.Unlock()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -511,7 +520,6 @@ func (s *server) start(ctx context.Context, port string) error {
 		if err := srv.Shutdown(shutdownCtx); err != nil {
 			return fmt.Errorf("server shutdown error: %w", err)
 		}
-		slog.InfoContext(ctx, "Server gracefully stopped")
 		return nil
 	case err := <-errorChan:
 		return fmt.Errorf("server error: %w", err)
@@ -535,13 +543,13 @@ func watchExecutable(ctx context.Context, cancel context.CancelFunc) error {
 		for range ticker.C {
 			currentStat, err := os.Stat(exePath)
 			if err != nil {
-				slog.WarnContext(ctx, "Could not stat executable", "error", err)
+				slog.WarnContext(ctx, "citygpt", "msg", "Could not stat executable", "error", err)
 				continue
 			}
 			currentModTime := currentStat.ModTime()
 			currentSize := currentStat.Size()
 			if !currentModTime.Equal(initialModTime) || currentSize != initialSize {
-				slog.InfoContext(ctx, "Executable file was modified, initiating shutdown...")
+				slog.InfoContext(ctx, "citygpt", "msg", "Executable file was modified, initiating shutdown...")
 				cancel()
 				break
 			}
@@ -595,7 +603,7 @@ func mainImpl() error {
 	}))
 	slog.SetDefault(logger)
 	if err := watchExecutable(ctx, cancel); err != nil {
-		slog.WarnContext(ctx, "Could not set up executable watcher", "error", err)
+		return err
 	}
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
@@ -608,29 +616,7 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
-
-	// Setup the server
-	s := server{
-		c:        c,
-		cityData: ottawa.DataFS,
-		appName:  *appName,
-	}
-
-	// Initialize the IP checker
-	ipChecker, err := ipgeo.NewGeoIPChecker()
-	if err != nil {
-		slog.WarnContext(ctx, "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
-	} else {
-		deferCleanup := func() {
-			if err := ipChecker.Close(); err != nil {
-				slog.WarnContext(ctx, "Failed to close GeoIP database", "error", err)
-			}
-		}
-		defer deferCleanup()
-		s.ipChecker = ipChecker
-		slog.InfoContext(ctx, "GeoIP database loaded successfully, IP restriction enabled")
-	}
-
+	s := server{c: c, cityData: ottawa.DataFS, appName: *appName}
 	return s.start(ctx, *port)
 }
 

@@ -7,6 +7,8 @@ package ipgeo
 import (
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/netip"
@@ -19,6 +21,7 @@ import (
 
 // IPChecker is an interface for services that can check the country of an IP address
 type IPChecker interface {
+	io.Closer
 	// GetCountry returns the ISO country code for the given IP address.
 	// Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
 	// and "local" for local, private, or unspecified IPs.
@@ -44,6 +47,7 @@ func NewGeoIPChecker() (*GeoIPChecker, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open GeoIP database: %w", err)
 	}
+	slog.Info("ipgeo", "loaded", dbPath)
 	return &GeoIPChecker{reader: reader}, nil
 }
 
@@ -59,9 +63,6 @@ func (g *GeoIPChecker) Close() error {
 // Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
 // and "local" for local, private, or unspecified IPs.
 func (g *GeoIPChecker) GetCountry(ip net.IP) (string, error) {
-	if g.reader == nil {
-		return "", errors.New("geoip database not initialized")
-	}
 	// Skip for private/local IPs
 	if ip == nil || ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
 		return "local", nil
