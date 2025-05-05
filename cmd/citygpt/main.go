@@ -33,6 +33,7 @@ import (
 	"github.com/maruel/citygpt"
 	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/citygpt/internal"
+	"github.com/maruel/citygpt/internal/ipgeo"
 	"github.com/maruel/genai"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
@@ -88,6 +89,9 @@ type server struct {
 
 	// statePath is the path to the state file on disk
 	statePath string
+
+	// ipChecker is used to check if an IP is from Canada
+	ipChecker ipgeo.IPChecker
 }
 
 func generateSessionID() string {
@@ -207,6 +211,36 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	// Check if the request is from Canada
+	if s.ipChecker != nil {
+		clientIP, err := ipgeo.GetRealIP(r)
+		if err != nil {
+			slog.WarnContext(ctx, "Failed to determine client IP", "error", err)
+		} else {
+			isCanadian, err := s.ipChecker.IsFromCanada(clientIP)
+			if err != nil {
+				slog.WarnContext(ctx, "Failed to check if IP is Canadian", "ip", clientIP, "error", err)
+			} else if !isCanadian {
+				slog.InfoContext(ctx, "Blocked non-Canadian IP", "ip", clientIP)
+				w.Header().Set("Content-Type", "application/json")
+
+				// Return the error message as a normal chat response
+				response := ChatResponse{
+					Message: Message{
+						Role:    "assistant",
+						Content: "I'm sorry, I can only be used within Canada",
+					},
+				}
+
+				// Return with a 403 status code
+				w.WriteHeader(http.StatusForbidden)
+				_ = json.NewEncoder(w).Encode(response)
+				return
+			}
+		}
+	}
+
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
@@ -566,6 +600,7 @@ func mainImpl() error {
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
+	geoipDB := flag.String("geoip-db", "", "Path to the MaxMind GeoIP country database file")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unsupported argument")
@@ -574,11 +609,35 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
+
+	// Setup the server
 	s := server{
 		c:        c,
 		cityData: ottawa.DataFS,
 		appName:  *appName,
 	}
+
+	// Initialize the IP checker
+	if *geoipDB != "" {
+		ipChecker, err := ipgeo.NewGeoIPChecker(*geoipDB)
+		if err != nil {
+			slog.WarnContext(ctx, "Failed to initialize GeoIP database, IP restriction disabled", "error", err)
+		} else {
+			deferCleanup := func() {
+				if err := ipChecker.Close(); err != nil {
+					slog.WarnContext(ctx, "Failed to close GeoIP database", "error", err)
+				}
+			}
+			defer deferCleanup()
+			s.ipChecker = ipChecker
+			slog.InfoContext(ctx, "GeoIP database loaded successfully, IP restriction enabled")
+		}
+	} else {
+		// For development or when no database is provided, use a mock checker that allows all IPs
+		slog.InfoContext(ctx, "No GeoIP database provided, using mock IP checker")
+		s.ipChecker = ipgeo.NewMockIPChecker()
+	}
+
 	return s.start(ctx, *port)
 }
 
