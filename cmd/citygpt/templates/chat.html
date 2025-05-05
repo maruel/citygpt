@@ -393,6 +393,7 @@ that can be found in the LICENSE file.
 		const sendButton = document.getElementById('send-button');
 		const typingIndicator = document.getElementById('typing-indicator');
 		const typingText = document.getElementById('typing-text');
+		let sessionID = localStorage.getItem('sessionID') || '';
 
 		// Set typing indicator text
 		typingText.textContent = `{{.AppName}} is typing`;
@@ -411,6 +412,32 @@ that can be found in the LICENSE file.
 			return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 		}
 
+		// Load previous messages if session exists
+		function loadSessionMessages() {
+			// Clear previous messages first
+			chatContainer.innerHTML = '';
+			
+			// Load messages from localStorage if they exist
+			const storedMessages = localStorage.getItem('chatMessages');
+			if (storedMessages) {
+				const messages = JSON.parse(storedMessages);
+				messages.forEach(msg => {
+					addMessageToChat(msg.role, msg.content, false); // Don't save again
+				});
+			}
+		}
+
+		// Function to save messages to localStorage
+		function saveMessageToStorage(role, content) {
+			let messages = [];
+			const storedMessages = localStorage.getItem('chatMessages');
+			if (storedMessages) {
+				messages = JSON.parse(storedMessages);
+			}
+			messages.push({ role, content });
+			localStorage.setItem('chatMessages', JSON.stringify(messages));
+		}
+
 		// Function to send message
 		function sendMessage() {
 			const message = messageInput.value.trim();
@@ -423,18 +450,31 @@ that can be found in the LICENSE file.
 			// Show typing indicator
 			typingIndicator.style.display = 'flex';
 
+			// Prepare request with sessionID if it exists
+			const requestBody = { message };
+			if (sessionID) {
+				requestBody.session_id = sessionID;
+			}
+
 			// Send message to server
 			fetch('/api/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({message}),
+				body: JSON.stringify(requestBody),
 			})
 				.then(response => response.json())
 				.then(data => {
 					// Hide typing indicator
 					typingIndicator.style.display = 'none';
+					
+					// Save the session ID if it came back from the server
+					if (data.session_id) {
+						sessionID = data.session_id;
+						localStorage.setItem('sessionID', sessionID);
+					}
+					
 					// Add response to chat
 					addMessageToChat(data.message.role, data.message.content);
 				})
@@ -446,7 +486,7 @@ that can be found in the LICENSE file.
 		}
 
 		// Function to add message to chat
-		function addMessageToChat(role, content) {
+		function addMessageToChat(role, content, saveToStorage = true) {
 			const time = getFormattedTime();
 
 			const messageRow = document.createElement('div');
@@ -489,13 +529,73 @@ that can be found in the LICENSE file.
 
 			chatContainer.appendChild(messageRow);
 			chatContainer.scrollTop = chatContainer.scrollHeight;
+			
+			// Save message to localStorage if needed
+			if (saveToStorage) {
+				saveMessageToStorage(role, content);
+			}
 		}
 
-		// Welcome message
-		window.addEventListener('DOMContentLoaded', () => {
+		// Function to start a new session
+		function startNewSession() {
+			// Clear session data
+			sessionID = '';
+			localStorage.removeItem('sessionID');
+			localStorage.removeItem('chatMessages');
+			
+			// Clear chat UI
+			chatContainer.innerHTML = '';
+			
+			// Show welcome message
 			setTimeout(() => {
 				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
-			}, 500);
+			}, 100);
+		}
+
+		// Add a reset button to the UI
+		function addResetButton() {
+			const header = document.querySelector('header');
+			const resetButton = document.createElement('button');
+			resetButton.id = 'reset-button';
+			resetButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+			resetButton.setAttribute('title', 'Start new conversation');
+			resetButton.style.marginLeft = 'auto';
+			resetButton.style.background = 'rgba(255, 255, 255, 0.2)';
+			resetButton.style.border = 'none';
+			resetButton.style.borderRadius = '50%';
+			resetButton.style.width = '40px';
+			resetButton.style.height = '40px';
+			resetButton.style.display = 'flex';
+			resetButton.style.alignItems = 'center';
+			resetButton.style.justifyContent = 'center';
+			resetButton.style.color = 'white';
+			resetButton.style.cursor = 'pointer';
+			resetButton.style.transition = 'background-color 0.3s';
+			resetButton.addEventListener('mouseenter', () => {
+				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+			});
+			resetButton.addEventListener('mouseleave', () => {
+				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+			});
+			resetButton.addEventListener('click', startNewSession);
+			header.appendChild(resetButton);
+		}
+
+		// Initialize the chat
+		window.addEventListener('DOMContentLoaded', () => {
+			// Add reset button
+			addResetButton();
+			
+			// Check if there's an existing session
+			if (sessionID) {
+				// Load chat history from localStorage
+				loadSessionMessages();
+			} else {
+				// Show welcome message for new users
+				setTimeout(() => {
+					addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
+				}, 500);
+			}
 		});
 	</script>
 </body>
