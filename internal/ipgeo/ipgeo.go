@@ -54,10 +54,7 @@ func NewGeoIPChecker() (*GeoIPChecker, error) {
 
 // Close closes the underlying GeoIP database reader
 func (g *GeoIPChecker) Close() error {
-	if g.reader != nil {
-		return g.reader.Close()
-	}
-	return nil
+	return g.reader.Close()
 }
 
 // GetCountry returns the ISO country code for the given IP address.
@@ -79,37 +76,6 @@ func (g *GeoIPChecker) GetCountry(ip net.IP) (string, error) {
 		return "", err
 	}
 	return m["country_code"], nil
-}
-
-// MockIPChecker is a simple implementation of IPChecker for testing
-type MockIPChecker struct {
-	CountryCodes map[string]string
-}
-
-// NewMockIPChecker creates a new MockIPChecker
-func NewMockIPChecker() *MockIPChecker {
-	return &MockIPChecker{
-		CountryCodes: make(map[string]string),
-	}
-}
-
-// GetCountry returns the ISO country code for the given IP address
-func (m *MockIPChecker) GetCountry(ip net.IP) (string, error) {
-	if ip == nil {
-		return "", errors.New("nil IP address")
-	}
-
-	// Skip for private/local IPs
-	if ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
-		return "local", nil
-	}
-
-	countryCode, exists := m.CountryCodes[ip.String()]
-	if !exists {
-		// If not explicitly set, default to not Canadian
-		return "XX", nil
-	}
-	return countryCode, nil
 }
 
 // GetRealIP extracts the client's real IP address from an HTTP request,
