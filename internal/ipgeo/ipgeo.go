@@ -6,8 +6,11 @@ package ipgeo
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -27,12 +30,28 @@ type GeoIPChecker struct {
 	reader *geoip2.Reader
 }
 
-// NewGeoIPChecker creates a new GeoIPChecker using the embedded database
+// NewGeoIPChecker creates a new GeoIPChecker using the database file from user's config directory
 func NewGeoIPChecker() (*GeoIPChecker, error) {
-	reader, err := geoip2.FromBytes(geoIPData)
+	// Get user's home directory
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user home directory: %w", err)
 	}
+
+	// Construct path to mmdb file
+	dbPath := filepath.Join(homeDir, ".config", "citygpt", "ipinfo_lite.mmdb")
+
+	// Check if file exists
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("GeoIP database not found at %s. Please download it by following the instructions in the internal/ipgeo/README.md file", dbPath)
+	}
+
+	// Open the database file
+	reader, err := geoip2.Open(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open GeoIP database: %w", err)
+	}
+
 	return &GeoIPChecker{reader: reader}, nil
 }
 
