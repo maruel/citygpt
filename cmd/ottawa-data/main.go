@@ -115,12 +115,37 @@ func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir st
 	return out, err
 }
 
+type workers struct {
+	total         int
+	c             genai.ChatProvider
+	outputDir     string
+	previousIndex internal.Index
+
+	processed atomic.Int32
+	mu        sync.Mutex
+	newIndex  internal.Index
+}
+
+func (w *workers) worker(ctx context.Context, jobs <-chan string) error {
+	for fullURL := range jobs {
+		s, err := processURL(ctx, w.c, fullURL, w.outputDir)
+		if err != nil {
+			return err
+		}
+		count := w.processed.Add(1)
+		w.mu.Lock()
+		w.newIndex.Items = append(w.newIndex.Items, s)
+		fmt.Printf("Fetched (%d/%d): %s\n", count, w.total, fullURL)
+		w.mu.Unlock()
+	}
+	return nil
+}
+
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
 func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []string, outputDir string) error {
 	// Number of workers to process URLs in parallel
 	const numWorkers = 8
-	err := os.MkdirAll(outputDir, 0o755)
-	if err != nil {
+	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 	var validLinks []string
@@ -136,26 +161,22 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 			validLinks = append(validLinks, link)
 		}
 	}
-	total := len(validLinks)
-	jobs := make(chan string, total)
+	indexPath := filepath.Join(outputDir, "index.json")
+	b, err := os.ReadFile(indexPath)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	w := workers{total: len(validLinks), c: c, outputDir: outputDir, newIndex: internal.Index{Version: 1, Created: time.Now()}}
+	if b != nil {
+		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
+			return err
+		}
+	}
+	jobs := make(chan string, w.total)
 	eg, ctx := errgroup.WithContext(ctx)
-	var mu sync.Mutex
-	var processed atomic.Int32
-	data := internal.Index{Version: 1, Created: time.Now()}
 	for range numWorkers {
 		eg.Go(func() error {
-			for fullURL := range jobs {
-				s, err3 := processURL(ctx, c, fullURL, outputDir)
-				if err3 != nil {
-					return err3
-				}
-				count := processed.Add(1)
-				mu.Lock()
-				data.Items = append(data.Items, s)
-				fmt.Printf("Fetched (%d/%d): %s\n", count, total, fullURL)
-				mu.Unlock()
-			}
-			return nil
+			return w.worker(ctx, jobs)
 		})
 	}
 	for _, url := range validLinks {
@@ -163,11 +184,11 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	}
 	close(jobs)
 	err = eg.Wait()
-	d, err2 := json.MarshalIndent(data, "", " ")
+	d, err2 := json.MarshalIndent(w.newIndex, "", " ")
 	if err2 != nil {
 		panic(err2)
 	}
-	if err2 = os.WriteFile(filepath.Join(outputDir, "index.json"), d, 0o644); err == nil {
+	if err2 = os.WriteFile(indexPath, d, 0o644); err == nil {
 		err = err2
 	}
 	return err
