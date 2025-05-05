@@ -71,6 +71,10 @@ type SessionData struct {
 	Item internal.Item `json:"item"`
 	// Messages is the chat history for the session.
 	Messages []Message `json:"messages"`
+	// Created is when the session was created.
+	Created time.Time `json:"created"`
+	// Modified is when the session was last modified.
+	Modified time.Time `json:"modified"`
 
 	mu sync.Mutex
 }
@@ -234,16 +238,24 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	s.stateLock.Lock()
 	sd := s.state.Sessions[req.SessionID]
 	if sd == nil {
-		sd = &SessionData{}
+		now := time.Now()
+		sd = &SessionData{
+			Created:  now,
+			Modified: now,
+		}
 		s.state.Sessions[req.SessionID] = sd
 	}
 	s.stateLock.Unlock()
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
 	isNew := len(sd.Messages) == 0
+	// Add the user's message to the history
+	userMsg := Message{Role: "user", Content: req.Message}
+	sd.Messages = append(sd.Messages, userMsg)
 	resp := s.generateResponse(r.Context(), req.Message, sd)
 	respMsg := Message{Role: "assistant", Content: resp}
 	sd.Messages = append(sd.Messages, respMsg)
+	sd.Modified = time.Now()
 
 	// TODO: Run this asynchronously.
 	// Save state after adding a new message.
