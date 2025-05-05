@@ -55,6 +55,9 @@ type ChatResponse struct {
 	SessionID string  `json:"session_id,omitempty"`
 }
 
+//go:embed templates/layout.html
+var layoutHTMLTemplate string
+
 //go:embed templates/chat.html
 var chatHTMLTemplate string
 
@@ -365,19 +368,34 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	tmpl, err := template.New("chat").Parse(chatHTMLTemplate)
+
+	// Create a template with both layout and chat templates
+	tmpl, err := template.New("layout").Parse(layoutHTMLTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Layout template parsing error", "err", err)
+		return
+	}
+
+	// Parse the chat template
+	_, err = tmpl.Parse(chatHTMLTemplate)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Chat template parsing error", "err", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	// Pass the app name to the template
+	// Pass the app name and current page to the template
 	data := struct {
-		AppName string
+		AppName     string
+		PageTitle   string
+		HeaderTitle string
+		CurrentPage string
 	}{
-		AppName: s.appName,
+		AppName:     s.appName,
+		HeaderTitle: "Chat",
+		CurrentPage: "chat",
 	}
 	err = tmpl.Execute(w, data)
 	if err != nil {
@@ -387,19 +405,33 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	tmpl, err := template.New("about").Parse(aboutHTMLTemplate)
+
+	// Create a template with both layout and about templates
+	tmpl, err := template.New("layout").Parse(layoutHTMLTemplate)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Layout template parsing error", "err", err)
+		return
+	}
+
+	// Parse the about template
+	_, err = tmpl.Parse(aboutHTMLTemplate)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		slog.ErrorContext(ctx, "citygpt", "msg", "About template parsing error", "err", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	// Pass the app name to the template
+	// Pass the app name and current page to the template
 	data := struct {
-		AppName string
+		AppName     string
+		PageTitle   string
+		CurrentPage string
 	}{
-		AppName: s.appName,
+		AppName:     s.appName,
+		PageTitle:   "About",
+		CurrentPage: "about",
 	}
 	err = tmpl.Execute(w, data)
 	if err != nil {

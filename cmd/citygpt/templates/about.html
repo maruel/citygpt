@@ -1,274 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<!--
-Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
-Use of this source code is governed under the AGPL v3
-that can be found in the LICENSE file.
--->
+{{define "extra_css"}}
+<style>
+	.section {
+		margin-bottom: 40px;
+	}
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>{{.AppName}} - About</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root {
-			--primary-color: #4361ee;
-			--primary-light: #e6edff;
-			--secondary-color: #3f37c9;
-			--accent-color: #4cc9f0;
-			--light-gray: #e0e0e0;
-			--dark-gray: #555;
-			--background: #fafafa;
-		}
+	h1 {
+		font-size: 32px;
+		color: var(--primary-color);
+		margin-bottom: 20px;
+	}
 
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
+	h2 {
+		font-size: 24px;
+		color: var(--secondary-color);
+		margin-top: 10px;
+		margin-bottom: 15px;
+	}
 
-		body {
-			font-family: 'Inter', sans-serif;
-			background-color: var(--background);
-			color: #333;
-			max-width: 1200px;
-			margin: 0 auto;
-			height: 100vh;
-			display: flex;
-			flex-direction: column;
-			line-height: 1.6;
-		}
+	p {
+		margin-bottom: 15px;
+	}
 
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
-			flex: 1;
-		}
+	a {
+		color: var(--primary-color);
+		text-decoration: none;
+	}
 
-		header {
-			background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-			color: white;
-			padding: 1rem 2rem;
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			justify-content: space-between;
-			position: sticky;
-			top: 0;
-			z-index: 100;
-		}
+	a:hover {
+		text-decoration: underline;
+	}
 
-		.header-top {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			width: 100%;
-		}
+	.disclaimer {
+		background-color: #fff3cd;
+		border-left: 4px solid #ffc107;
+		padding: 10px;
+		margin-bottom: 20px;
+	}
 
-		header h1 {
-			font-weight: 700;
-			font-size: 1.8rem;
-			margin: 0;
-			display: flex;
-			align-items: center;
-			color: white;
-		}
+	ul {
+		padding-left: 40px;
+		margin-bottom: 15px;
+	}
+</style>
+{{end}}
 
-		header h1 i {
-			margin-right: 10px;
-			font-size: 1.5rem;
-		}
+{{define "content"}}
+<div class="section">
+	<h1>About {{.AppName}}</h1>
+	<p>{{.AppName}} is an AI assistant designed to provide information about city bylaws and regulations. It
+		aims to make public information more accessible through conversational AI.</p>
+</div>
 
-		.logo {
-			font-size: 24px;
-			font-weight: 700;
-			color: white;
-			text-decoration: none;
-		}
+<div class="section disclaimer">
+	<h2>Disclaimer</h2>
+	<p>Please be aware of the following important information:</p>
+	<ul>
+		<li>{{.AppName}} is based on public information and documents, but it is not an official government
+			service.</li>
+		<li>As an AI model, {{.AppName}} may make mistakes, provide incomplete information, or misinterpret
+			questions.</li>
+		<li>You are using this service at your own risk. Always verify important information with official
+			sources.</li>
+		<li>The information provided should not be considered legal advice.</li>
+	</ul>
+</div>
 
-		.nav-links a {
-			text-decoration: none;
-			color: white;
-			margin-left: 15px;
-			padding: 6px 12px;
-			border-radius: 4px;
-			transition: all 0.3s;
-			opacity: 0.8;
-		}
+<div class="section">
+	<h2>Privacy Policy</h2>
+	<p>We are committed to protecting your privacy while providing our service. Here's how we handle your data:
+	</p>
+	<ul>
+		<li>We log IP addresses for security and geographic restriction purposes.</li>
+		<li>We do not log or store the content of your conversations beyond what is necessary for the
+			functioning of the service.</li>
+		<li>The service is designed to be used only within Canada and access is restricted accordingly.</li>
+	</ul>
+</div>
 
-		.nav-links a:hover {
-			opacity: 1;
-			background-color: rgba(255, 255, 255, 0.1);
-		}
+<div class="section">
+	<h2>Open Source</h2>
+	<p>{{.AppName}} is based on CityGPT, an open source project. The full source code is available at <a
+			href="https://github.com/maruel/citygpt" target="_blank">https://github.com/maruel/citygpt</a>.</p>
+	<p>The software is licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html" target="_blank">GNU
+			Affero General Public License v3.0 (AGPL-3.0)</a>, which means you are free to
+		use, modify, and distribute the code under the terms of this license.</p>
+</div>
 
-		.nav-links a.active {
-			opacity: 1;
-			background-color: rgba(255, 255, 255, 0.2);
-		}
-
-		/* Responsive Styles */
-		@media (max-width: 768px) {
-			.container {
-				padding: 10px;
-			}
-
-			header {
-				padding: 0.7rem 1.2rem;
-				flex-wrap: wrap;
-			}
-
-			.header-top {
-				width: 100%;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-
-			header h1 {
-				font-size: 1.5rem;
-				flex-grow: 1;
-			}
-
-			.nav-links {
-				display: flex;
-				width: 100%;
-				margin-top: 8px;
-			}
-
-			.nav-links a {
-				margin-left: 0;
-				margin-right: 10px;
-			}
-		}
-
-		@media (max-width: 480px) {
-			.container {
-				padding: 8px;
-			}
-
-			header h1 {
-				font-size: 1.3rem;
-			}
-		}
-
-		.section {
-			margin-bottom: 40px;
-		}
-
-		h1 {
-			font-size: 32px;
-			color: var(--primary-color);
-			margin-bottom: 20px;
-		}
-
-		h2 {
-			font-size: 24px;
-			color: var(--secondary-color);
-			margin-top: 10px;
-			margin-bottom: 15px;
-		}
-
-		p {
-			margin-bottom: 15px;
-		}
-
-		a {
-			color: var(--primary-color);
-			text-decoration: none;
-		}
-
-		a:hover {
-			text-decoration: underline;
-		}
-
-		.disclaimer {
-			background-color: #fff3cd;
-			border-left: 4px solid #ffc107;
-			padding: 10px;
-			margin-bottom: 20px;
-		}
-
-		ul {
-			padding-left: 40px;
-			margin-bottom: 15px;
-		}
-
-		footer {
-			text-align: center;
-			padding: 20px 0;
-			border-top: 1px solid var(--light-gray);
-			margin-top: 50px;
-			color: var(--dark-gray);
-			font-size: 14px;
-		}
-	</style>
-</head>
-
-<body>
-	<header>
-		<div class="header-top">
-			<h1><i class="fa-solid fa-city"></i> {{.AppName}}</h1>
-		</div>
-		<div class="nav-links">
-			<a href="/"><i class="fa-solid fa-comments"></i> Chat</a>
-			<a href="/about" class="active"><i class="fa-solid fa-circle-info"></i> About</a>
-		</div>
-	</header>
-
-	<div class="container">
-
-		<div class="section">
-			<h1>About {{.AppName}}</h1>
-			<p>{{.AppName}} is an AI assistant designed to provide information about city bylaws and regulations. It
-				aims to make public information more accessible through conversational AI.</p>
-		</div>
-
-		<div class="section disclaimer">
-			<h2>Disclaimer</h2>
-			<p>Please be aware of the following important information:</p>
-			<ul>
-				<li>{{.AppName}} is based on public information and documents, but it is not an official government
-					service.</li>
-				<li>As an AI model, {{.AppName}} may make mistakes, provide incomplete information, or misinterpret
-					questions.</li>
-				<li>You are using this service at your own risk. Always verify important information with official
-					sources.</li>
-				<li>The information provided should not be considered legal advice.</li>
-			</ul>
-		</div>
-
-		<div class="section">
-			<h2>Privacy Policy</h2>
-			<p>We are committed to protecting your privacy while providing our service. Here's how we handle your data:
-			</p>
-			<ul>
-				<li>We log IP addresses for security and geographic restriction purposes.</li>
-				<li>We do not log or store the content of your conversations beyond what is necessary for the
-					functioning of the service.</li>
-				<li>The service is designed to be used only within Canada and access is restricted accordingly.</li>
-			</ul>
-		</div>
-
-		<div class="section">
-			<h2>Open Source</h2>
-			<p>{{.AppName}} is based on CityGPT, an open source project. The full source code is available at <a
-					href="https://github.com/maruel/citygpt" target="_blank">https://github.com/maruel/citygpt</a>.</p>
-			<p>The software is licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html"
-					target="_blank">GNU
-					Affero General Public License v3.0 (AGPL-3.0)</a>, which means you are free to
-				use, modify, and distribute the code under the terms of this license.</p>
-		</div>
-
-		<footer>
-			&copy; 2025 CityGPT - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a>
-		</footer>
-	</div>
-</body>
-
-</html>
+<footer>
+	&copy; 2025 CityGPT - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a>
+</footer>
+{{end}}
