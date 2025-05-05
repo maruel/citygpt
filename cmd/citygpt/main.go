@@ -19,7 +19,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"os/user"
 	"path"
+	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -82,6 +85,9 @@ type server struct {
 	// state stores both chat messages and selected files for each session
 	state     State
 	stateLock sync.Mutex
+
+	// statePath is the path to the state file on disk
+	statePath string
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
@@ -226,6 +232,15 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	resp := s.generateResponse(r.Context(), req.Message, sd)
 	respMsg := Message{Role: "assistant", Content: resp}
 	sd.Messages = append(sd.Messages, respMsg)
+
+	// TODO: Run this asynchronously.
+	// Save state after adding a new message.
+	s.stateLock.Lock()
+	if err := s.saveState(); err != nil {
+		slog.Error("Failed to save state", "error", err)
+	}
+	s.stateLock.Unlock()
+
 	if isNew {
 		respMsg.Content = fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
 			html.EscapeString(sd.Item.URL),
@@ -346,8 +361,79 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) start(ctx context.Context, port string) error {
+// getConfigDir returns the appropriate configuration directory based on the OS
+func getConfigDir() (string, error) {
+	// Check if XDG_CONFIG_HOME is set (Linux/Unix)
+	if configHome := os.Getenv("XDG_CONFIG_HOME"); configHome != "" {
+		return filepath.Join(configHome, "citygpt"), nil
+	}
+
+	// For Windows, use APPDATA
+	if runtime.GOOS == "windows" {
+		if appData := os.Getenv("APPDATA"); appData != "" {
+			return filepath.Join(appData, "citygpt"), nil
+		}
+	}
+
+	// Default to ~/.config/citygpt
+	current, err := user.Current()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current user: %w", err)
+	}
+
+	return filepath.Join(current.HomeDir, ".config", "citygpt"), nil
+}
+
+// loadState loads the server state from disk
+func (s *server) loadState() error {
 	s.state.Sessions = map[string]*SessionData{}
+	if _, err := os.Stat(s.statePath); os.IsNotExist(err) {
+		slog.Info("No existing state file found, starting with empty state", "path", s.statePath)
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("error checking state file: %w", err)
+	}
+	data, err := os.ReadFile(s.statePath)
+	if err != nil {
+		return fmt.Errorf("error reading state file: %w", err)
+	}
+	if err := json.Unmarshal(data, &s.state); err != nil {
+		return fmt.Errorf("error parsing state file: %w", err)
+	}
+	slog.Info("Loaded state from disk", "sessions", len(s.state.Sessions))
+	return nil
+}
+
+// saveState saves the server state to disk
+func (s *server) saveState() error {
+	data, err := json.MarshalIndent(s.state, "", " ")
+	if err != nil {
+		return fmt.Errorf("error serializing state: %w", err)
+	}
+	// Write to temp file and rename for atomic replacement.
+	tmpPath := s.statePath + ".tmp"
+	if err := os.WriteFile(tmpPath, data, 0o644); err != nil {
+		return fmt.Errorf("error writing state file: %w", err)
+	}
+	if err := os.Rename(tmpPath, s.statePath); err != nil {
+		return fmt.Errorf("error finalizing state file: %w", err)
+	}
+	return nil
+}
+
+func (s *server) start(ctx context.Context, port string) error {
+	configDir, err := getConfigDir()
+	if err != nil {
+		return fmt.Errorf("failed to determine config directory: %w", err)
+	}
+	if err := os.MkdirAll(configDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create config directory: %w", err)
+	}
+	s.statePath = filepath.Join(configDir, s.appName+".json")
+	slog.Info("Using state file", "path", s.statePath)
+	if err := s.loadState(); err != nil {
+		slog.Warn("Failed to load state from disk, starting with empty state", "error", err)
+	}
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
@@ -385,6 +471,11 @@ func (s *server) start(ctx context.Context, port string) error {
 	select {
 	case <-ctx.Done():
 		slog.Info("main", "message", "Shutdown signal received, gracefully shutting down server...")
+		s.stateLock.Lock()
+		if err := s.saveState(); err != nil {
+			slog.Error("Failed to save state during shutdown", "error", err)
+		}
+		s.stateLock.Unlock()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := srv.Shutdown(shutdownCtx); err != nil {
