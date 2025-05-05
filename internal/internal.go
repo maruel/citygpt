@@ -140,9 +140,10 @@ func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, md stri
 
 // Index is the content of index.json.
 type Index struct {
-	Version int       `json:"version"`
-	Created time.Time `json:"created"`
-	Items   []Item    `json:"items"`
+	Version  int       `json:"version"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
+	Items    []Item    `json:"items"`
 }
 
 // Item is one indexed item.

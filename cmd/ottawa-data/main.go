@@ -19,7 +19,6 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -90,54 +89,42 @@ func isValidContentURL(link string) bool {
 	return strings.HasPrefix(link, baseURL)
 }
 
-// processURL downloads text from a single URL and saves it
-func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (internal.Item, error) {
-	out := internal.Item{URL: fullURL}
+type summaryWorkers struct {
+	c             genai.ChatProvider
+	outputDir     string
+	previousIndex internal.Index
+
+	mu       sync.Mutex
+	newIndex internal.Index
+}
+
+func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
 	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
-		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
+		return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
 	}
 	md := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
 	if md == "" {
 		md = "index"
 	}
 	md += ".md"
-	out.Name = md
+	item := internal.Item{URL: fullURL}
+	item.Name = md
 	resp, err := http.Get(fullURL)
 	if err != nil {
-		return out, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+		return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+		return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 	}
-	out.Title, out.Summary, err = internal.ProcessHTML(ctx, c, resp.Body, filepath.Join(outputDir, md))
-	return out, err
-}
-
-type workers struct {
-	total         int
-	c             genai.ChatProvider
-	outputDir     string
-	previousIndex internal.Index
-
-	processed atomic.Int32
-	mu        sync.Mutex
-	newIndex  internal.Index
-}
-
-func (w *workers) worker(ctx context.Context, jobs <-chan string) error {
-	for fullURL := range jobs {
-		s, err := processURL(ctx, w.c, fullURL, w.outputDir)
-		if err != nil {
-			return err
-		}
-		count := w.processed.Add(1)
-		w.mu.Lock()
-		w.newIndex.Items = append(w.newIndex.Items, s)
-		fmt.Printf("Fetched (%d/%d): %s\n", count, w.total, fullURL)
-		w.mu.Unlock()
+	item.Title, item.Summary, err = internal.ProcessHTML(ctx, s.c, resp.Body, filepath.Join(s.outputDir, md))
+	if err != nil {
+		return err
 	}
+	s.mu.Lock()
+	s.newIndex.Items = append(s.newIndex.Items, item)
+	s.mu.Unlock()
 	return nil
 }
 
@@ -148,6 +135,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
+	// TODO: Recurse.
 	var validLinks []string
 	for _, link := range links {
 		if link == "" {
@@ -166,24 +154,48 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	w := workers{total: len(validLinks), c: c, outputDir: outputDir, newIndex: internal.Index{Version: 1, Created: time.Now()}}
+	now := time.Now()
+	w := summaryWorkers{c: c, outputDir: outputDir, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
 	if b != nil {
 		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
 			return err
 		}
+		if len(w.previousIndex.Items) > 0 && !w.previousIndex.Created.IsZero() {
+			w.newIndex.Created = w.previousIndex.Created
+		}
 	}
-	jobs := make(chan string, w.total)
+	jobs := make(chan string, 2*numWorkers)
+	done := make(chan string, 10)
 	eg, ctx := errgroup.WithContext(ctx)
 	for range numWorkers {
 		eg.Go(func() error {
-			return w.worker(ctx, jobs)
+			for fullURL := range jobs {
+				if err := w.worker(ctx, fullURL); err != nil {
+					return err
+				}
+				done <- fullURL
+			}
+			return nil
 		})
 	}
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		total := len(validLinks)
+		processed := 0
+		for fullURL := range done {
+			processed++
+			fmt.Printf("Fetched (%d/%d): %s\n", processed, total, fullURL)
+		}
+		wg.Done()
+	}()
 	for _, url := range validLinks {
 		jobs <- url
 	}
 	close(jobs)
 	err = eg.Wait()
+	close(done)
+	wg.Wait()
 	d, err2 := json.MarshalIndent(w.newIndex, "", " ")
 	if err2 != nil {
 		panic(err2)
