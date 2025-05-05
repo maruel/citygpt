@@ -52,11 +52,17 @@ that can be found in the LICENSE file.
 			padding: 1rem 2rem;
 			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
 			justify-content: space-between;
 			position: sticky;
 			top: 0;
 			z-index: 100;
+		}
+
+		.header-top {
+			display: flex;
+			align-items: center;
 		}
 
 		header h1 {
@@ -333,18 +339,18 @@ that can be found in the LICENSE file.
 
 			header {
 				padding: 0.7rem 1.2rem;
-				flex-direction: column;
-				align-items: flex-start;
+				flex-wrap: wrap;
 			}
 
 			header h1 {
 				font-size: 1.5rem;
-				margin-bottom: 10px;
+				flex-grow: 1;
 			}
 
 			.nav-links {
 				display: flex;
 				width: 100%;
+				margin-top: 8px;
 			}
 
 			.nav-links a {
@@ -394,13 +400,24 @@ that can be found in the LICENSE file.
 				display: flex;
 				flex-direction: column;
 			}
+
+			#reset-button {
+				width: 36px;
+				height: 36px;
+			}
+
+			header h1 {
+				font-size: 1.3rem;
+			}
 		}
 	</style>
 </head>
 
 <body>
 	<header>
-		<h1><i class="fa-solid fa-city"></i> {{.AppName}} Chat</h1>
+		<div class="header-top">
+			<h1><i class="fa-solid fa-city"></i> {{.AppName}} Chat</h1>
+		</div>
 		<div class="nav-links">
 			<a href="/" class="active"><i class="fa-solid fa-comments"></i> Chat</a>
 			<a href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
@@ -607,11 +624,12 @@ that can be found in the LICENSE file.
 		// Add a reset button to the UI
 		function addResetButton() {
 			const header = document.querySelector('header');
+			const titleContainer = document.querySelector('header h1').parentElement;
 			const resetButton = document.createElement('button');
 			resetButton.id = 'reset-button';
 			resetButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
 			resetButton.setAttribute('title', 'Start new conversation');
-			resetButton.style.marginLeft = 'auto';
+			resetButton.style.marginLeft = '10px';
 			resetButton.style.background = 'rgba(255, 255, 255, 0.2)';
 			resetButton.style.border = 'none';
 			resetButton.style.borderRadius = '50%';
@@ -623,6 +641,7 @@ that can be found in the LICENSE file.
 			resetButton.style.color = 'white';
 			resetButton.style.cursor = 'pointer';
 			resetButton.style.transition = 'background-color 0.3s';
+			resetButton.style.flexShrink = '0';
 			resetButton.addEventListener('mouseenter', () => {
 				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
 			});
@@ -630,7 +649,25 @@ that can be found in the LICENSE file.
 				resetButton.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
 			});
 			resetButton.addEventListener('click', startNewSession);
-			header.appendChild(resetButton);
+
+			// Insert reset button after the header title, not at end of header
+			if (window.matchMedia('(max-width: 768px)').matches) {
+				header.insertBefore(resetButton, document.querySelector('.nav-links'));
+			} else {
+				header.appendChild(resetButton);
+			}
+
+			// Update button position on window resize
+			window.addEventListener('resize', () => {
+				if (resetButton.parentNode) {
+					resetButton.parentNode.removeChild(resetButton);
+				}
+				if (window.matchMedia('(max-width: 768px)').matches) {
+					header.insertBefore(resetButton, document.querySelector('.nav-links'));
+				} else {
+					header.appendChild(resetButton);
+				}
+			});
 		}
 
 		// Initialize the chat
