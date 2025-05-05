@@ -12,8 +12,10 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -88,6 +90,31 @@ func isValidContentURL(link string) bool {
 	return strings.HasPrefix(link, baseURL)
 }
 
+// processURL downloads text from a single URL and saves it
+func processURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (internal.Item, error) {
+	out := internal.Item{URL: fullURL}
+	parsedURL, err := url.Parse(fullURL)
+	if err != nil {
+		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
+	}
+	md := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
+	if md == "" {
+		md = "index"
+	}
+	md += ".md"
+	out.Name = md
+	resp, err := http.Get(fullURL)
+	if err != nil {
+		return out, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+	}
+	out.Title, out.Summary, err = internal.ProcessHTML(ctx, c, resp.Body, md, outputDir)
+	return out, err
+}
+
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
 func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []string, outputDir string) error {
 	// Number of workers to process URLs in parallel
@@ -118,7 +145,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				s, err3 := internal.ProcessURL(ctx, c, fullURL, outputDir)
+				s, err3 := processURL(ctx, c, fullURL, outputDir)
 				if err3 != nil {
 					return err3
 				}

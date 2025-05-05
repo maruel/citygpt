@@ -10,11 +10,8 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"net/http"
-	"net/url"
 	"os"
 	"os/user"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -119,31 +116,6 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 }
 
 const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
-
-// ProcessURL downloads text from a single URL and saves it
-func ProcessURL(ctx context.Context, c genai.ChatProvider, fullURL, outputDir string) (Item, error) {
-	out := Item{URL: fullURL}
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return out, fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
-	}
-	md := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
-	if md == "" {
-		md = "index"
-	}
-	md += ".md"
-	out.Name = md
-	resp, err := http.Get(fullURL)
-	if err != nil {
-		return out, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return out, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
-	}
-	out.Title, out.Summary, err = ProcessHTML(ctx, c, resp.Body, md, outputDir)
-	return out, err
-}
 
 // ProcessHTML from a single URL and saves it
 func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, md, outputDir string) (string, string, error) {
