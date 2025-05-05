@@ -20,6 +20,8 @@ require (
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/maruel/httpjson v0.3.0 // indirect
 	github.com/maruel/roundtrippers v0.2.1 // indirect
+	github.com/oschwald/geoip2-golang v1.11.0 // indirect
+	github.com/oschwald/maxminddb-golang v1.13.0 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
