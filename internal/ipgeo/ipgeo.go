@@ -17,12 +17,12 @@ import (
 	"github.com/oschwald/maxminddb-golang/v2"
 )
 
-// IPChecker is an interface for services that can check if an IP is from a specified country
+// IPChecker is an interface for services that can check the country of an IP address
 type IPChecker interface {
-	// IsFromCanada returns the ISO country code for the given IP address.
+	// GetCountry returns the ISO country code for the given IP address.
 	// Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
 	// and "local" for local, private, or unspecified IPs.
-	IsFromCanada(ip net.IP) (string, error)
+	GetCountry(ip net.IP) (string, error)
 }
 
 // GeoIPChecker implements IPChecker using the MaxMind GeoIP database
@@ -55,10 +55,10 @@ func (g *GeoIPChecker) Close() error {
 	return nil
 }
 
-// IsFromCanada returns the ISO country code for the given IP address.
+// GetCountry returns the ISO country code for the given IP address.
 // Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
 // and "local" for local, private, or unspecified IPs.
-func (g *GeoIPChecker) IsFromCanada(ip net.IP) (string, error) {
+func (g *GeoIPChecker) GetCountry(ip net.IP) (string, error) {
 	if g.reader == nil {
 		return "", errors.New("geoip database not initialized")
 	}
@@ -95,8 +95,8 @@ func NewMockIPChecker() *MockIPChecker {
 	}
 }
 
-// IsFromCanada returns the ISO country code for the given IP address
-func (m *MockIPChecker) IsFromCanada(ip net.IP) (string, error) {
+// GetCountry returns the ISO country code for the given IP address
+func (m *MockIPChecker) GetCountry(ip net.IP) (string, error) {
 	if ip == nil {
 		return "", errors.New("nil IP address")
 	}

@@ -128,15 +128,15 @@ func TestMockIPChecker(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := checker.IsFromCanada(net.ParseIP(tt.ipStr))
+			result, err := checker.GetCountry(net.ParseIP(tt.ipStr))
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("IsFromCanada() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GetCountry() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			if result != tt.expected {
-				t.Errorf("IsFromCanada(%s) = %v, expected %v", tt.ipStr, result, tt.expected)
+				t.Errorf("GetCountry(%s) = %v, expected %v", tt.ipStr, result, tt.expected)
 			}
 		})
 	}

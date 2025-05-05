@@ -218,7 +218,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.WarnContext(ctx, "Failed to determine client IP", "error", err)
 		} else {
-			countryCode, err := s.ipChecker.IsFromCanada(clientIP)
+			countryCode, err := s.ipChecker.GetCountry(clientIP)
 			if err != nil {
 				slog.WarnContext(ctx, "Failed to check IP country code", "ip", clientIP, "error", err)
 			} else if countryCode != "CA" && countryCode != "local" {
