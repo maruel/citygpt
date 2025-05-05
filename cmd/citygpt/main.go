@@ -57,15 +57,17 @@ type ChatResponse struct {
 var htmlTemplate string
 
 type State struct {
-	Sessions map[string]SessionData `json:"sessions"`
+	Sessions map[string]*SessionData `json:"sessions"`
 }
 
-// SessionData holds both the chat messages and selected file for a session
+// SessionData holds both the chat messages and selected file for a session.
 type SessionData struct {
 	// Item is the selected file for the session.
 	Item internal.Item `json:"item"`
 	// Messages is the chat history for the session.
 	Messages []Message `json:"messages"`
+
+	mu sync.Mutex
 }
 
 // server represents the HTTP server that handles the chat application.
@@ -79,7 +81,7 @@ type server struct {
 
 	// state stores both chat messages and selected files for each session
 	state     State
-	stateLock sync.RWMutex
+	stateLock sync.Mutex
 }
 
 // askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
@@ -127,10 +129,7 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 }
 
 func (s *server) genericReply(ctx context.Context, message string, history []Message) string {
-	// Create genai.Messages with message history
 	msgs := genai.Messages{}
-
-	// Add previous messages from history
 	for _, msg := range history {
 		var role genai.Role
 		if msg.Role == "user" {
@@ -140,8 +139,6 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 		}
 		msgs = append(msgs, genai.NewTextMessage(role, msg.Content))
 	}
-
-	// Add the current message
 	msgs = append(msgs, genai.NewTextMessage(genai.User, message))
 
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
@@ -153,85 +150,43 @@ func (s *server) genericReply(ctx context.Context, message string, history []Mes
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 		return "No response generated"
 	}
-	return html.EscapeString(resp.Message.Contents[0].Text)
+	return resp.Message.Contents[0].Text
 }
 
-func (s *server) generateResponse(ctx context.Context, message string, history []Message, sessionID string) string {
-	var bestFile internal.Item
-	var err error
-
-	// Check if this is a follow-up message
-	if len(history) > 0 {
-		s.stateLock.RLock()
-		sessionData, exists := s.state.Sessions[sessionID]
-		s.stateLock.RUnlock()
-		if exists {
-			// Use the previously selected file for this session
-			bestFile = sessionData.Item
-			slog.Info("Using previously selected file for follow-up message", "file", bestFile.Name)
-		} else {
-			// Ask LLM for the best file
-			bestFile, err = s.askLLMForBestFile(ctx, message)
-			if err != nil {
-				slog.Error("Error asking LLM for best file", "error", err)
-				return s.genericReply(ctx, message, history)
-			}
-
-			// Store the selected file for this session
-			s.stateLock.Lock()
-			s.state.Sessions[sessionID] = SessionData{
-				Item:     bestFile,
-				Messages: history,
-			}
-			s.stateLock.Unlock()
-			slog.Info("Selected best file for response", "file", bestFile.Name)
-		}
-	} else {
-		// First message in the conversation, ask LLM for the best file
-		bestFile, err = s.askLLMForBestFile(ctx, message)
-		if err != nil {
-			slog.Error("Error asking LLM for best file", "error", err)
-			return s.genericReply(ctx, message, history)
-		}
-
-		// Store the selected file for this session
-		s.stateLock.Lock()
-		s.state.Sessions[sessionID] = SessionData{
-			Item:     bestFile,
-			Messages: history,
-		}
-		s.stateLock.Unlock()
-		slog.Info("Selected best file for response", "file", bestFile.Name)
-	}
-	fileContent, err := s.cityData.ReadFile(bestFile.Name)
-	if err != nil {
-		slog.Error("Error reading selected file", "file", bestFile.Name, "error", err)
-		return s.genericReply(ctx, message, history)
-	}
-	// Generate the final response, including the content from the selected file
-	prompt := fmt.Sprintf(
-		"Using the following information from file '%s', please answer the user's questions in a concise way : \"%s\"\n\nFile content:\n%s",
-		bestFile.Name,
-		message,
-		string(fileContent),
-	)
-
-	// Create genai.Messages with message history
+func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionData) string {
 	msgs := genai.Messages{}
-
-	// Add previous messages from history
-	for _, msg := range history {
+	for _, m := range sd.Messages {
 		var role genai.Role
-		if msg.Role == "user" {
+		if m.Role == "user" {
 			role = genai.User
-		} else if msg.Role == "assistant" {
+		} else if m.Role == "assistant" {
 			role = genai.Assistant
 		}
-		msgs = append(msgs, genai.NewTextMessage(role, msg.Content))
+		msgs = append(msgs, genai.NewTextMessage(role, m.Content))
 	}
-
-	// Add the current prompt as the latest message
-	msgs = append(msgs, genai.NewTextMessage(genai.User, prompt))
+	var err error
+	if len(msgs) > 0 {
+		slog.Info("Follow up question", "file", sd.Item.Name)
+		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
+	} else {
+		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
+			slog.Error("Error asking LLM for best file", "error", err)
+			return s.genericReply(ctx, msg, sd.Messages)
+		}
+		slog.Info("Selected best file for response", "file", sd.Item.Name)
+		fileContent, err := s.cityData.ReadFile(sd.Item.Name)
+		if err != nil {
+			slog.Error("Error reading selected file", "file", sd.Item.Name, "error", err)
+			return s.genericReply(ctx, msg, sd.Messages)
+		}
+		prompt := fmt.Sprintf(
+			"Using the following information from file '%s', please answer the user's questions in a concise way : \"%s\"\n\nFile content:\n%s",
+			sd.Item.Name,
+			msg,
+			string(fileContent),
+		)
+		msgs = append(msgs, genai.NewTextMessage(genai.User, prompt))
+	}
 
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
 	resp, err := s.c.Chat(ctx, msgs, &opts)
@@ -242,11 +197,7 @@ func (s *server) generateResponse(ctx context.Context, message string, history [
 	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
 		return "No response generated"
 	}
-
-	return fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
-		html.EscapeString(bestFile.URL),
-		html.EscapeString(bestFile.Title),
-		html.EscapeString(resp.Message.Contents[0].Text))
+	return resp.Message.Contents[0].Text
 }
 
 func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
@@ -259,58 +210,32 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
-	// Generate a session ID if one doesn't exist
 	if req.SessionID == "" {
 		req.SessionID = generateSessionID()
 	}
-
-	// Get or initialize chat history for this session
-	s.stateLock.RLock()
-	sessionData, exists := s.state.Sessions[req.SessionID]
-	s.stateLock.RUnlock()
-
-	history := []Message{}
-	if exists {
-		history = sessionData.Messages
-	}
-
-	// Add user message to history
-	userMessage := Message{
-		Role:    "user",
-		Content: req.Message,
-	}
-	history = append(history, userMessage)
-
-	// Generate response using history
-	response := s.generateResponse(r.Context(), req.Message, history, req.SessionID)
-
-	// Create assistant message and add to history
-	assistantMessage := Message{
-		Role:    "assistant",
-		Content: response,
-	}
-	history = append(history, assistantMessage)
-
-	// Update history in the state.Sessions map
 	s.stateLock.Lock()
-	if exists {
-		// Keep the existing Item but update Messages
-		sessionData.Messages = history
-		s.state.Sessions[req.SessionID] = sessionData
-	} else {
-		// This should be set by generateResponse, but just in case
-		s.state.Sessions[req.SessionID] = SessionData{
-			Messages: history,
-		}
+	sd := s.state.Sessions[req.SessionID]
+	if sd == nil {
+		sd = &SessionData{}
+		s.state.Sessions[req.SessionID] = sd
 	}
 	s.stateLock.Unlock()
-
+	sd.mu.Lock()
+	defer sd.mu.Unlock()
+	isNew := len(sd.Messages) == 0
+	resp := s.generateResponse(r.Context(), req.Message, sd)
+	respMsg := Message{Role: "assistant", Content: resp}
+	sd.Messages = append(sd.Messages, respMsg)
+	if isNew {
+		respMsg.Content = fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
+			html.EscapeString(sd.Item.URL),
+			html.EscapeString(sd.Item.Title),
+			html.EscapeString(resp))
+	} else {
+		respMsg.Content = html.EscapeString(resp)
+	}
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(ChatResponse{
-		Message:   assistantMessage,
-		SessionID: req.SessionID,
-	})
+	_ = json.NewEncoder(w).Encode(ChatResponse{Message: respMsg, SessionID: req.SessionID})
 }
 
 func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
@@ -422,8 +347,7 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) start(ctx context.Context, port string) error {
-	// Initialize state.Sessions storage
-	s.state.Sessions = make(map[string]SessionData)
+	s.state.Sessions = map[string]*SessionData{}
 	raw, err := s.cityData.ReadFile("index.json")
 	if err != nil {
 		return err
