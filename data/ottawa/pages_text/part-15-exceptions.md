@@ -1,0 +1,44 @@
+The City of Ottawa Zoning By-law is made available on the web site for information, however confirmation on the zoning provisions should be sought through the City’s development information officers (DIO), by contacting 311 and asking for the DIO for the geographic area in question.
+In this part you will find exceptions to the standard provisions.
+- Exceptions 1-100
+- Exceptions 101-200
+- Exceptions 201-300
+- Exceptions 301-400
+- Exceptions 401-500
+- Exceptions 501-600
+- Exceptions 601-700
+- Exceptions 701-800
+- Exceptions 801-900
+- Exceptions 901-1000
+- Exceptions 1001-1100
+- Exceptions 1101-1200
+- Exceptions 1201-1300
+- Exceptions 1301-1400
+- Exceptions 1401-1500
+- Exceptions 1501-1600
+- Exceptions 1601-1700
+- Exceptions 1701-1800
+- Exceptions 1801-1900
+- Exceptions 1901-2000
+- Exceptions 2001-2100
+- Exceptions 2101-2200
+- Exceptions 2201-2300
+- Exceptions 2301-2400
+- Exceptions 2401-2500
+- Exceptions 2501-2600
+- Exceptions 2601-2700
+- Exceptions 2701 - 2800
+- Exceptions 2801 - 2900
+- Exceptions 2901 - 3000
+- Exceptions 3001-3100
+
+- Exceptions 1r-100r
+- Exceptions 101r-200r
+- Exceptions 201r-300r
+- Exceptions 301r-400r
+- Exceptions 401r-500r
+- Exceptions 501r-600r
+- Exceptions 601r-700r
+- Exceptions 701r-800r
+- Exceptions 801r-900r
+- Exceptions 901r-1000r

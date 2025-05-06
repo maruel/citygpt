@@ -6,11 +6,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,34 +32,41 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const (
-	// targetURL is the URL to fetch links from
-	targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
-
-	// baseURL is the base URL for resolving relative links
-	baseURL = targetURL + "/"
-)
-
-// Extensions to ignore when processing URLs
-var ignoreExtensions = []string{
-	".ico", ".jpg", ".jpeg", ".png", ".gif", ".svg",
-	".bmp", ".webp", ".pdf", ".css", ".js",
+func trimURLFragment(u string) (string, error) {
+	parsedURL, err := url.Parse(u)
+	if err != nil {
+		return "", err
+	}
+	parsedURL.Fragment = ""
+	return parsedURL.String(), nil
 }
 
-// extractLinks fetches a webpage and extracts all href attributes
-func extractLinks(url string) ([]string, error) {
-	resp, err := http.Get(url)
+// extractLinksFromURL fetches a webpage and extracts all href attributes
+func extractLinksFromURL(u string) ([]string, error) {
+	resp, err := http.Get(u)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)
 	}
+	// TODO: Check content-type?
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("received non-200 response: %d", resp.StatusCode)
 	}
-	doc, err := html.Parse(resp.Body)
+	return extractLinks(u, resp.Body)
+}
+
+func extractLinks(u string, r io.Reader) ([]string, error) {
+	parsedURL, err := url.Parse(u)
+	if err != nil {
+		return nil, nil
+	}
+	doc, err := html.Parse(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
+	// baseURL is the base URL for resolving relative links
+	baseURL := u + "/"
+	host := parsedURL.Scheme + "://" + parsedURL.Host
 	var links []string
 	// Function to recursively extract links from HTML
 	var extract func(*html.Node)
@@ -65,7 +74,18 @@ func extractLinks(url string) ([]string, error) {
 		if n.Type == html.ElementNode && n.Data == "a" {
 			for _, attr := range n.Attr {
 				if attr.Key == "href" {
-					links = append(links, attr.Val)
+					link := attr.Val
+					// Check if it is a link we care about.
+					// Construct full URL from relative link
+					if strings.HasPrefix(link, "/") {
+						link = host + link
+					}
+					if isValidContentURL(link, baseURL) {
+						var err2 error
+						if link, err2 = trimURLFragment(link); err2 == nil {
+							links = append(links, link)
+						}
+					}
 					break
 				}
 			}
@@ -79,16 +99,18 @@ func extractLinks(url string) ([]string, error) {
 }
 
 // isValidContentURL checks if a URL should be processed
-func isValidContentURL(link string) bool {
-	// Check if the URL has any of the ignored extensions
-	linkLower := strings.ToLower(link)
-	for _, ext := range ignoreExtensions {
-		if strings.HasSuffix(linkLower, ext) {
-			return false
-		}
+func isValidContentURL(link, baseURL string) bool {
+	if !strings.HasPrefix(link, baseURL) {
+		return false
 	}
-	// Check if the URL is within the base URL
-	return strings.HasPrefix(link, baseURL)
+	switch strings.ToLower(path.Ext(link)) {
+	case ".ico", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".bmp", ".webp", ".pdf", ".css", ".js":
+		// Common extensions to ignore when processing URLs.
+		// TODO: Process pdf.
+		return false
+	default:
+		return true
+	}
 }
 
 type summaryWorkers struct {
@@ -113,24 +135,39 @@ func urlToMDName(u string) (string, error) {
 	return md + ".md", nil
 }
 
-func (s *summaryWorkers) worker(ctx context.Context, fullURL string) (bool, error) {
+func (s *summaryWorkers) worker(ctx context.Context, fullURL string) (bool, []string, error) {
 	// Always download a fresh copy of the HTML page in case it changed.
 	resp, err := http.Get(fullURL)
 	if err != nil {
-		return false, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+		return false, nil, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return false, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+	b, err := io.ReadAll(resp.Body)
+	if err2 := resp.Body.Close(); err == nil {
+		err = err2
 	}
-	md, title, err := htmlparse.ExtractTextFromHTML(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("failed to extract text: %w", err)
+		return false, nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == 404 {
+			// The web site has broken links.
+			return false, nil, nil
+		}
+		return false, nil, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+	}
+
+	links, err := extractLinks(fullURL, bytes.NewReader(b))
+	if err != nil {
+		return false, links, err
+	}
+	md, title, err := htmlparse.ExtractTextFromHTML(bytes.NewReader(b))
+	if err != nil {
+		return false, links, fmt.Errorf("failed to extract text: %w", err)
 	}
 
 	mdName, err := urlToMDName(fullURL)
 	if err != nil {
-		return false, err
+		return false, links, err
 	}
 	mdPath := filepath.Join(s.outputDir, mdName)
 	now := time.Now().Round(time.Second)
@@ -147,43 +184,32 @@ func (s *summaryWorkers) worker(ctx context.Context, fullURL string) (bool, erro
 				s.mu.Lock()
 				s.newIndex.Items = append(s.newIndex.Items, prev)
 				s.mu.Unlock()
-				return false, nil
+				return false, links, nil
 			}
 		}
 	}
 
 	// Content changed or is new, create a summary.
+	if err = os.WriteFile(mdPath, []byte(md), 0o644); err != nil {
+		return false, links, err
+	}
 	item := internal.Item{URL: fullURL, Title: title, Name: mdName, Created: created, Modified: now}
 	item.Summary, err = internal.Summarize(ctx, s.c, md)
 	if err != nil {
-		return false, err
+		return false, links, err
 	}
 	s.mu.Lock()
 	s.newIndex.Items = append(s.newIndex.Items, item)
 	s.mu.Unlock()
-	return true, nil
+	return true, links, nil
 }
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []string, outputDir string) error {
+func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL string, outputDir string) error {
 	// Number of workers to process URLs in parallel
 	const numWorkers = 8
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
-	}
-	// TODO: Recurse.
-	var validLinks []string
-	for _, link := range links {
-		if link == "" {
-			continue
-		}
-		// Construct full URL from relative link
-		if strings.HasPrefix(link, "/") {
-			link = "https://ottawa.ca" + link
-		}
-		if isValidContentURL(link) {
-			validLinks = append(validLinks, link)
-		}
 	}
 	indexPath := filepath.Join(outputDir, "index.json")
 	b, err := os.ReadFile(indexPath)
@@ -203,52 +229,67 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 			w.urlLookup[w.previousIndex.Items[i].URL] = i
 		}
 	}
-	type doneItem struct {
-		url     string
-		updated bool
+
+	links, err := extractLinksFromURL(baseURL)
+	if err != nil {
+		return fmt.Errorf("error extracting links: %w", err)
 	}
-	jobs := make(chan string, 2*numWorkers)
-	done := make(chan doneItem, 10)
+	if len(links) == 0 {
+		return errors.New("no link found")
+	}
+
+	type doneItem struct {
+		url      string
+		updated  bool
+		newLinks []string
+	}
+	done := make(chan doneItem, len(links))
+	jobs := make(chan string, len(links))
 	eg, ctx := errgroup.WithContext(ctx)
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				updated, err3 := w.worker(ctx, fullURL)
+				updated, newLinks, err3 := w.worker(ctx, fullURL)
 				if err3 != nil {
 					return err3
 				}
-				done <- doneItem{fullURL, updated}
+				done <- doneItem{fullURL, updated, newLinks}
 			}
 			return nil
 		})
 	}
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		total := len(validLinks)
-		processed := 0
-		for i := range done {
-			processed++
+	seen := map[string]struct{}{}
+	for _, url := range links {
+		jobs <- url
+		seen[url] = struct{}{}
+	}
+	total := len(links)
+breakLoop:
+	for processed := 0; processed < total; processed++ {
+		select {
+		case <-ctx.Done():
+			break breakLoop
+		case i := <-done:
+			for _, l := range i.newLinks {
+				if _, ok := seen[l]; !ok {
+					seen[l] = struct{}{}
+					total++
+					select {
+					case jobs <- l:
+					case <-ctx.Done():
+					}
+				}
+			}
 			suffix := ""
 			if i.updated {
 				suffix = " (updated)"
 			}
 			fmt.Printf("- (%d/%d): %s%s\n", processed, total, i.url, suffix)
 		}
-		wg.Done()
-	}()
-breakLoop:
-	for _, url := range validLinks {
-		select {
-		case jobs <- url:
-		case <-ctx.Done():
-			break breakLoop
-		}
 	}
+
 	close(jobs)
 	err = eg.Wait()
-	close(done)
-	wg.Wait()
 	sort.Slice(w.newIndex.Items, func(a, b int) bool {
 		return w.newIndex.Items[a].URL < w.newIndex.Items[b].URL
 	})
@@ -275,12 +316,10 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
+	// targetURL is the URL to fetch links from
+	const targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
 	fmt.Printf("Extracting links from %s\n", targetURL)
-	links, err := extractLinks(targetURL)
-	if err != nil {
-		return fmt.Errorf("error extracting links: %w", err)
-	}
-	if err := downloadAndSaveTexts(ctx, c, links, *outputDir); err != nil {
+	if err = downloadAndSaveTexts(ctx, c, targetURL, *outputDir); err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
 	}
 	fmt.Println("Process completed successfully")
