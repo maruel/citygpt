@@ -54,6 +54,43 @@ type State struct {
 	Sessions map[string]*SessionData `json:"sessions"`
 }
 
+// load loads the server state from disk
+func (s *State) load(ctx context.Context, p string) error {
+	s.Sessions = map[string]*SessionData{}
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		slog.InfoContext(ctx, "citygpt", "msg", "No existing state file found, starting with empty state", "path", p)
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("error checking state file: %w", err)
+	}
+	data, err := os.ReadFile(p)
+	if err != nil {
+		return fmt.Errorf("error reading state file: %w", err)
+	}
+	if err := json.Unmarshal(data, s); err != nil {
+		return fmt.Errorf("error parsing state file: %w", err)
+	}
+	slog.InfoContext(ctx, "citygpt", "msg", "Loaded state from disk", "sessions", len(s.Sessions), "path", p)
+	return nil
+}
+
+// save saves the server state to disk
+func (s *State) save(p string) error {
+	data, err := json.MarshalIndent(s, "", " ")
+	if err != nil {
+		return fmt.Errorf("error serializing state: %w", err)
+	}
+	// Write to temp file and rename for atomic replacement.
+	tmpPath := p + ".tmp"
+	if err := os.WriteFile(tmpPath, data, 0o644); err != nil {
+		return fmt.Errorf("error writing state file: %w", err)
+	}
+	if err := os.Rename(tmpPath, p); err != nil {
+		return fmt.Errorf("error finalizing state file: %w", err)
+	}
+	return nil
+}
+
 // SessionData holds both the chat messages and selected file for a session.
 type SessionData struct {
 	// Item is the selected file for the session.
@@ -252,7 +289,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	// TODO: Run this asynchronously.
 	// Save state after adding a new message.
 	s.mu.Lock()
-	if err := s.saveState(); err != nil {
+	if err := s.state.save(s.statePath); err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state", "err", err)
 	}
 	s.mu.Unlock()
@@ -431,43 +468,6 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// loadState loads the server state from disk
-func (s *server) loadState(ctx context.Context) error {
-	s.state.Sessions = map[string]*SessionData{}
-	if _, err := os.Stat(s.statePath); os.IsNotExist(err) {
-		slog.InfoContext(ctx, "citygpt", "msg", "No existing state file found, starting with empty state", "path", s.statePath)
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("error checking state file: %w", err)
-	}
-	data, err := os.ReadFile(s.statePath)
-	if err != nil {
-		return fmt.Errorf("error reading state file: %w", err)
-	}
-	if err := json.Unmarshal(data, &s.state); err != nil {
-		return fmt.Errorf("error parsing state file: %w", err)
-	}
-	slog.InfoContext(ctx, "citygpt", "msg", "Loaded state from disk", "sessions", len(s.state.Sessions), "path", s.statePath)
-	return nil
-}
-
-// saveState saves the server state to disk
-func (s *server) saveState() error {
-	data, err := json.MarshalIndent(s.state, "", " ")
-	if err != nil {
-		return fmt.Errorf("error serializing state: %w", err)
-	}
-	// Write to temp file and rename for atomic replacement.
-	tmpPath := s.statePath + ".tmp"
-	if err := os.WriteFile(tmpPath, data, 0o644); err != nil {
-		return fmt.Errorf("error writing state file: %w", err)
-	}
-	if err := os.Rename(tmpPath, s.statePath); err != nil {
-		return fmt.Errorf("error finalizing state file: %w", err)
-	}
-	return nil
-}
-
 func newServer(ctx context.Context, c genai.ChatProvider, appName string, files fs.FS) (*server, error) {
 	s := &server{c: c, cityData: files, appName: appName, files: map[string]internal.Item{}}
 	var err error
@@ -486,7 +486,7 @@ func newServer(ctx context.Context, c genai.ChatProvider, appName string, files 
 		return nil, fmt.Errorf("failed to create config directory: %w", err)
 	}
 	s.statePath = filepath.Join(configDir, s.appName+".json")
-	if err = s.loadState(ctx); err != nil {
+	if err = s.state.load(ctx, s.statePath); err != nil {
 		return nil, err
 	}
 	raw, err := fs.ReadFile(s.cityData, "index.json")
@@ -530,7 +530,7 @@ func (s *server) start(ctx context.Context, port string) error {
 	case <-ctx.Done():
 		slog.InfoContext(ctx, "citygpt", "msg", "Shutdown signal received, gracefully shutting down server...")
 		s.mu.Lock()
-		if err := s.saveState(); err != nil {
+		if err := s.state.save(s.statePath); err != nil {
 			slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state during shutdown", "err", err)
 		}
 		s.mu.Unlock()
