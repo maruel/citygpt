@@ -3,6 +3,7 @@ module github.com/maruel/citygpt
 go 1.24.2
 
 require (
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/lmittmann/tint v1.0.7
 	github.com/maruel/genai v0.0.0-20250503214016-861a3ebf609c
 	github.com/maruel/roundtrippers v0.2.1

@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/lmittmann/tint"
 	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/citygpt/internal"
@@ -27,30 +28,37 @@ func watchExecutable(ctx context.Context, cancel context.CancelFunc) error {
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
-	initialStat, err := os.Stat(exePath)
+	w, err := fsnotify.NewWatcher()
 	if err != nil {
-		return fmt.Errorf("failed to stat executable: %w", err)
+		return fmt.Errorf("failed to create file watcher: %w", err)
 	}
-	initialModTime := initialStat.ModTime()
-	initialSize := initialStat.Size()
 	go func() {
-		ticker := time.NewTicker(1 * time.Second)
-		defer ticker.Stop()
-		for range ticker.C {
-			currentStat, err := os.Stat(exePath)
-			if err != nil {
-				slog.WarnContext(ctx, "citygpt", "msg", "Could not stat executable", "err", err)
-				continue
-			}
-			currentModTime := currentStat.ModTime()
-			currentSize := currentStat.Size()
-			if !currentModTime.Equal(initialModTime) || currentSize != initialSize {
-				slog.InfoContext(ctx, "citygpt", "msg", "Executable file was modified, initiating shutdown...")
-				cancel()
-				break
+		defer w.Close()
+		for {
+			select {
+			case event, ok := <-w.Events:
+				if !ok {
+					return
+				}
+				// Detect writes or chmod events which may indicate a modification
+				if event.Has(fsnotify.Write) || event.Has(fsnotify.Chmod) {
+					slog.InfoContext(ctx, "citygpt", "msg", "Executable file was modified, initiating shutdown...")
+					cancel()
+					return
+				}
+			case err, ok := <-w.Errors:
+				if !ok {
+					return
+				}
+				slog.WarnContext(ctx, "citygpt", "msg", "Error watching executable", "err", err)
+			case <-ctx.Done():
+				return
 			}
 		}
 	}()
+	if err := w.Add(exePath); err != nil {
+		return fmt.Errorf("failed to watch executable: %w", err)
+	}
 	return nil
 }
 
