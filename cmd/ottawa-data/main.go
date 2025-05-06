@@ -29,9 +29,22 @@ import (
 	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/citygpt/internal/htmlparse"
 	"github.com/maruel/genai"
+	"github.com/maruel/roundtrippers"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
 )
+
+type Throttle struct {
+	Transport http.RoundTripper
+	QPS       float64
+
+	mu sync.Mutex
+}
+
+func (t *Throttle) RoundTrip(req *http.Request) (*http.Response, error) {
+	// TODO: Implement a throttling algorithm to slow down requests.
+	return t.Transport.RoundTrip(req)
+}
 
 func trimURLFragment(u string) (string, error) {
 	parsedURL, err := url.Parse(u)
@@ -40,20 +53,6 @@ func trimURLFragment(u string) (string, error) {
 	}
 	parsedURL.Fragment = ""
 	return parsedURL.String(), nil
-}
-
-// extractLinksFromURL fetches a webpage and extracts all href attributes
-func extractLinksFromURL(baseURL, u string) ([]string, error) {
-	resp, err := http.Get(u)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch URL: %w", err)
-	}
-	// TODO: Check content-type for PDF vs HTML vs others.
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response: %d", resp.StatusCode)
-	}
-	return extractLinks(baseURL, u, resp.Body)
 }
 
 func extractLinks(baseURL, u string, r io.Reader) ([]string, error) {
@@ -115,6 +114,7 @@ func isValidContentURL(link, baseURL string) bool {
 }
 
 type summaryWorkers struct {
+	client        http.Client
 	c             genai.ChatProvider
 	outputDir     string
 	previousIndex internal.Index
@@ -147,7 +147,7 @@ func urlToMDName(baseURL, u string) (string, error) {
 
 func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, []string, error) {
 	// Always download a fresh copy of the HTML page in case it changed.
-	resp, err := http.Get(u)
+	resp, err := s.client.Get(u)
 	if err != nil {
 		return false, nil, fmt.Errorf("failed to fetch %s: %w", u, err)
 	}
@@ -229,8 +229,14 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 	if err != nil && !os.IsNotExist(err) {
 		return nil, err
 	}
+	client := http.Client{
+		Transport: &Throttle{
+			Transport: &roundtrippers.Retry{Transport: http.DefaultTransport},
+			QPS:       5,
+		},
+	}
 	now := time.Now().Round(time.Second)
-	w := summaryWorkers{c: c, outputDir: outputDir, urlLookup: map[string]int{}, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
+	w := summaryWorkers{client: client, c: c, outputDir: outputDir, urlLookup: map[string]int{}, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
 	if b != nil {
 		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
 			return nil, err
@@ -243,7 +249,16 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 		}
 	}
 
-	links, err := extractLinksFromURL(baseURL, u)
+	resp, err := client.Get(u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch URL: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		_ = resp.Body.Close()
+		return nil, fmt.Errorf("received non-200 response: %d", resp.StatusCode)
+	}
+	links, err := extractLinks(baseURL, u, resp.Body)
+	_ = resp.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("error extracting links: %w", err)
 	}
