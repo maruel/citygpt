@@ -142,7 +142,7 @@ func (s *summaryWorkers) worker(ctx context.Context, fullURL string) (bool, erro
 			if !prev.Created.IsZero() {
 				created = prev.Created
 			}
-			if b, err := os.ReadFile(mdPath); err == nil && string(b) == md {
+			if b, err2 := os.ReadFile(mdPath); err2 == nil && string(b) == md {
 				// No need to re-create the summary, the content didn't change.
 				s.mu.Lock()
 				s.newIndex.Items = append(s.newIndex.Items, prev)
@@ -213,9 +213,9 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				updated, err := w.worker(ctx, fullURL)
-				if err != nil {
-					return err
+				updated, err3 := w.worker(ctx, fullURL)
+				if err3 != nil {
+					return err3
 				}
 				done <- doneItem{fullURL, updated}
 			}
