@@ -59,11 +59,19 @@ func (g *GeoIPChecker) Close() error {
 
 // GetCountry returns the ISO country code for the given IP address.
 // Returns "CA" for Canadian IPs, other ISO codes for non-Canadian IPs,
-// and "local" for local, private, or unspecified IPs.
+// and "local" for local, private, unspecified, or Tailscale IPs.
 func (g *GeoIPChecker) GetCountry(ip net.IP) (string, error) {
 	// Skip for private/local IPs
 	if ip == nil || ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified() {
 		return "local", nil
+	}
+
+	// Check for Tailscale IP (100.64.0.0/10 CGNAT range used by Tailscale)
+	if ip4 := ip.To4(); ip4 != nil {
+		// Tailscale uses 100.64.0.0/10 which is 100.64.0.0 through 100.127.255.255
+		if int(ip4[0]) == 100 && int(ip4[1]) >= 64 && int(ip4[1]) <= 127 {
+			return "local", nil
+		}
 	}
 
 	// TODO: Sounds inefficient.
