@@ -166,14 +166,14 @@ that can be found in the LICENSE file.
 			}
 		}
 	</style>
-	{{block "extra_css" .}}{{end}}
+	{{- block "extra_css" . -}}{{- end -}}
 </head>
 
 <body>
 	<header>
 		<div class="header-top">
 			<h1><i class="fa-solid fa-city"></i> {{.AppName}}{{if .HeaderTitle}} {{.HeaderTitle}}{{end}}</h1>
-			{{block "header_actions" .}}{{end}}
+			{{- block "header_actions" . -}}{{- end -}}
 		</div>
 		<div class="nav-links">
 			<a href="/" {{if eq .CurrentPage "chat" }}class="active" {{end}}><i class="fa-solid fa-comments"></i>
@@ -184,10 +184,10 @@ that can be found in the LICENSE file.
 	</header>
 
 	<div class="container">
-		{{block "content" .}}{{end}}
+		{{- block "content" . -}}{{- end -}}
 	</div>
 
-	{{block "scripts" .}}{{end}}
+	{{- block "scripts" . -}}{{- end -}}
 </body>
 
 </html>

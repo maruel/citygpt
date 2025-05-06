@@ -1,9 +1,9 @@
-{{/*
+{{- /*
 Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
 Use of this source code is governed under the AGPL v3
 that can be found in the LICENSE file.
-*/}}
-{{define "extra_css"}}
+*/ -}}
+{{define "extra_css" -}}
 <style>
 	.section {
 		margin-bottom: 40px;
@@ -47,9 +47,9 @@ that can be found in the LICENSE file.
 		margin-bottom: 15px;
 	}
 </style>
-{{end}}
+{{- end -}}
 
-{{define "content"}}
+{{- define "content" -}}
 <div class="section">
 	<h1>About {{.AppName}}</h1>
 	<p>{{.AppName}} is an AI assistant designed to provide information about city bylaws and regulations. It
@@ -94,4 +94,4 @@ that can be found in the LICENSE file.
 <footer>
 	&copy; 2025 CityGPT - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a>
 </footer>
-{{end}}
+{{- end -}}

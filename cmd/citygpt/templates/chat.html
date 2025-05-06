@@ -1,9 +1,9 @@
-{{/*
+{{- /*
 Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
 Use of this source code is governed under the AGPL v3
 that can be found in the LICENSE file.
-*/}}
-{{define "extra_css"}}
+*/ -}}
+{{- define "extra_css" -}}
 <style>
 	:root {
 		--user-msg-color: #4361ee;
@@ -325,15 +325,15 @@ that can be found in the LICENSE file.
 		}
 	}
 </style>
-{{end}}
+{{- end -}}
 
-{{define "header_actions"}}
+{{- define "header_actions" -}}
 <button id="reset-button" title="Start new conversation">
 	<i class="fa-solid fa-trash"></i>
 </button>
-{{end}}
+{{- end -}}
 
-{{define "content"}}
+{{- define "content" -}}
 <div id="chat-container">
 	<!-- Chat messages will appear here -->
 </div>
@@ -351,9 +351,9 @@ that can be found in the LICENSE file.
 	<input type="text" id="message-input" placeholder="Type your message..." autofocus>
 	<button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
 </div>
-{{end}}
+{{- end -}}
 
-{{define "scripts"}}
+{{- define "scripts" -}}
 <script>
 	const chatContainer = document.getElementById('chat-container');
 	const messageInput = document.getElementById('message-input');
@@ -548,4 +548,4 @@ that can be found in the LICENSE file.
 		}
 	});
 </script>
-{{end}}
+{{- end -}}
