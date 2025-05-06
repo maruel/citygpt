@@ -115,27 +115,33 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 	return nil, errors.New("set either CEREBRAS_API_KEY or GROQ_API_KEY")
 }
 
+// ProcessHTML from a single URL and saves it
+func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, mdPath string) (string, string, error) {
+	md, title, err := htmlparse.ExtractTextFromHTML(r)
+	if err != nil {
+		return title, "", fmt.Errorf("failed to extract text: %w", err)
+	}
+	if err = os.WriteFile(mdPath, []byte(md), 0o644); err != nil {
+		return title, "", fmt.Errorf("failed to write file %s: %w", mdPath, err)
+	}
+	summary, err := Summarize(ctx, c, md)
+	return title, summary, err
+}
+
 const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
 
-// ProcessHTML from a single URL and saves it
-func ProcessHTML(ctx context.Context, c genai.ChatProvider, r io.Reader, md string) (string, string, error) {
-	textContent, pageTitle, err := htmlparse.ExtractTextFromHTML(r)
-	if err != nil {
-		return pageTitle, "", fmt.Errorf("failed to extract text: %w", err)
-	}
-	if err = os.WriteFile(md, []byte(textContent), 0o644); err != nil {
-		return pageTitle, "", fmt.Errorf("failed to write file %s: %w", md, err)
-	}
+// Summarize creates a summary of a the provided content.
+func Summarize(ctx context.Context, c genai.ChatProvider, content string) (string, error) {
 	messages := genai.Messages{
 		genai.NewTextMessage(genai.User, summarizationPrompt),
-		genai.NewTextMessage(genai.User, textContent),
+		genai.NewTextMessage(genai.User, content),
 	}
 	opts := genai.ChatOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
 	resp, err := c.Chat(ctx, messages, &opts)
 	if err != nil {
-		return pageTitle, "", err
+		return "", err
 	}
-	return pageTitle, resp.Contents[0].Text, nil
+	return resp.Contents[0].Text, nil
 }
 
 // Index is the content of index.json.
@@ -148,10 +154,12 @@ type Index struct {
 
 // Item is one indexed item.
 type Item struct {
-	URL     string `json:"url"`
-	Name    string `json:"name"`
-	Title   string `json:"title"`
-	Summary string `json:"summary"`
+	URL      string    `json:"url"`
+	Name     string    `json:"name"`
+	Title    string    `json:"title"`
+	Summary  string    `json:"summary"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
 }
 
 // GetConfigDir returns the appropriate configuration directory based on the OS

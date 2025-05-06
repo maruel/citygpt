@@ -17,12 +17,14 @@ import (
 	"os/signal"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
 
 	"github.com/maruel/citygpt/internal"
+	"github.com/maruel/citygpt/internal/htmlparse"
 	"github.com/maruel/genai"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
@@ -93,23 +95,26 @@ type summaryWorkers struct {
 	c             genai.ChatProvider
 	outputDir     string
 	previousIndex internal.Index
+	urlLookup     map[string]int
 
 	mu       sync.Mutex
 	newIndex internal.Index
 }
 
-func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
-	parsedURL, err := url.Parse(fullURL)
+func urlToMDName(u string) (string, error) {
+	parsedURL, err := url.Parse(u)
 	if err != nil {
-		return fmt.Errorf("failed to parse URL %s: %w", fullURL, err)
+		return "", fmt.Errorf("failed to parse URL %s: %w", u, err)
 	}
 	md := url.PathEscape(path.Base(strings.TrimSuffix(parsedURL.Path, "/")))
 	if md == "" {
 		md = "index"
 	}
-	md += ".md"
-	item := internal.Item{URL: fullURL}
-	item.Name = md
+	return md + ".md", nil
+}
+
+func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
+	// Always download a fresh copy of the HTML page in case it changed.
 	resp, err := http.Get(fullURL)
 	if err != nil {
 		return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
@@ -118,7 +123,38 @@ func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 	}
-	item.Title, item.Summary, err = internal.ProcessHTML(ctx, s.c, resp.Body, filepath.Join(s.outputDir, md))
+	md, title, err := htmlparse.ExtractTextFromHTML(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to extract text: %w", err)
+	}
+
+	mdName, err := urlToMDName(fullURL)
+	if err != nil {
+		return err
+	}
+	mdPath := filepath.Join(s.outputDir, md)
+	now := time.Now().Round(time.Second)
+	created := now
+	if i, ok := s.urlLookup[fullURL]; ok {
+		prev := s.previousIndex.Items[i]
+		if prev.Name == mdName && prev.Title == title {
+			// We saw this page in a previous run.
+			if !prev.Created.IsZero() {
+				created = prev.Created
+			}
+			if b, err := os.ReadFile(mdPath); err == nil && string(b) == md {
+				// No need to re-create the summary, the content didn't change.
+				s.mu.Lock()
+				s.newIndex.Items = append(s.newIndex.Items, prev)
+				s.mu.Unlock()
+				return nil
+			}
+		}
+	}
+
+	// Content changed or is new, create a summary.
+	item := internal.Item{URL: fullURL, Title: title, Name: mdName, Created: created, Modified: now}
+	item.Summary, err = internal.Summarize(ctx, s.c, md)
 	if err != nil {
 		return err
 	}
@@ -154,14 +190,17 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	now := time.Now()
-	w := summaryWorkers{c: c, outputDir: outputDir, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
+	now := time.Now().Round(time.Second)
+	w := summaryWorkers{c: c, outputDir: outputDir, urlLookup: map[string]int{}, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
 	if b != nil {
 		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
 			return err
 		}
 		if len(w.previousIndex.Items) > 0 && !w.previousIndex.Created.IsZero() {
 			w.newIndex.Created = w.previousIndex.Created
+		}
+		for i := range w.previousIndex.Items {
+			w.urlLookup[w.previousIndex.Items[i].URL] = i
 		}
 	}
 	jobs := make(chan string, 2*numWorkers)
@@ -196,6 +235,10 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	err = eg.Wait()
 	close(done)
 	wg.Wait()
+	sort.Slice(w.newIndex.Items, func(a, b int) bool {
+		return w.newIndex.Items[a].URL < w.newIndex.Items[b].URL
+	})
+	// Always save, even in case of error.
 	d, err2 := json.MarshalIndent(w.newIndex, "", " ")
 	if err2 != nil {
 		panic(err2)

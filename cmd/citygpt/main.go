@@ -241,7 +241,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	s.stateLock.Lock()
 	sd := s.state.Sessions[req.SessionID]
 	if sd == nil {
-		now := time.Now()
+		now := time.Now().Round(time.Second)
 		sd = &SessionData{
 			Created:  now,
 			Modified: now,
@@ -258,7 +258,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	resp := s.generateResponse(r.Context(), req.Message, sd)
 	respMsg := Message{Role: "assistant", Content: resp}
 	sd.Messages = append(sd.Messages, respMsg)
-	sd.Modified = time.Now()
+	sd.Modified = time.Now().Round(time.Second)
 
 	// TODO: Run this asynchronously.
 	// Save state after adding a new message.
