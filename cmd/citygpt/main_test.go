@@ -6,6 +6,7 @@ package main
 
 import (
 	"embed"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,13 +14,23 @@ import (
 )
 
 //go:embed testdata
-var testFS embed.FS
+var testdataFS embed.FS
+
+var testFS fs.FS
+
+func init() {
+	t, err := fs.Sub(testdataFS, "testdata")
+	if err != nil {
+		panic(err)
+	}
+	testFS = t
+}
 
 func TestHandleCityData(t *testing.T) {
-	s := server{
-		cityData: testFS,
+	s, err := newServer(t.Context(), nil, "testgpt", testFS)
+	if err != nil {
+		t.Fatal(err)
 	}
-
 	tests := []struct {
 		name           string
 		path           string
@@ -39,14 +50,8 @@ func TestHandleCityData(t *testing.T) {
 			expectedBody:   "Data Files:",
 		},
 		{
-			name:           "Directory path should list directory contents",
-			path:           "/city-data/testdata",
-			expectedStatus: http.StatusOK,
-			expectedBody:   "Contents of testdata:",
-		},
-		{
 			name:           "Existing file path should return file content",
-			path:           "/city-data/testdata/test.txt",
+			path:           "/city-data/test.txt",
 			expectedStatus: http.StatusOK,
 			expectedBody:   "Test file content",
 		},
@@ -79,29 +84,11 @@ func TestHandleCityData(t *testing.T) {
 	}
 }
 
-// TestAppNameFlag verifies that the app-name flag works correctly
-func TestAppNameFlag(t *testing.T) {
-	// Test with default app name
-	s := server{
-		appName: "CityGPT",
-	}
-	if s.appName != "CityGPT" {
-		t.Errorf("Default app name should be CityGPT, got %s", s.appName)
-	}
-
-	// Test with custom app name
-	s = server{
-		appName: "CustomName",
-	}
-	if s.appName != "CustomName" {
-		t.Errorf("Custom app name should be CustomName, got %s", s.appName)
-	}
-}
-
 // TestTemplateHeaderTitle verifies that the templates are using the HeaderTitle field correctly
 func TestTemplateHeaderTitle(t *testing.T) {
-	s := server{
-		appName: "TestApp",
+	s, err := newServer(t.Context(), nil, "TestApp", testFS)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	// Test the About page which we just fixed

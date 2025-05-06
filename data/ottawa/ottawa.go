@@ -8,20 +8,18 @@ package ottawa
 import (
 	"embed"
 	"io/fs"
-
-	"github.com/maruel/citygpt"
 )
 
 //go:embed pages_text
 var dataFS embed.FS
 
 // DataFS contains the pages under pages_text/.
-var DataFS citygpt.ReadDirFileFS
+var DataFS fs.FS
 
 func init() {
 	f, err := fs.Sub(dataFS, "pages_text")
 	if err != nil {
 		panic(err)
 	}
-	DataFS = f.(citygpt.ReadDirFileFS)
+	DataFS = f
 }

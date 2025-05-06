@@ -28,7 +28,6 @@ import (
 	"time"
 
 	"github.com/lmittmann/tint"
-	"github.com/maruel/citygpt"
 	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/citygpt/internal/ipgeo"
@@ -78,22 +77,20 @@ type SessionData struct {
 
 // server represents the HTTP server that handles the chat application.
 type server struct {
-	c        genai.ChatProvider
-	cityData citygpt.ReadDirFileFS
-	appName  string
+	// Immutable
+	c             genai.ChatProvider
+	cityData      fs.FS
+	appName       string
+	templates     map[string]*template.Template
+	files         map[string]internal.Item
+	summaryPrompt string
+	statePath     string          // statePath is the path to the state file on disk
+	ipChecker     ipgeo.IPChecker // ipChecker is used to check if an IP is from Canada
 
-	files   map[string]internal.Item
-	summary string
-
+	// Mutable
+	mu sync.Mutex
 	// state stores both chat messages and selected files for each session
-	state     State
-	stateLock sync.Mutex
-
-	// statePath is the path to the state file on disk
-	statePath string
-
-	// ipChecker is used to check if an IP is from Canada
-	ipChecker ipgeo.IPChecker
+	state State
 }
 
 func generateSessionID() string {
@@ -111,7 +108,7 @@ func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (int
 	prompt := fmt.Sprintf(
 		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
 		userMessage,
-		s.summary,
+		s.summaryPrompt,
 	)
 	for attempt := range 3 {
 		// Increase temperature with each attempt
@@ -173,7 +170,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 			return s.genericReply(ctx, msg, sd.Messages)
 		}
 		slog.InfoContext(ctx, "citygpt", "msg", "Selected best file for response", "file", sd.Item.Name)
-		fileContent, err2 := s.cityData.ReadFile(sd.Item.Name)
+		fileContent, err2 := fs.ReadFile(s.cityData, sd.Item.Name)
 		if err2 != nil {
 			slog.ErrorContext(ctx, "citygpt", "msg", "Error reading selected file", "file", sd.Item.Name, "err", err2)
 			return s.genericReply(ctx, msg, sd.Messages)
@@ -232,7 +229,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	if req.SessionID == "" {
 		req.SessionID = generateSessionID()
 	}
-	s.stateLock.Lock()
+	s.mu.Lock()
 	sd := s.state.Sessions[req.SessionID]
 	if sd == nil {
 		now := time.Now().Round(time.Second)
@@ -242,7 +239,7 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 		}
 		s.state.Sessions[req.SessionID] = sd
 	}
-	s.stateLock.Unlock()
+	s.mu.Unlock()
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
 	isNew := len(sd.Messages) == 0
@@ -256,11 +253,11 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Run this asynchronously.
 	// Save state after adding a new message.
-	s.stateLock.Lock()
+	s.mu.Lock()
 	if err := s.saveState(); err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state", "err", err)
 	}
-	s.stateLock.Unlock()
+	s.mu.Unlock()
 
 	if isNew {
 		respMsg.Content = fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
@@ -282,7 +279,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 	// If no subpath is provided, list all top-level files and directories
 	if subPath == "" {
 		// Get all entries in the embedded FS
-		entries, err := s.cityData.ReadDir(".")
+		entries, err := fs.ReadDir(s.cityData, ".")
 		if err != nil {
 			http.Error(w, "Error reading data: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -293,7 +290,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 		for _, entry := range entries {
 			fmt.Fprintf(w, "- %s\n", entry.Name())
 			if !entry.IsDir() {
-				data, err := s.cityData.ReadFile(entry.Name())
+				data, err := fs.ReadDir(s.cityData, entry.Name())
 				if err != nil {
 					fmt.Fprintf(w, "  Error reading file: %v\n", err)
 				} else {
@@ -307,7 +304,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 	// Check if the path points to a directory
 	if info, err := fs.Stat(s.cityData, subPath); err == nil && info.IsDir() {
 		// If it's a directory, list its contents
-		entries, err := s.cityData.ReadDir(subPath)
+		entries, err := fs.ReadDir(s.cityData, subPath)
 		if err != nil {
 			http.Error(w, "Error reading directory: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -319,7 +316,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 			fullPath := path.Join(subPath, entry.Name())
 			fmt.Fprintf(w, "- %s\n", entry.Name())
 			if !entry.IsDir() {
-				data, err := s.cityData.ReadFile(fullPath)
+				data, err := fs.ReadDir(s.cityData, fullPath)
 				if err != nil {
 					fmt.Fprintf(w, "  Error reading file: %v\n", err)
 				} else {
@@ -331,7 +328,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle request for a specific file
-	data, err := s.cityData.ReadFile(subPath)
+	data, err := fs.ReadFile(s.cityData, subPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			http.Error(w, "File not found", http.StatusNotFound)
@@ -363,13 +360,6 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 
-	// Parse templates from the embedded filesystem
-	tmpl, err := template.ParseFS(templateFS, "templates/layout.html", "templates/chat.html")
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
-		return
-	}
 	clientIP, err := ipgeo.GetRealIP(r)
 	if err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
@@ -400,22 +390,13 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		HeaderTitle: "Chat",
 		CurrentPage: "chat",
 	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
+	if err := s.templates["/"].Execute(w, data); err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "err", err)
 	}
 }
 
 func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
-	// Parse templates from the embedded filesystem
-	tmpl, err := template.ParseFS(templateFS, "templates/layout.html", "templates/about.html")
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
-		return
-	}
 	clientIP, err := ipgeo.GetRealIP(r)
 	if err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
@@ -447,8 +428,7 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 		HeaderTitle: "About",
 		CurrentPage: "about",
 	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
+	if err := s.templates["/about"].Execute(w, data); err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "err", err)
 	}
 }
@@ -490,46 +470,46 @@ func (s *server) saveState() error {
 	return nil
 }
 
-func (s *server) start(ctx context.Context, port string) error {
+func newServer(ctx context.Context, c genai.ChatProvider, appName string, files fs.FS) (*server, error) {
+	s := &server{c: c, cityData: files, appName: appName, files: map[string]internal.Item{}}
 	var err error
 	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {
 		slog.WarnContext(ctx, "citygpt", "msg", "Failed to initialize GeoIP database, IP restriction disabled", "err", err)
-	} else {
-		defer func() {
-			if err2 := s.ipChecker.Close(); err2 != nil {
-				slog.WarnContext(ctx, "citygpt", "msg", "Failed to close GeoIP database", "err", err2)
-			}
-		}()
+	}
+	if err = s.compileTemplates(); err != nil {
+		return s, err
 	}
 	configDir, err := internal.GetConfigDir()
 	if err != nil {
-		return fmt.Errorf("failed to determine config directory: %w", err)
+		return nil, fmt.Errorf("failed to determine config directory: %w", err)
 	}
 	configDir = filepath.Join(configDir, "citygpt")
 	if err = os.MkdirAll(configDir, 0o755); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
+		return nil, fmt.Errorf("failed to create config directory: %w", err)
 	}
 	s.statePath = filepath.Join(configDir, s.appName+".json")
 	if err = s.loadState(ctx); err != nil {
-		return err
+		return nil, err
 	}
-	raw, err := s.cityData.ReadFile("index.json")
+	raw, err := fs.ReadFile(s.cityData, "index.json")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	data := internal.Index{}
 	if err = json.Unmarshal(raw, &data); err != nil {
-		return err
+		return nil, err
 	}
-	s.files = map[string]internal.Item{}
-	var content []string
+	content := make([]string, 0, len(data.Items))
 	for _, item := range data.Items {
 		s.files[item.Name] = item
 		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
 	}
 	sort.Strings(content)
-	s.summary = strings.Join(content, "\n")
+	s.summaryPrompt = strings.Join(content, "\n")
+	return s, nil
+}
 
+func (s *server) start(ctx context.Context, port string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", s.handleIndex)
 	mux.HandleFunc("GET /about", s.handleAbout)
@@ -551,11 +531,11 @@ func (s *server) start(ctx context.Context, port string) error {
 	select {
 	case <-ctx.Done():
 		slog.InfoContext(ctx, "citygpt", "msg", "Shutdown signal received, gracefully shutting down server...")
-		s.stateLock.Lock()
+		s.mu.Lock()
 		if err := s.saveState(); err != nil {
 			slog.ErrorContext(ctx, "citygpt", "msg", "Failed to save state during shutdown", "err", err)
 		}
-		s.stateLock.Unlock()
+		s.mu.Unlock()
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := srv.Shutdown(shutdownCtx); err != nil {
@@ -565,6 +545,27 @@ func (s *server) start(ctx context.Context, port string) error {
 	case err := <-errorChan:
 		return fmt.Errorf("server error: %w", err)
 	}
+}
+
+func (s *server) Close() error {
+	if s.ipChecker != nil {
+		if err := s.ipChecker.Close(); err != nil {
+			slog.Warn("citygpt", "msg", "Failed to close GeoIP database", "err", err)
+		}
+	}
+	return nil
+}
+
+func (s *server) compileTemplates() error {
+	s.templates = map[string]*template.Template{}
+	var err error
+	if s.templates["/"], err = template.ParseFS(templateFS, "templates/layout.html", "templates/chat.html"); err != nil {
+		return err
+	}
+	if s.templates["/about"], err = template.ParseFS(templateFS, "templates/layout.html", "templates/about.html"); err != nil {
+		return err
+	}
+	return nil
 }
 
 func watchExecutable(ctx context.Context, cancel context.CancelFunc) error {
@@ -657,7 +658,10 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
-	s := server{c: c, cityData: ottawa.DataFS, appName: *appName}
+	s, err := newServer(ctx, c, *appName, ottawa.DataFS)
+	if err != nil {
+		return err
+	}
 	return s.start(ctx, *port)
 }
 

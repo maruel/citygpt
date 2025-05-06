@@ -4,10 +4,3 @@
 
 // Package citygpt includes comment embeds the data for Ottawa's By-Laws.
 package citygpt
-
-import "io/fs"
-
-type ReadDirFileFS interface {
-	fs.ReadFileFS
-	ReadDir(name string) ([]fs.DirEntry, error)
-}
