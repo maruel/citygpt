@@ -211,18 +211,18 @@ func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
 	if s.ipChecker != nil {
 		countryCode, err := s.ipChecker.GetCountry(clientIP)
 		if err != nil {
-			slog.WarnContext(ctx, "citygpt", "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
 		} else if countryCode != "CA" && countryCode != "local" {
-			slog.InfoContext(ctx, "citygpt", "msg", "Blocked non-Canadian IP", "ip", clientIP, "country", countryCode)
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusForbidden)
 			_ = json.NewEncoder(w).Encode(ChatResponse{Message: Message{Role: "assistant", Content: "I'm sorry, I can only be used within Canada"}})
 			return
 		} else {
-			slog.InfoContext(ctx, "citygpt", "ip", clientIP, "country", countryCode)
+			slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP, "country", countryCode)
 		}
 	} else {
-		slog.InfoContext(ctx, "citygpt", "ip", clientIP)
+		slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP)
 	}
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -370,6 +370,23 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
 		return
 	}
+	clientIP, err := ipgeo.GetRealIP(r)
+	if err != nil {
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
+		http.Error(w, "Can't determine IP address", http.StatusPreconditionFailed)
+		return
+	}
+	if s.ipChecker != nil {
+		if countryCode, err := s.ipChecker.GetCountry(clientIP); err != nil {
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
+		} else if countryCode != "CA" && countryCode != "local" {
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
+		} else {
+			slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP, "country", countryCode)
+		}
+	} else {
+		slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP)
+	}
 
 	w.Header().Set("Content-Type", "text/html")
 	// Pass the app name and current page to the template
@@ -398,6 +415,23 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
 		return
+	}
+	clientIP, err := ipgeo.GetRealIP(r)
+	if err != nil {
+		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
+		http.Error(w, "Can't determine IP address", http.StatusPreconditionFailed)
+		return
+	}
+	if s.ipChecker != nil {
+		if countryCode, err := s.ipChecker.GetCountry(clientIP); err != nil {
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
+		} else if countryCode != "CA" && countryCode != "local" {
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
+		} else {
+			slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP, "country", countryCode)
+		}
+	} else {
+		slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP)
 	}
 
 	w.Header().Set("Content-Type", "text/html")

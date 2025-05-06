@@ -110,7 +110,7 @@ func TestTemplateHeaderTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		req.RemoteAddr = "127.0.0.1"
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(s.handleAbout)
 		handler.ServeHTTP(rr, req)
@@ -119,9 +119,9 @@ func TestTemplateHeaderTitle(t *testing.T) {
 			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 		}
 
-		expectedContent := "TestApp About"
-		if !strings.Contains(rr.Body.String(), expectedContent) {
-			t.Errorf("handler returned unexpected body: expected it to contain %q", expectedContent)
+		want := "TestApp About"
+		if got := rr.Body.String(); !strings.Contains(got, want) {
+			t.Errorf("handler returned unexpected body: expected it to contain %q\n%q", want, got)
 		}
 	})
 }
