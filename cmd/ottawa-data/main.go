@@ -34,15 +34,40 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// Throttle implements a time based algorithm to smooth out HTTP requests at exactly QPS or less.
+//
+// It doesn't have allowance for bursty requests.
 type Throttle struct {
 	Transport http.RoundTripper
 	QPS       float64
 
-	mu sync.Mutex
+	mu          sync.Mutex
+	lastRequest time.Time
 }
 
 func (t *Throttle) RoundTrip(req *http.Request) (*http.Response, error) {
-	// TODO: Implement a throttling algorithm to slow down requests.
+	var sleep time.Duration
+	t.mu.Lock()
+	now := time.Now()
+	if t.lastRequest.IsZero() {
+		t.lastRequest = now
+	} else {
+		if sleep = time.Duration(t.QPS * float64(time.Second)); sleep < 0 {
+			sleep = 0
+			t.lastRequest = now
+		} else {
+			t.lastRequest = t.lastRequest.Add(sleep)
+		}
+	}
+	t.mu.Unlock()
+	if sleep != 0 {
+		ctx := req.Context()
+		select {
+		case <-time.After(sleep):
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		}
+	}
 	return t.Transport.RoundTrip(req)
 }
 
@@ -219,8 +244,12 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
 func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u, outputDir string) (*internal.Index, error) {
-	// Number of workers to process URLs in parallel
+	// Number of workers to process URLs and generate summaries in parallel. Generating summaries is slow so it
+	// needs to be significantly higher than 1/qps.
 	const numWorkers = 8
+	// Maximum queries per second to hit the HTTP server with HTTP GET. We don't want them to hate us.
+	const qps = 1.
+
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -230,9 +259,15 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 		return nil, err
 	}
 	client := http.Client{
-		Transport: &Throttle{
-			Transport: &roundtrippers.Retry{Transport: http.DefaultTransport},
-			QPS:       5,
+		Transport: &roundtrippers.Header{
+			Header: http.Header{"User-Agent": {"CityGPT"}},
+			Transport: &roundtrippers.Retry{
+				// Throttle retries too.
+				Transport: &Throttle{
+					QPS:       qps,
+					Transport: http.DefaultTransport,
+				},
+			},
 		},
 	}
 	now := time.Now().Round(time.Second)
