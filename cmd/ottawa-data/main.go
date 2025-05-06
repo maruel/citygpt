@@ -13,6 +13,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
@@ -217,22 +218,22 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 }
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u, outputDir string) error {
+func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u, outputDir string) (*internal.Index, error) {
 	// Number of workers to process URLs in parallel
 	const numWorkers = 8
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
-		return fmt.Errorf("failed to create output directory: %w", err)
+		return nil, fmt.Errorf("failed to create output directory: %w", err)
 	}
 	indexPath := filepath.Join(outputDir, "index.json")
 	b, err := os.ReadFile(indexPath)
 	if err != nil && !os.IsNotExist(err) {
-		return err
+		return nil, err
 	}
 	now := time.Now().Round(time.Second)
 	w := summaryWorkers{c: c, outputDir: outputDir, urlLookup: map[string]int{}, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
 	if b != nil {
 		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
-			return err
+			return nil, err
 		}
 		if len(w.previousIndex.Items) > 0 && !w.previousIndex.Created.IsZero() {
 			w.newIndex.Created = w.previousIndex.Created
@@ -244,10 +245,10 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 
 	links, err := extractLinksFromURL(baseURL, u)
 	if err != nil {
-		return fmt.Errorf("error extracting links: %w", err)
+		return nil, fmt.Errorf("error extracting links: %w", err)
 	}
 	if len(links) == 0 {
-		return errors.New("no link found")
+		return nil, errors.New("no link found")
 	}
 
 	type doneItem struct {
@@ -313,7 +314,34 @@ breakLoop:
 	if err2 = os.WriteFile(indexPath, d, 0o644); err == nil {
 		err = err2
 	}
-	return err
+	out := &internal.Index{}
+	*out = w.newIndex
+	return out, err
+}
+
+// cleanupOutputDir removes files from outputDir that are not listed in the index.
+func cleanupOutputDir(outputDir string, index *internal.Index) error {
+	validFiles := make(map[string]struct{}, len(index.Items)+1)
+	for _, item := range index.Items {
+		validFiles[item.Name] = struct{}{}
+	}
+	validFiles["index.json"] = struct{}{}
+	return filepath.WalkDir(outputDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		relPath, err := filepath.Rel(outputDir, path)
+		if err != nil {
+			return err
+		}
+		if _, exists := validFiles[relPath]; !exists {
+			if err := os.Remove(path); err != nil {
+				return err
+			}
+			fmt.Printf("Deleted file not in index: %s\n", relPath)
+		}
+		return nil
+	})
 }
 
 func mainImpl() error {
@@ -331,9 +359,14 @@ func mainImpl() error {
 	// targetURL is the URL to fetch links from
 	const targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
 	fmt.Printf("Extracting links from %s\n", targetURL)
-	if err = downloadAndSaveTexts(ctx, c, targetURL+"/", targetURL, *outputDir); err != nil {
+	index, err := downloadAndSaveTexts(ctx, c, targetURL+"/", targetURL, *outputDir)
+	if err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
 	}
+	if err = cleanupOutputDir(*outputDir, index); err != nil {
+		return fmt.Errorf("error during file cleanup: %w", err)
+	}
+
 	fmt.Println("Process completed successfully")
 	return nil
 }
