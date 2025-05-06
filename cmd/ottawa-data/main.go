@@ -113,26 +113,26 @@ func urlToMDName(u string) (string, error) {
 	return md + ".md", nil
 }
 
-func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
+func (s *summaryWorkers) worker(ctx context.Context, fullURL string) (bool, error) {
 	// Always download a fresh copy of the HTML page in case it changed.
 	resp, err := http.Get(fullURL)
 	if err != nil {
-		return fmt.Errorf("failed to fetch %s: %w", fullURL, err)
+		return false, fmt.Errorf("failed to fetch %s: %w", fullURL, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
+		return false, fmt.Errorf("received non-200 response for %s: %d", fullURL, resp.StatusCode)
 	}
 	md, title, err := htmlparse.ExtractTextFromHTML(resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed to extract text: %w", err)
+		return false, fmt.Errorf("failed to extract text: %w", err)
 	}
 
 	mdName, err := urlToMDName(fullURL)
 	if err != nil {
-		return err
+		return false, err
 	}
-	mdPath := filepath.Join(s.outputDir, md)
+	mdPath := filepath.Join(s.outputDir, mdName)
 	now := time.Now().Round(time.Second)
 	created := now
 	if i, ok := s.urlLookup[fullURL]; ok {
@@ -147,7 +147,7 @@ func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
 				s.mu.Lock()
 				s.newIndex.Items = append(s.newIndex.Items, prev)
 				s.mu.Unlock()
-				return nil
+				return false, nil
 			}
 		}
 	}
@@ -156,12 +156,12 @@ func (s *summaryWorkers) worker(ctx context.Context, fullURL string) error {
 	item := internal.Item{URL: fullURL, Title: title, Name: mdName, Created: created, Modified: now}
 	item.Summary, err = internal.Summarize(ctx, s.c, md)
 	if err != nil {
-		return err
+		return false, err
 	}
 	s.mu.Lock()
 	s.newIndex.Items = append(s.newIndex.Items, item)
 	s.mu.Unlock()
-	return nil
+	return true, nil
 }
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
@@ -203,16 +203,21 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 			w.urlLookup[w.previousIndex.Items[i].URL] = i
 		}
 	}
+	type doneItem struct {
+		url     string
+		updated bool
+	}
 	jobs := make(chan string, 2*numWorkers)
-	done := make(chan string, 10)
+	done := make(chan doneItem, 10)
 	eg, ctx := errgroup.WithContext(ctx)
 	for range numWorkers {
 		eg.Go(func() error {
 			for fullURL := range jobs {
-				if err := w.worker(ctx, fullURL); err != nil {
+				updated, err := w.worker(ctx, fullURL)
+				if err != nil {
 					return err
 				}
-				done <- fullURL
+				done <- doneItem{fullURL, updated}
 			}
 			return nil
 		})
@@ -222,14 +227,23 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, links []str
 	go func() {
 		total := len(validLinks)
 		processed := 0
-		for fullURL := range done {
+		for i := range done {
 			processed++
-			fmt.Printf("Fetched (%d/%d): %s\n", processed, total, fullURL)
+			suffix := ""
+			if i.updated {
+				suffix = " (updated)"
+			}
+			fmt.Printf("- (%d/%d): %s%s\n", processed, total, i.url, suffix)
 		}
 		wg.Done()
 	}()
+breakLoop:
 	for _, url := range validLinks {
-		jobs <- url
+		select {
+		case jobs <- url:
+		case <-ctx.Done():
+			break breakLoop
+		}
 	}
 	close(jobs)
 	err = eg.Wait()
