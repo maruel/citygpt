@@ -7,7 +7,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
-	_ "embed"
+	"embed"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -55,14 +55,8 @@ type ChatResponse struct {
 	SessionID string  `json:"session_id,omitempty"`
 }
 
-//go:embed templates/layout.html
-var layoutHTMLTemplate string
-
-//go:embed templates/chat.html
-var chatHTMLTemplate string
-
-//go:embed templates/about.html
-var aboutHTMLTemplate string
+//go:embed templates
+var templateFS embed.FS
 
 type State struct {
 	Sessions map[string]*SessionData `json:"sessions"`
@@ -369,19 +363,11 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 
-	// Create a template with both layout and chat templates
-	tmpl, err := template.New("layout").Parse(layoutHTMLTemplate)
+	// Parse templates from the embedded filesystem
+	tmpl, err := template.ParseFS(templateFS, "templates/layout.html", "templates/chat.html")
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Layout template parsing error", "err", err)
-		return
-	}
-
-	// Parse the chat template
-	_, err = tmpl.Parse(chatHTMLTemplate)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Chat template parsing error", "err", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
 		return
 	}
 
@@ -406,19 +392,11 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// Create a template with both layout and about templates
-	tmpl, err := template.New("layout").Parse(layoutHTMLTemplate)
+	// Parse templates from the embedded filesystem
+	tmpl, err := template.ParseFS(templateFS, "templates/layout.html", "templates/about.html")
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "Layout template parsing error", "err", err)
-		return
-	}
-
-	// Parse the about template
-	_, err = tmpl.Parse(aboutHTMLTemplate)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.ErrorContext(ctx, "citygpt", "msg", "About template parsing error", "err", err)
+		slog.ErrorContext(ctx, "citygpt", "msg", "Template parsing error", "err", err)
 		return
 	}
 
