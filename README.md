@@ -4,7 +4,7 @@ Chat with a system that knows the By-Laws of your city.
 
 ## Live Demo
 
-CityGPT is live at [https://ottawa.maruel.ca](https://ottawa.maruel.ca) where you can chat with it about Ottawa by-laws.
+CityGPT is live at [https://citybylaws.org](https://citybylaws.org) where you can chat with it about Ottawa by-laws.
 
 ## License
 
