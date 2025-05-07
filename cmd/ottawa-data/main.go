@@ -204,7 +204,7 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 		return false, links, err
 	}
 	mdPath := filepath.Join(s.outputDir, mdName)
-	if err := os.MkdirAll(filepath.Dir(mdPath), 0o755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(mdPath), 0o755); err != nil {
 		return false, links, err
 	}
 	now := time.Now().Round(time.Second)
