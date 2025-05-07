@@ -557,7 +557,7 @@ func (s *server) Close() error {
 func (s *server) compileTemplates() error {
 	s.templates = map[string]*template.Template{}
 	var err error
-	if s.templates["/"], err = template.ParseFS(templateFS, "templates/layout.html", "templates/chat.html"); err != nil {
+	if s.templates["/"], err = template.ParseFS(templateFS, "templates/layout.html", "templates/index.html"); err != nil {
 		return err
 	}
 	if s.templates["/about"], err = template.ParseFS(templateFS, "templates/layout.html", "templates/about.html"); err != nil {
