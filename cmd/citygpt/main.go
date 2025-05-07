@@ -66,41 +66,34 @@ func mainImpl() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
 	Level := &slog.LevelVar{}
-	Level.Set(slog.LevelDebug)
+	Level.Set(slog.LevelInfo)
 	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
 		Level:      Level,
 		TimeFormat: "15:04:05.000", // Like time.TimeOnly plus milliseconds.
 		NoColor:    !isatty.IsTerminal(os.Stderr.Fd()),
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			switch t := a.Value.Any().(type) {
+			val := a.Value.Any()
+			skip := false
+			switch t := val.(type) {
 			case string:
-				if t == "" {
-					return slog.Attr{}
-				}
+				skip = t == ""
 			case bool:
-				if !t {
-					return slog.Attr{}
-				}
+				skip = !t
 			case uint64:
-				if t == 0 {
-					return slog.Attr{}
-				}
+				skip = t == 0
 			case int64:
-				if t == 0 {
-					return slog.Attr{}
-				}
+				skip = t == 0
 			case float64:
-				if t == 0 {
-					return slog.Attr{}
-				}
+				skip = t == 0
 			case time.Time:
-				if t.IsZero() {
-					return slog.Attr{}
-				}
+				skip = t.IsZero()
 			case time.Duration:
-				if t == 0 {
-					return slog.Attr{}
-				}
+				skip = t == 0
+			case nil:
+				skip = true
+			}
+			if skip {
+				return slog.Attr{}
 			}
 			return a
 		},
@@ -112,9 +105,13 @@ func mainImpl() error {
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
+	verbose := flag.Bool("verbose", false, "Enable verbose logging")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unsupported argument")
+	}
+	if *verbose {
+		Level.Set(slog.LevelDebug)
 	}
 	c, err := internal.LoadProvider(ctx)
 	if err != nil {

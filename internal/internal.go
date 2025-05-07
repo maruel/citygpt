@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log/slog"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -70,7 +71,10 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 				}
 			}
 		}
-		return gemini.New("", modelFlag)
+		if c, err = gemini.New("", modelFlag); err != nil {
+			return nil, err
+		}
+		return &LoggingChatProvider{c}, nil
 	}
 	if useCerebras {
 		c, err := cerebras.New("", "")
@@ -91,7 +95,10 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 				}
 			}
 		}
-		return cerebras.New("", modelFlag)
+		if c, err = cerebras.New("", modelFlag); err != nil {
+			return nil, err
+		}
+		return &LoggingChatProvider{c}, nil
 	}
 	if useGroq {
 		c, err := groq.New("", "")
@@ -112,9 +119,12 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 				}
 			}
 		}
-		return groq.New("", modelFlag)
+		if c, err = groq.New("", modelFlag); err != nil {
+			return nil, err
+		}
+		return &LoggingChatProvider{c}, nil
 	}
-	return nil, errors.New("set either CEREBRAS_API_KEY or GROQ_API_KEY")
+	return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
 }
 
 // ProcessHTML from a single URL and saves it
@@ -209,4 +219,22 @@ func (i *Index) Save(path string) error {
 		return err
 	}
 	return os.Rename(tmpPath, path)
+}
+
+type LoggingChatProvider struct {
+	genai.ChatProvider
+}
+
+func (l *LoggingChatProvider) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
+	start := time.Now()
+	resp, err := l.ChatProvider.Chat(ctx, msgs, opts)
+	slog.DebugContext(ctx, "genai", "fn", "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
+	return resp, err
+}
+
+func (l *LoggingChatProvider) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) error {
+	start := time.Now()
+	err := l.ChatProvider.ChatStream(ctx, msgs, opts, replies)
+	slog.DebugContext(ctx, "genai", "fn", "ChatStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
+	return err
 }

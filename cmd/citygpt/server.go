@@ -141,16 +141,15 @@ func generateSessionID() string {
 //
 // It retries up to 3 times with increasing temperature.
 func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (internal.Item, error) {
-	prompt := fmt.Sprintf(
-		"Given the user's question: \"%s\"\n\nUsing the following summary information, which file would likely be the best source of information to answer this question? Please respond ONLY with the name of the single most relevant file.\n\nSummary information:\n%s",
-		userMessage,
-		s.summaryPrompt,
-	)
+	msgs := genai.Messages{
+		genai.NewTextMessage(genai.User, "Here's a list of file names and their corresponding summary. The files contain information to answer the user's questions.:"),
+		genai.NewTextMessage(genai.User, s.summaryPrompt),
+		genai.NewTextMessage(genai.User, fmt.Sprintf("Using the previous summary information, determine which file would likely be the best source of information to answer this question. Please respond ONLY with the name of the single most relevant file.\n\nHere's the user's question: \"%s\"", userMessage)),
+	}
 	for attempt := range 3 {
 		// Increase temperature with each attempt
 		temperature := 0.1 * float64(attempt+1)
 		slog.InfoContext(ctx, "citygpt", "msg", "Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
-		msgs := genai.Messages{genai.NewTextMessage(genai.User, prompt)}
 		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
 		resp, err := s.c.Chat(ctx, msgs, &opts)
 		if err != nil {

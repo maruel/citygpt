@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,10 +26,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/lmittmann/tint"
 	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/citygpt/internal/htmlparse"
 	"github.com/maruel/genai"
 	"github.com/maruel/roundtrippers"
+	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
 )
@@ -385,10 +389,48 @@ func cleanupOutputDir(outputDir string, index *internal.Index) error {
 func mainImpl() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
+	Level := &slog.LevelVar{}
+	Level.Set(slog.LevelInfo)
+	logger := slog.New(tint.NewHandler(colorable.NewColorable(os.Stderr), &tint.Options{
+		Level:      Level,
+		TimeFormat: "15:04:05.000", // Like time.TimeOnly plus milliseconds.
+		NoColor:    !isatty.IsTerminal(os.Stderr.Fd()),
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			val := a.Value.Any()
+			skip := false
+			switch t := val.(type) {
+			case string:
+				skip = t == ""
+			case bool:
+				skip = !t
+			case uint64:
+				skip = t == 0
+			case int64:
+				skip = t == 0
+			case float64:
+				skip = t == 0
+			case time.Time:
+				skip = t.IsZero()
+			case time.Duration:
+				skip = t == 0
+			case nil:
+				skip = true
+			}
+			if skip {
+				return slog.Attr{}
+			}
+			return a
+		},
+	}))
+	slog.SetDefault(logger)
 	outputDir := flag.String("output-dir", "pages_text", "Directory to save downloaded markdown files")
+	verbose := flag.Bool("verbose", false, "Enable verbose logging")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
+	}
+	if *verbose {
+		Level.Set(slog.LevelDebug)
 	}
 	c, err := internal.LoadProvider(ctx)
 	if err != nil {
