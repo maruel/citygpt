@@ -437,9 +437,15 @@ func mainImpl() error {
 		return err
 	}
 	// targetURL is the URL to fetch links from
-	const targetURL = "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
+	targetURL := "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
+	baseURL := targetURL + "/"
+	if false {
+		// Requires PDF support.
+		targetURL = "https://www.gatineau.ca/portail/default.aspx?p=guichet_municipal/reglements_municipaux"
+		baseURL = "https://docweb.gatineau.ca/Doc-Web/masson/documents/pdf/"
+	}
 	fmt.Printf("Extracting links from %s\n", targetURL)
-	index, err := downloadAndSaveTexts(ctx, c, targetURL+"/", targetURL, *outputDir)
+	index, err := downloadAndSaveTexts(ctx, c, baseURL, targetURL, *outputDir)
 	if err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
 	}
