@@ -92,6 +92,16 @@ that can be found in the LICENSE file.
 </div>
 
 <footer>
-	&copy; 2025 CityGPT - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a>
+	&copy; 2025 CityGPT - <a href="https://github.com/maruel/citygpt" target="_blank">GitHub</a> - <a id="contact-email" href="#">Contact</a>
+	<script>
+		// Get the current domain and set the email link
+		document.addEventListener('DOMContentLoaded', function() {
+			const domain = window.location.hostname;
+			const emailElement = document.getElementById('contact-email');
+			const emailAddress = 'info@' + domain;
+			emailElement.href = 'mailto:' + emailAddress;
+			emailElement.textContent = emailAddress;
+		});
+	</script>
 </footer>
 {{- end -}}
