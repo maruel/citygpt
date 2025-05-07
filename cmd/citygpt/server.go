@@ -231,7 +231,7 @@ func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionDa
 	return resp.Message.Contents[0].Text
 }
 
-func (s *server) handleChat(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	clientIP, err := ipgeo.GetRealIP(r)
 	if err != nil {
@@ -389,12 +389,7 @@ func (s *server) handleCityData(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
 	ctx := r.Context()
-
 	clientIP, err := ipgeo.GetRealIP(r)
 	if err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Failed to determine client IP", "err", err)
@@ -411,6 +406,11 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP)
+	}
+	// Refuse random subpaths after checking the IP.
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
@@ -506,7 +506,7 @@ func (s *server) start(ctx context.Context, port string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", s.handleIndex)
 	mux.HandleFunc("GET /about", s.handleAbout)
-	mux.HandleFunc("POST /api/chat", s.handleChat)
+	mux.HandleFunc("POST /api/chat", s.handleRoot)
 	mux.HandleFunc("GET /city-data/", s.handleCityData)
 	mux.HandleFunc("GET /city-data", s.handleCityData)
 
