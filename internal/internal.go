@@ -6,10 +6,12 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -180,4 +182,31 @@ func GetConfigDir() (string, error) {
 		return "", fmt.Errorf("failed to get current user: %w", err)
 	}
 	return filepath.Join(current.HomeDir, ".config"), nil
+}
+
+// Load loads an Index from a filesystem.
+func (i *Index) Load(fsys fs.FS, path string) error {
+	raw, err := fs.ReadFile(fsys, path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// If the file doesn't exist, initialize with an empty Index
+			*i = Index{Version: 1, Created: time.Now().Round(time.Second), Modified: time.Now().Round(time.Second)}
+			return nil
+		}
+		return err
+	}
+	return json.Unmarshal(raw, i)
+}
+
+// Save saves an Index to a file path.
+func (i *Index) Save(path string) error {
+	d, err := json.MarshalIndent(i, "", " ")
+	if err != nil {
+		return err
+	}
+	tmpPath := path + ".tmp"
+	if err := os.WriteFile(path, d, 0o644); err != nil {
+		return err
+	}
+	return os.Rename(tmpPath, path)
 }

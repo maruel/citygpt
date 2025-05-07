@@ -117,6 +117,7 @@ type server struct {
 	cityData      fs.FS
 	appName       string
 	templates     map[string]*template.Template
+	index         internal.Index
 	files         map[string]internal.Item
 	summaryPrompt string
 	statePath     string          // statePath is the path to the state file on disk
@@ -489,16 +490,11 @@ func newServer(ctx context.Context, c genai.ChatProvider, appName string, files 
 	if err = s.state.load(ctx, s.statePath); err != nil {
 		return nil, err
 	}
-	raw, err := fs.ReadFile(s.cityData, "index.json")
-	if err != nil {
+	if err = s.index.Load(s.cityData, "index.json"); err != nil {
 		return nil, err
 	}
-	data := internal.Index{}
-	if err = json.Unmarshal(raw, &data); err != nil {
-		return nil, err
-	}
-	content := make([]string, 0, len(data.Items))
-	for _, item := range data.Items {
+	content := make([]string, 0, len(s.index.Items))
+	for _, item := range s.index.Items {
 		s.files[item.Name] = item
 		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
 	}

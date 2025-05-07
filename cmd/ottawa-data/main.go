@@ -8,7 +8,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -253,11 +252,6 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create output directory: %w", err)
 	}
-	indexPath := filepath.Join(outputDir, "index.json")
-	b, err := os.ReadFile(indexPath)
-	if err != nil && !os.IsNotExist(err) {
-		return nil, err
-	}
 	client := http.Client{
 		Transport: &roundtrippers.Header{
 			Header: http.Header{"User-Agent": {"CityGPT"}},
@@ -272,16 +266,14 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 	}
 	now := time.Now().Round(time.Second)
 	w := summaryWorkers{client: client, c: c, outputDir: outputDir, urlLookup: map[string]int{}, newIndex: internal.Index{Version: 1, Created: now, Modified: now}}
-	if b != nil {
-		if err = json.Unmarshal(b, &w.previousIndex); err != nil {
-			return nil, err
-		}
-		if len(w.previousIndex.Items) > 0 && !w.previousIndex.Created.IsZero() {
-			w.newIndex.Created = w.previousIndex.Created
-		}
-		for i := range w.previousIndex.Items {
-			w.urlLookup[w.previousIndex.Items[i].URL] = i
-		}
+	if err := w.previousIndex.Load(os.DirFS(outputDir), "index.json"); err != nil {
+		return nil, err
+	}
+	if len(w.previousIndex.Items) > 0 && !w.previousIndex.Created.IsZero() {
+		w.newIndex.Created = w.previousIndex.Created
+	}
+	for i := range w.previousIndex.Items {
+		w.urlLookup[w.previousIndex.Items[i].URL] = i
 	}
 
 	resp, err := client.Get(u)
@@ -357,11 +349,7 @@ breakLoop:
 		return w.newIndex.Items[a].URL < w.newIndex.Items[b].URL
 	})
 	// Always save, even in case of error.
-	d, err2 := json.MarshalIndent(w.newIndex, "", " ")
-	if err2 != nil {
-		panic(err2)
-	}
-	if err2 = os.WriteFile(indexPath, d, 0o644); err == nil {
+	if err2 := w.newIndex.Save(filepath.Join(outputDir, "index.json")); err == nil {
 		err = err2
 	}
 	out := &internal.Index{}
