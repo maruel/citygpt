@@ -1,551 +1,622 @@
 {{- /*
-Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
-Use of this source code is governed under the AGPL v3
-that can be found in the LICENSE file.
-*/ -}}
-{{- define "extra_css" -}}
-<style>
-	:root {
-		--user-msg-color: #4361ee;
-		--user-msg-text: #fff;
-		--bot-msg-color: #f2f5ff;
-		--bot-msg-text: #333;
-	}
-
-	.container {
-		flex: 1;
-		padding: 20px;
-		display: flex;
-		flex-direction: column;
-		height: calc(100vh - 70px);
-		max-height: 100%;
-	}
-
-	#reset-button {
-		width: 38px;
-		height: 38px;
-		background: rgba(255, 255, 255, 0.2);
-		border: none;
-		border-radius: 50%;
-		color: white;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transition: background-color 0.3s;
-		flex-shrink: 0;
-		margin-left: 10px;
-	}
-
-	#reset-button:hover {
-		background-color: rgba(255, 255, 255, 0.3);
-	}
-
-	#chat-container {
-		flex: 1 1 auto;
-		overflow-y: auto;
-		padding: 20px;
-		background: white;
-		border-radius: 10px;
-		box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-		margin-bottom: 20px;
-		scroll-behavior: smooth;
-		min-height: 100px;
-		/* Ensure minimum height even on small screens */
-	}
-
-	.message-row {
-		display: flex;
-		margin-bottom: 20px;
-		position: relative;
-	}
-
-	.message-row.user {
-		justify-content: flex-end;
-	}
-
-	.avatar {
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		background-color: var(--primary-light);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin-right: 12px;
-		font-size: 1rem;
-		color: var(--primary-color);
-	}
-
-	.message-row.user .avatar {
-		order: 1;
-		margin-right: 0;
-		margin-left: 12px;
-		background-color: var(--primary-color);
-		color: white;
-	}
-
-	.message {
-		max-width: 70%;
-		padding: 12px 16px;
-		border-radius: 18px;
-		position: relative;
-		animation: fadeIn 0.3s ease-out;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-	}
-
-	.message-content {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-	}
-
-	.message-content a {
-		color: #2563eb;
-		font-weight: 500;
-		text-decoration: none;
-		border-bottom: 1px solid rgba(37, 99, 235, 0.3);
-		transition: border-color 0.2s, color 0.2s;
-	}
-
-	.message-content a:hover {
-		color: #1e40af;
-		border-bottom-color: rgba(30, 64, 175, 0.7);
-	}
-
-	.message-content a:first-child {
-		display: inline-block;
-		padding: 6px 12px;
-		background-color: rgba(37, 99, 235, 0.1);
-		border-radius: 6px;
-		border-bottom: none;
-		margin-bottom: 8px;
-		transition: background-color 0.2s;
-	}
-
-	.message-content a:first-child:hover {
-		background-color: rgba(37, 99, 235, 0.2);
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(10px);
+	Copyright 2025 Marc-Antoine Ruel and Félix Lachapelle. All rights reserved.
+	Use of this source code is governed under the AGPL v3
+	that can be found in the LICENSE file.
+	*/ -}}
+	{{- define "extra_css" -}}
+	<style>
+		:root {
+			--user-msg-color: #4361ee;
+			--user-msg-text: #fff;
+			--bot-msg-color: #f2f5ff;
+			--bot-msg-text: #333;
+			--safe-area-bottom: env(safe-area-inset-bottom, 0px);
+			/* --vh: 1vh; /* Set by JS for mobile viewport height */ */
 		}
-
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.user-message {
-		background-color: var(--user-msg-color);
-		color: var(--user-msg-text);
-		border-top-right-radius: 4px;
-	}
-
-	.assistant-message {
-		background-color: var(--bot-msg-color);
-		color: var(--bot-msg-text);
-		border-top-left-radius: 4px;
-	}
-
-	.message-time {
-		font-size: 0.7rem;
-		color: var(--dark-gray);
-		margin-top: 5px;
-		text-align: right;
-		opacity: 0.8;
-	}
-
-	.message-row.user .message-time {
-		text-align: right;
-	}
-
-	#input-container {
-		display: flex;
-		padding: 15px;
-		background: white;
-		border-radius: 10px;
-		box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-	}
-
-	#message-input {
-		flex-grow: 1;
-		padding: 14px 20px;
-		border: 1px solid var(--light-gray);
-		border-radius: 30px;
-		font-family: 'Inter', sans-serif;
-		font-size: 1rem;
-		outline: none;
-		transition: border-color 0.3s, box-shadow 0.3s;
-	}
-
-	#message-input:focus {
-		border-color: var(--primary-color);
-		box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
-	}
-
-	#send-button {
-		margin-left: 10px;
-		width: 50px;
-		height: 50px;
-		border-radius: 50%;
-		background-color: var(--primary-color);
-		color: white;
-		border: none;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.2rem;
-		transition: background-color 0.3s, transform 0.2s;
-	}
-
-	#send-button:hover {
-		background-color: var(--secondary-color);
-		transform: scale(1.05);
-	}
-
-	#send-button:active {
-		transform: scale(0.98);
-	}
-
-	.typing-indicator {
-		display: none;
-		align-items: center;
-		margin: 10px 0;
-		color: var(--dark-gray);
-		font-style: italic;
-		animation: fadeIn 0.3s;
-	}
-
-	.typing-indicator .dots {
-		display: flex;
-		margin-left: 8px;
-	}
-
-	.typing-indicator .dot {
-		width: 8px;
-		height: 8px;
-		margin: 0 2px;
-		background-color: var(--dark-gray);
-		border-radius: 50%;
-		animation: typing 1.5s infinite ease-in-out;
-	}
-
-	.typing-indicator .dot:nth-child(1) {
-		animation-delay: 0s;
-	}
-
-	.typing-indicator .dot:nth-child(2) {
-		animation-delay: 0.3s;
-	}
-
-	.typing-indicator .dot:nth-child(3) {
-		animation-delay: 0.6s;
-	}
-
-	@keyframes typing {
-		0% {
-			transform: translateY(0px);
-			opacity: 0.3;
-		}
-
-		50% {
-			transform: translateY(-5px);
-			opacity: 1;
-		}
-
-		100% {
-			transform: translateY(0px);
-			opacity: 0.3;
-		}
-	}
-
-	/* Responsive Styles */
-	@media (max-width: 768px) {
+	
 		.container {
-			padding: 10px;
-			height: calc(100vh - 60px);
-			/* Reduced height for mobile */
+			flex: 1;
+			padding: 15px;
+			display: flex;
+			flex-direction: column;
+			height: 100%; /* Will be effectively calc(var(--vh, 1vh) * 100) when --vh is set */
+			max-height: 100%;
+			width: 100%;
+			position: relative;
+			overflow: hidden;
 		}
-
+	
 		#reset-button {
 			width: 38px;
 			height: 38px;
-		}
-
-		.message {
-			max-width: 85%;
-		}
-
-		#chat-container {
-			/* Limit the height of the chat container on mobile */
-			max-height: calc(100vh - 180px);
-			flex: 0 1 auto;
-			margin-bottom: 15px;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.container {
-			padding: 8px;
-			height: calc(100vh - 55px);
-		}
-
-		#chat-container {
-			padding: 10px;
-			/* Further restrict on very small screens */
-			max-height: calc(100vh - 160px);
-		}
-
-		.message {
-			max-width: 90%;
-			padding: 10px 14px;
-		}
-
-		#message-input {
-			padding: 12px 16px;
-		}
-
-		#send-button {
-			width: 44px;
-			height: 44px;
-		}
-
-		body {
+			background: rgba(255, 255, 255, 0.2);
+			border: none;
+			border-radius: 50%;
+			color: white;
+			cursor: pointer;
 			display: flex;
-			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			transition: background-color 0.3s;
+			flex-shrink: 0;
+			margin-left: 10px;
+			-webkit-tap-highlight-color: transparent;
 		}
-
-		#reset-button {
+	
+		#reset-button:hover {
+			background-color: rgba(255, 255, 255, 0.3);
+		}
+	
+		#chat-container {
+			flex: 1 1 auto; /* Allow shrinking and growing, auto basis */
+			overflow-y: auto;
+			padding: 20px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+			margin-bottom: 20px;
+			scroll-behavior: smooth;
+			min-height: 100px;
+			overscroll-behavior: contain;
+			-webkit-overflow-scrolling: touch;
+			width: 100%;
+		}
+	
+		.message-row {
+			display: flex;
+			margin-bottom: 20px;
+			position: relative;
+		}
+	
+		.message-row.user {
+			justify-content: flex-end;
+		}
+	
+		.avatar {
 			width: 36px;
 			height: 36px;
+			min-width: 36px; /* Keep min-width here as a fallback for non-flex contexts or fixed sizes */
+			border-radius: 50%;
+			background-color: var(--primary-light); /* Assumed defined elsewhere */
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-right: 12px;
+			font-size: 1rem;
+			color: var(--primary-color); /* Assumed defined elsewhere */
+			flex-shrink: 0;
 		}
-	}
-</style>
-{{- end -}}
-
-{{- define "header_actions" -}}
-<button id="reset-button" title="Start new conversation">
-	<i class="fa-solid fa-trash"></i>
-</button>
-{{- end -}}
-
-{{- define "content" -}}
-<div id="chat-container">
-	<!-- Chat messages will appear here -->
-</div>
-
-<div class="typing-indicator" id="typing-indicator">
-	<span id="typing-text">{{.AppName}} is typing</span>
-	<div class="dots">
-		<div class="dot"></div>
-		<div class="dot"></div>
-		<div class="dot"></div>
+	
+		.message-row.user .avatar {
+			order: 1;
+			margin-right: 0;
+			margin-left: 12px;
+			background-color: var(--primary-color); /* Assumed defined elsewhere */
+			color: white;
+		}
+	
+		.message {
+			max-width: 70%;
+			padding: 12px 16px;
+			border-radius: 18px;
+			position: relative;
+			animation: fadeIn 0.3s ease-out;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+		}
+	
+		.message-content {
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			font-size: 1rem;
+		}
+	
+		.message-content a {
+			color: #2563eb;
+			font-weight: 500;
+			text-decoration: none;
+			border-bottom: 1px solid rgba(37, 99, 235, 0.3);
+			transition: border-color 0.2s, color 0.2s;
+		}
+	
+		.message-content a:hover {
+			color: #1e40af;
+			border-bottom-color: rgba(30, 64, 175, 0.7);
+		}
+	
+		/* Special styling for first link, e.g., a button-like link */
+		.message-content a:first-child:not(:only-child), /* If multiple links, first one */
+		.message-content a:only-child { /* If only one link */
+			display: inline-block;
+			padding: 6px 12px;
+			background-color: rgba(37, 99, 235, 0.1);
+			border-radius: 6px;
+			border-bottom: none;
+			margin-bottom: 8px;
+			transition: background-color 0.2s;
+		}
+		.message-content a:first-child:not(:only-child):hover,
+		.message-content a:only-child:hover {
+			background-color: rgba(37, 99, 235, 0.2);
+		}
+	
+	
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+	
+		.user-message {
+			background-color: var(--user-msg-color);
+			color: var(--user-msg-text);
+			border-top-right-radius: 4px;
+		}
+	
+		.assistant-message {
+			background-color: var(--bot-msg-color);
+			color: var(--bot-msg-text);
+			border-top-left-radius: 4px;
+		}
+	
+		.message-time {
+			font-size: 0.7rem;
+			color: var(--dark-gray); /* Assumed defined elsewhere */
+			margin-top: 5px;
+			text-align: right;
+			opacity: 0.8;
+		}
+	
+		.message-row.user .message-time {
+			text-align: right; /* Already default, but explicit */
+		}
+	
+		#input-container {
+			display: flex;
+			padding: 15px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+			position: relative; /* For z-index if needed, though z-index: 5 wasn't strictly necessary without overlapping siblings */
+			width: 100%;
+		}
+	
+		#message-input {
+			flex-grow: 1;
+			padding: 14px 20px;
+			border: 1px solid var(--light-gray); /* Assumed defined elsewhere */
+			border-radius: 30px;
+			font-family: 'Inter', sans-serif;
+			font-size: 1rem;
+			outline: none;
+			transition: border-color 0.3s, box-shadow 0.3s;
+			-webkit-appearance: none; /* Add for consistency on mobile */
+			-moz-appearance: none;
+			appearance: none;
+		}
+	
+		#message-input:focus {
+			border-color: var(--primary-color); /* Assumed defined elsewhere */
+			box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+		}
+	
+		#send-button {
+			margin-left: 10px;
+			width: 50px;
+			height: 50px;
+			min-width: 50px; /* Keep for fixed size button */
+			border-radius: 50%;
+			background-color: var(--primary-color); /* Assumed defined elsewhere */
+			color: white;
+			border: none;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			transition: background-color 0.3s, transform 0.2s;
+			flex-shrink: 0;
+		}
+	
+		#send-button:hover {
+			background-color: var(--secondary-color); /* Assumed defined elsewhere */
+			transform: scale(1.05);
+		}
+	
+		#send-button:active {
+			transform: scale(0.98);
+		}
+	
+		.typing-indicator {
+			display: none; /* Hidden by default */
+			align-items: center;
+			margin: 10px 0;
+			color: var(--dark-gray); /* Assumed defined elsewhere */
+			font-style: italic;
+			animation: fadeIn 0.3s;
+		}
+	
+		.typing-indicator .dots {
+			display: flex;
+			margin-left: 8px;
+		}
+	
+		.typing-indicator .dot {
+			width: 8px;
+			height: 8px;
+			margin: 0 2px;
+			background-color: var(--dark-gray); /* Assumed defined elsewhere */
+			border-radius: 50%;
+			animation: typing 1.5s infinite ease-in-out;
+		}
+	
+		.typing-indicator .dot:nth-child(1) { animation-delay: 0s; }
+		.typing-indicator .dot:nth-child(2) { animation-delay: 0.3s; }
+		.typing-indicator .dot:nth-child(3) { animation-delay: 0.6s; }
+	
+		@keyframes typing {
+			0%, 100% { transform: translateY(0px); opacity: 0.3; }
+			50% { transform: translateY(-5px); opacity: 1; }
+		}
+	
+		/* Responsive Styles */
+		@media (max-width: 768px) {
+			.container { padding: 8px; }
+			/* #reset-button size is same as base, no change needed unless overriding */
+			.message { max-width: 85%; }
+			#chat-container { padding: 15px; margin-bottom: 15px; }
+			#input-container { padding: 12px; margin-bottom: calc(8px + var(--safe-area-bottom)); }
+		}
+	
+		@media (max-width: 480px) {
+			.container { padding: 6px; }
+			#chat-container { padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+			.message { max-width: 90%; padding: 10px 14px; }
+			.message-content { font-size: 0.95rem; }
+			.avatar { width: 32px; height: 32px; min-width: 32px; font-size: 0.9rem; }
+			#message-input { padding: 10px 16px; font-size: 0.95rem; border-radius: 20px; }
+			#send-button { width: 44px; height: 44px; min-width: 44px; }
+			#reset-button { width: 36px; height: 36px; /* min-width: 36px; -> redundant with width */ }
+			#input-container { border-radius: 8px; padding: 8px; }
+		}
+		
+		/* Compact UI for very narrow/short displays (merged "compact-view" styles here) */
+		@media (max-width: 480px) and (max-height: 900px) {
+			.container { padding: 6px 6px 4px 6px; /* padding: top right bottom left */ }
+			#chat-container { padding: 8px; margin-bottom: 10px; /* Was 8px margin */ }
+			.message-row { margin-bottom: 10px; /* Was 12px */ }
+			.avatar {
+				width: 28px; height: 28px; min-width: 28px; font-size: 0.8rem;
+				margin-right: 6px;
+			}
+			.message-row.user .avatar { margin-left: 6px; margin-right: 0; }
+			.message { padding: 8px 12px; }
+			.message-content { font-size: 0.9rem; }
+			.message-time { margin-top: 2px; font-size: 0.65rem; /* Was 3px margin, 0.65rem font */ }
+			#input-container { padding: 6px; margin-bottom: calc(4px + var(--safe-area-bottom)); }
+			#message-input { padding: 6px 10px; font-size: 0.9rem; }
+			#send-button { width: 36px; height: 36px; min-width: 36px; font-size: 1rem; }
+			#reset-button { width: 30px; height: 30px; /* min-width: 30px; -> redundant with width */ }
+			.typing-indicator { margin: 6px 0; font-size: 0.85rem; }
+			.typing-indicator .dot { width: 6px; height: 6px; }
+		}
+		
+		/* Fix for iOS safe area padding on input container */
+		@supports (padding-bottom: env(safe-area-inset-bottom)) {
+			#input-container {
+				/* Use max to ensure there's always some padding even if safe-area is 0 */
+				padding-bottom: max(15px, calc(10px + env(safe-area-inset-bottom)));
+			}
+			@media (max-width: 480px) { /* Matches general <480px styles */
+				#input-container {
+					padding-bottom: max(10px, calc(8px + env(safe-area-inset-bottom)));
+				}
+			}
+			@media (max-width: 480px) and (max-height: 900px) { /* Matches compact styles */
+				#input-container {
+					padding-bottom: max(6px, calc(6px + env(safe-area-inset-bottom)));
+				}
+			}
+		}
+	</style>
+	{{- end -}}
+	
+	{{- define "header_actions" -}}
+	<button id="reset-button" title="Start new conversation">
+		<i class="fa-solid fa-trash"></i>
+	</button>
+	{{- end -}}
+	
+	{{- define "content" -}}
+	<div id="chat-container">
+		<!-- Chat messages will appear here -->
 	</div>
-</div>
-
-<div id="input-container">
-	<input type="text" id="message-input" placeholder="Type your message..." autofocus>
-	<button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
-</div>
-{{- end -}}
-
-{{- define "scripts" -}}
-<script>
-	const chatContainer = document.getElementById('chat-container');
-	const messageInput = document.getElementById('message-input');
-	const sendButton = document.getElementById('send-button');
-	const typingIndicator = document.getElementById('typing-indicator');
-	const typingText = document.getElementById('typing-text');
-	let sessionID = localStorage.getItem('sessionID') || '';
-
-	// Set typing indicator text
-	typingText.textContent = `{{.AppName}} is typing`;
-
-	// Add event listeners
-	sendButton.addEventListener('click', sendMessage);
-	messageInput.addEventListener('keypress', function (e) {
-		if (e.key === 'Enter') {
-			sendMessage();
-		}
-	});
-
-	// Function to get formatted time
-	function getFormattedTime() {
-		const now = new Date();
-		return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-	}
-
-	// Load previous messages if session exists
-	function loadSessionMessages() {
-		// Clear previous messages first
-		chatContainer.innerHTML = '';
-
-		// Load messages from localStorage if they exist
-		const storedMessages = localStorage.getItem('chatMessages');
-		if (storedMessages) {
-			const messages = JSON.parse(storedMessages);
-			messages.forEach(msg => {
-				addMessageToChat(msg.role, msg.content, false); // Don't save again
+	
+	<div class="typing-indicator" id="typing-indicator">
+		<span id="typing-text">{{.AppName}} is typing</span>
+		<div class="dots">
+			<div class="dot"></div>
+			<div class="dot"></div>
+			<div class="dot"></div>
+		</div>
+	</div>
+	
+	<div id="input-container">
+		<input type="text" id="message-input" placeholder="Type your message..." autofocus>
+		<button id="send-button"><i class="fa-solid fa-paper-plane"></i></button>
+	</div>
+	{{- end -}}
+	
+	{{- define "scripts" -}}
+	<script>
+		const chatContainer = document.getElementById('chat-container');
+		const messageInput = document.getElementById('message-input');
+		const sendButton = document.getElementById('send-button');
+		const typingIndicator = document.getElementById('typing-indicator');
+		const typingText = document.getElementById('typing-text');
+		
+		let sessionID = localStorage.getItem('sessionID') || '';
+	
+		typingText.textContent = `{{.AppName}} is typing`;
+	
+		sendButton.addEventListener('click', sendMessage);
+		messageInput.addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') {
+				e.preventDefault(); 
+				sendMessage();
+			}
+		});
+		
+		function setupInputFocusScroll() {
+			messageInput.addEventListener('focus', () => {
+				setTimeout(() => {
+					window.scrollTo(0, document.body.scrollHeight);
+				}, 100); 
 			});
 		}
-	}
-
-	// Function to save messages to localStorage
-	function saveMessageToStorage(role, content) {
-		let messages = [];
-		const storedMessages = localStorage.getItem('chatMessages');
-		if (storedMessages) {
-			messages = JSON.parse(storedMessages);
+	
+		function getFormattedTime() {
+			const now = new Date();
+			return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 		}
-		messages.push({role, content});
-		localStorage.setItem('chatMessages', JSON.stringify(messages));
-	}
-
-	// Function to send message
-	function sendMessage() {
-		const message = messageInput.value.trim();
-		if (message === '') return;
-
-		// Add user message to chat
-		addMessageToChat('user', message);
-		messageInput.value = '';
-
-		// Show typing indicator
-		typingIndicator.style.display = 'flex';
-
-		// Prepare request with sessionID if it exists
-		const requestBody = {message};
-		if (sessionID) {
-			requestBody.session_id = sessionID;
+	
+		function loadSessionMessages() {
+			chatContainer.innerHTML = ''; 
+			const storedMessages = localStorage.getItem('chatMessages');
+			if (storedMessages) {
+				try {
+					const messages = JSON.parse(storedMessages);
+					if (messages && messages.length > 0) {
+						messages.forEach(msg => addMessageToChat(msg.role, msg.content, false)); 
+						scrollToBottom(false); 
+						return true; 
+					}
+				} catch (e) {
+					console.error("Error parsing chatMessages from localStorage:", e);
+					localStorage.removeItem('chatMessages'); 
+					localStorage.removeItem('sessionID');    // Clear sessionID if messages are corrupt
+					sessionID = ''; // Update in-memory variable
+				}
+			}
+			return false; 
 		}
-
-		// Get XSRF token from cookie
-		const xsrfToken = getCookie('xsrf_token');
-
-		// Send message to server
-		fetch('/api/chat', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-XSRF-Token': xsrfToken || '',
-			},
-			body: JSON.stringify(requestBody),
-		})
-			.then(response => response.json())
+	
+		function saveMessageToStorage(role, content) {
+			let messages = [];
+			const storedMessages = localStorage.getItem('chatMessages');
+			if (storedMessages) {
+				try {
+					messages = JSON.parse(storedMessages);
+				} catch (e) {
+					console.error("Error parsing chatMessages for saving:", e);
+					messages = []; 
+				}
+			}
+			messages.push({ role, content });
+			localStorage.setItem('chatMessages', JSON.stringify(messages));
+		}
+	
+		function sendMessage() {
+			const messageText = messageInput.value.trim();
+			if (messageText === '') return;
+	
+			addMessageToChat('user', messageText, true);
+			messageInput.value = '';
+			messageInput.focus(); 
+	
+			typingIndicator.style.display = 'flex';
+			adjustLayout(); 
+	
+			const requestBody = { message: messageText };
+			if (sessionID) {
+				requestBody.session_id = sessionID;
+			}
+	
+			const xsrfToken = getCookie('xsrf_token');
+	
+			fetch('/api/chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-XSRF-Token': xsrfToken || '',
+				},
+				body: JSON.stringify(requestBody),
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.json();
+			})
 			.then(data => {
-				// Hide typing indicator
-				typingIndicator.style.display = 'none';
-
-				// Save the session ID if it came back from the server
 				if (data.session_id) {
 					sessionID = data.session_id;
 					localStorage.setItem('sessionID', sessionID);
 				}
-
-				// Add response to chat
-				addMessageToChat(data.message.role, data.message.content);
+				if (data.message && data.message.role && data.message.content) {
+					addMessageToChat(data.message.role, data.message.content, true);
+				} else {
+					console.error('Invalid message format from server:', data);
+					addMessageToChat('assistant', 'Sorry, I received an unexpected response.', true);
+				}
 			})
 			.catch(error => {
-				console.error('Error:', error);
+				console.error('Error sending message:', error);
+				addMessageToChat('assistant', 'Sorry, there was an error. Please try again.', true);
+			})
+			.finally(() => {
 				typingIndicator.style.display = 'none';
-				addMessageToChat('assistant', 'Sorry, there was an error processing your request.');
+				adjustLayout(); 
 			});
-	}
-
-	// Function to add message to chat
-	function addMessageToChat(role, content, saveToStorage = true) {
-		const time = getFormattedTime();
-
-		const messageRow = document.createElement('div');
-		messageRow.classList.add('message-row');
-		if (role === 'user') {
-			messageRow.classList.add('user');
 		}
-
-		// Create avatar
-		const avatar = document.createElement('div');
-		avatar.classList.add('avatar');
-		avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-building"></i>';
-
-		const messageElement = document.createElement('div');
-		messageElement.classList.add('message');
-		messageElement.classList.add(role === 'user' ? 'user-message' : 'assistant-message');
-
-		// Create message content
-		const messageContent = document.createElement('div');
-		messageContent.classList.add('message-content');
-
-		// Use innerHTML for assistant messages to support HTML links
-		// Use textContent for user messages for security
-		if (role === 'assistant') {
-			messageContent.innerHTML = content; // innerHTML to support HTML links
-		} else {
-			messageContent.textContent = content; // textContent preserves newlines when white-space: pre-wrap is used
+	
+		function addMessageToChat(role, content, saveToStorage = true) {
+			const time = getFormattedTime();
+	
+			const messageRow = document.createElement('div');
+			messageRow.className = `message-row ${role === 'user' ? 'user' : ''}`;
+	
+			const avatar = document.createElement('div');
+			avatar.className = 'avatar';
+			avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-building"></i>';
+	
+			const messageElement = document.createElement('div');
+			messageElement.className = `message ${role === 'user' ? 'user-message' : 'assistant-message'}`;
+	
+			const messageContent = document.createElement('div');
+			messageContent.className = 'message-content';
+			if (role === 'assistant') {
+				messageContent.innerHTML = content;
+			} else {
+				messageContent.textContent = content;
+			}
+	
+			const messageTime = document.createElement('div');
+			messageTime.className = 'message-time';
+			messageTime.textContent = time;
+	
+			messageElement.appendChild(messageContent);
+			messageElement.appendChild(messageTime);
+			
+			// DOM order for user: message then avatar
+			// DOM order for assistant: avatar then message
+			if (role === 'user') {
+				messageRow.appendChild(messageElement); 
+				messageRow.appendChild(avatar);
+			} else {
+				messageRow.appendChild(avatar);
+				messageRow.appendChild(messageElement);
+			}
+			
+			chatContainer.appendChild(messageRow);
+			scrollToBottom(true); 
+	
+			if (saveToStorage) {
+				saveMessageToStorage(role, content);
+			}
 		}
-
-		// Create message time
-		const messageTime = document.createElement('div');
-		messageTime.classList.add('message-time');
-		messageTime.textContent = time;
-
-		// Append elements
-		messageElement.appendChild(messageContent);
-		messageElement.appendChild(messageTime);
-		messageRow.appendChild(avatar);
-		messageRow.appendChild(messageElement);
-
-		chatContainer.appendChild(messageRow);
-		chatContainer.scrollTop = chatContainer.scrollHeight;
-
-		// Save message to localStorage if needed
-		if (saveToStorage) {
-			saveMessageToStorage(role, content);
-		}
-	}
-
-	// Function to start a new session
-	function startNewSession() {
-		// Clear session data
-		sessionID = '';
-		localStorage.removeItem('sessionID');
-		localStorage.removeItem('chatMessages');
-
-		// Clear chat UI
-		chatContainer.innerHTML = '';
-
-		// Show welcome message
-		setTimeout(() => {
-			addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
-		}, 100);
-	}
-
-	// Helper function to get a cookie by name
-	function getCookie(name) {
-		const value = `; ${document.cookie}`;
-		const parts = value.split(`; ${name}=`);
-		if (parts.length === 2) return parts.pop().split(';').shift();
-		return '';
-	}
-
-	// Initialize the chat
-	window.addEventListener('DOMContentLoaded', () => {
-		// Add event listener to reset button
-		document.getElementById('reset-button').addEventListener('click', startNewSession);
-
-		// Check if there's an existing session
-		if (sessionID) {
-			// Load chat history from localStorage
-			loadSessionMessages();
-		} else {
-			// Show welcome message for new users
+		
+		function scrollToBottom(animated = true) {
 			setTimeout(() => {
-				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`);
-			}, 500);
+				chatContainer.scrollTo({
+					top: chatContainer.scrollHeight,
+					behavior: animated ? 'smooth' : 'auto'
+				});
+			}, 50); 
 		}
-	});
-</script>
-{{- end -}}
+	
+		function startNewSession() {
+			sessionID = ''; // Update in-memory
+			localStorage.removeItem('sessionID'); // Clear from storage
+			localStorage.removeItem('chatMessages');
+			chatContainer.innerHTML = '';
+	
+			// Show welcome message AND SAVE IT to prevent re-showing on simple reload
+			setTimeout(() => { 
+				addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`, true); 
+			}, 100);
+			messageInput.focus();
+		}
+		
+		function debounce(func, wait) {
+			let timeout;
+			return function(...args) {
+				const context = this;
+				clearTimeout(timeout);
+				timeout = setTimeout(() => func.apply(context, args), wait);
+			};
+		}
+		
+		function setViewportHeightProperty() {
+			document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+		}
+	
+		function adjustChatContainerHeight() {
+			const header = document.querySelector('header');
+			const headerHeight = header ? header.offsetHeight : 0;
+			const inputContainerHeight = document.getElementById('input-container').offsetHeight;
+			const typingIndicatorHeight = typingIndicator.style.display === 'flex' ? typingIndicator.offsetHeight : 0;
+			
+			const availableHeight = (window.innerHeight || document.documentElement.clientHeight);
+			// Assuming .container has roughly 15px padding top/bottom based on original CSS
+			const containerVerticalPadding = parseFloat(getComputedStyle(document.querySelector('.container')).paddingTop) + parseFloat(getComputedStyle(document.querySelector('.container')).paddingBottom) || 30; 
+			
+			let chatHeight = availableHeight - headerHeight - inputContainerHeight - typingIndicatorHeight - containerVerticalPadding - 20; // 20px buffer (for chat-container's own margin-bottom)
+			
+			chatHeight = Math.max(chatHeight, 100); 
+			chatContainer.style.height = `${chatHeight}px`;
+		}
+	
+		function adjustLayout() {
+			setViewportHeightProperty(); 
+			adjustChatContainerHeight(); 
+			scrollToBottom(false);       
+		}
+	
+		function getCookie(name) {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+			return '';
+		}
+	
+		window.addEventListener('DOMContentLoaded', () => {
+			document.getElementById('reset-button').addEventListener('click', startNewSession);
+			setupInputFocusScroll();
+			
+			// sessionID is already initialized globally from localStorage at the top
+			const messagesWereLoaded = loadSessionMessages(); // This might modify sessionID if corruption occurs
+	
+			if (!messagesWereLoaded) {
+				// If no messages were loaded (chatMessages was empty or corrupt and got cleared):
+				// Ensure any orphaned sessionID (if chatMessages was just empty, not corrupt) is also cleared
+				// to start the backend session fresh too.
+				if (localStorage.getItem('sessionID')) { // Check if one *still* exists
+					localStorage.removeItem('sessionID');
+					sessionID = ''; // Sync the in-memory variable
+				}
+	
+				// Display initial greeting AND SAVE IT to localStorage
+				setTimeout(() => {
+					addMessageToChat('assistant', `Hello! I am {{.AppName}}, your virtual assistant. How can I help you today?`, true);
+				}, 100); 
+			}
+			
+			adjustLayout(); // Initial layout setup
+			
+			const debouncedAdjustLayout = debounce(adjustLayout, 150);
+			window.addEventListener('resize', debouncedAdjustLayout);
+			window.addEventListener('orientationchange', () => setTimeout(adjustLayout, 300));
+	
+			if ('visualViewport' in window) {
+				window.visualViewport.addEventListener('resize', debouncedAdjustLayout);
+			}
+			document.addEventListener('visibilitychange', () => {
+				if (document.visibilityState === 'visible') {
+					setTimeout(adjustLayout, 100);
+				}
+			});
+			
+			messageInput.focus();
+			setTimeout(adjustLayout, 100); 
+		});
+	</script>
+	{{- end -}}
