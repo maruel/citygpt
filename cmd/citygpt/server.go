@@ -110,6 +110,9 @@ type SessionData struct {
 //go:embed templates
 var templateFS embed.FS
 
+//go:embed static
+var staticFS embed.FS
+
 // server represents the HTTP server that handles the chat application.
 type server struct {
 	// Immutable
@@ -502,6 +505,31 @@ func newServer(ctx context.Context, c genai.ChatProvider, appName string, files 
 	return s, nil
 }
 
+// noDirectoryFS is a wrapper around fs.FS that prevents directory listing by always
+// returning an error for directories.
+type noDirectoryFS struct {
+	fs fs.FS
+}
+
+// Open implements fs.FS
+func (n noDirectoryFS) Open(name string) (fs.File, error) {
+	f, err := n.fs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	stat, err := f.Stat()
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+	// Return an error if this is a directory to prevent listing
+	if stat.IsDir() {
+		f.Close()
+		return nil, fs.ErrNotExist
+	}
+	return f, nil
+}
+
 func (s *server) start(ctx context.Context, port string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", s.handleIndex)
@@ -509,6 +537,14 @@ func (s *server) start(ctx context.Context, port string) error {
 	mux.HandleFunc("POST /api/chat", s.handleRoot)
 	mux.HandleFunc("GET /city-data/", s.handleCityData)
 	mux.HandleFunc("GET /city-data", s.handleCityData)
+
+	// Serve static files without allowing directory listing
+	staticSubFS, err := fs.Sub(staticFS, "static")
+	if err != nil {
+		return fmt.Errorf("error setting up static file server: %w", err)
+	}
+	fileServer := http.FileServer(http.FS(noDirectoryFS{fs: staticSubFS}))
+	mux.Handle("GET /static/", http.StripPrefix("/static/", fileServer))
 
 	srv := &http.Server{
 		Addr:              ":" + port,
