@@ -5,6 +5,24 @@ that can be found in the LICENSE file.
 */ -}}
 {{define "extra_css" -}}
 <style>
+	/* Override layout.html's overflow: hidden for about page */
+	html, body {
+		overflow: auto !important;
+		position: relative !important;
+		height: auto !important;
+	}
+
+	#main-container {
+		overflow: auto !important;
+		position: relative !important;
+		height: auto !important;
+	}
+
+	.container {
+		overflow: auto !important;
+		max-height: none !important;
+	}
+
 	.section {
 		margin-bottom: 30px;
 		background-color: white;
