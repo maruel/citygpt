@@ -151,7 +151,7 @@ type LoggingChatProvider struct {
 func (l *LoggingChatProvider) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
 	start := time.Now()
 	resp, err := l.ChatProvider.Chat(ctx, msgs, opts)
-	slog.DebugContext(ctx, "genai", "fn", "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
+	slog.DebugContext(ctx, "genai", "fn", "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
