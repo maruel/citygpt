@@ -2,7 +2,7 @@
 // Use of this source code is governed under the AGPL v3
 // that can be found in the LICENSE file.
 
-// ottawa-data extracts and downloads text content from Ottawa's website.
+// data-ingestor extracts and downloads text content from a city website.
 package main
 
 import (
@@ -245,8 +245,15 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 	return true, links, nil
 }
 
+type dataIngestor struct {
+	// targetURL is the URL to fetch links from.
+	targetURL string
+	// baseURL is the base URL of the content we care about. Generally under targetURL but not always.
+	baseURL string
+}
+
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u, outputDir string) (*internal.Index, error) {
+func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, outputDir string) (*internal.Index, error) {
 	// Number of workers to process URLs and generate summaries in parallel. Generating summaries is slow so it
 	// needs to be significantly higher than 1/qps.
 	const numWorkers = 8
@@ -280,7 +287,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 		w.urlLookup[w.previousIndex.Items[i].URL] = i
 	}
 
-	resp, err := client.Get(u)
+	resp, err := client.Get(d.targetURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)
 	}
@@ -288,7 +295,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 		_ = resp.Body.Close()
 		return nil, fmt.Errorf("received non-200 response: %d", resp.StatusCode)
 	}
-	links, err := extractLinks(baseURL, u, resp.Body)
+	links, err := extractLinks(d.baseURL, d.targetURL, resp.Body)
 	_ = resp.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("error extracting links: %w", err)
@@ -308,7 +315,7 @@ func downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, baseURL, u,
 	for range numWorkers {
 		eg.Go(func() error {
 			for u := range jobs {
-				updated, newLinks, err3 := w.worker(ctx, baseURL, u)
+				updated, newLinks, err3 := w.worker(ctx, d.baseURL, d.targetURL)
 				if err3 != nil {
 					return err3
 				}
@@ -386,6 +393,18 @@ func cleanupOutputDir(outputDir string, index *internal.Index) error {
 	})
 }
 
+var cities = map[string]dataIngestor{
+	"ottawa": {
+		targetURL: "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z",
+		baseURL:   "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z" + "/",
+	},
+	"gatineau": {
+		// Requires PDF support.
+		targetURL: "https://www.gatineau.ca/portail/default.aspx?p=guichet_municipal/reglements_municipaux",
+		baseURL:   "https://docweb.gatineau.ca/Doc-Web/masson/documents/pdf/",
+	},
+}
+
 func mainImpl() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
@@ -423,8 +442,11 @@ func mainImpl() error {
 		},
 	}))
 	slog.SetDefault(logger)
-	outputDir := flag.String("output-dir", "pages_text", "Directory to save downloaded markdown files")
+	outputDir := flag.String("output-dir", "", "Directory to save downloaded markdown files; defaults to data/<city>/ingested")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
+	city := flag.String("city", "", "City to fetch from, one of ottawa, gatineau")
+	provider := flag.String("provider", "", "Provider to use for chat completions; one of gemini, groq, cerebras")
+	model := flag.String("model", "", "Model to use for chat completions; default to a relevant model for the provider")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
@@ -432,20 +454,20 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProvider(ctx)
+	cs := cities[*city]
+	if cs.targetURL == "" {
+		return fmt.Errorf("unknown city: %s", *city)
+	}
+	if *outputDir == "" {
+		*outputDir = filepath.Join("data", *city, "ingested")
+	}
+	c, err := internal.LoadProvider(ctx, *provider, *model)
 	if err != nil {
 		return err
 	}
-	// targetURL is the URL to fetch links from
-	targetURL := "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z"
-	baseURL := targetURL + "/"
-	if false {
-		// Requires PDF support.
-		targetURL = "https://www.gatineau.ca/portail/default.aspx?p=guichet_municipal/reglements_municipaux"
-		baseURL = "https://docweb.gatineau.ca/Doc-Web/masson/documents/pdf/"
-	}
-	fmt.Printf("Extracting links from %s\n", targetURL)
-	index, err := downloadAndSaveTexts(ctx, c, baseURL, targetURL, *outputDir)
+
+	fmt.Printf("Extracting links from %s\n", cs.targetURL)
+	index, err := cs.downloadAndSaveTexts(ctx, c, *outputDir)
 	if err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
 	}
@@ -459,7 +481,7 @@ func mainImpl() error {
 
 func main() {
 	if err := mainImpl(); err != nil {
-		fmt.Fprintf(os.Stderr, "ottawa-data: %s\n", err)
+		fmt.Fprintf(os.Stderr, "data-ingestor: %s\n", err)
 		os.Exit(1)
 	}
 }

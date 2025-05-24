@@ -7,14 +7,12 @@ package internal
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"log/slog"
 	"os"
 	"os/user"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/maruel/genai"
@@ -25,33 +23,79 @@ import (
 
 var (
 	modelFlag   string
-	useCerebras bool
-	useGemini   bool
-	useGroq     bool
+	useCerebras string
+	useGemini   string
+	useGroq     string
 )
 
 func init() {
 	if os.Getenv("GEMINI_API_KEY") != "" {
-		useGemini = true
-		flag.StringVar(&modelFlag, "model", "gemini-2.5-flash-preview-04-17", "Model to use for chat completions")
-	} else if os.Getenv("GROQ_API_KEY") != "" {
-		useGroq = true
-		flag.StringVar(&modelFlag, "model", "meta-llama/llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
-	} else if os.Getenv("CEREBRAS_API_KEY") != "" {
+		useGemini = "gemini-2.5-flash-preview-04-17"
+	}
+	if os.Getenv("GROQ_API_KEY") != "" {
+		useGroq = "meta-llama/llama-4-scout-17b-16e-instruct"
+	}
+	if os.Getenv("CEREBRAS_API_KEY") != "" {
 		// Cerebras limits to 8K context on free tier.
-		useCerebras = true
 		// llama3.1-8b
 		// llama-3.3-70b
 		// llama-4-scout-17b-16e-instruct
-		flag.StringVar(&modelFlag, "model", "llama-4-scout-17b-16e-instruct", "Model to use for chat completions")
+		// qwen-3-32b
+		useCerebras = "qwen-3-32b"
 	}
 }
 
-func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
-	if useGemini {
-		c, err := gemini.New("", "")
+// LoadProvider loads the first available provider, prioritizing the one requested first.
+func LoadProvider(ctx context.Context, provider, model string) (genai.ChatProvider, error) {
+	if provider == "" {
+		if useGemini != "" {
+			provider = "gemini"
+		} else if useGroq != "" {
+			provider = "groq"
+		} else if useCerebras != "" {
+			provider = "cerebras"
+		} else {
+			return nil, errors.New("no provider available")
+		}
+	}
+	var getClient func(model string) (genai.ChatProvider, error)
+	switch provider {
+	case "cerebras":
+		if model == "" {
+			model = useCerebras
+		}
+		getClient = func(model string) (genai.ChatProvider, error) {
+			c, err := cerebras.New("", model)
+			if err != nil {
+				return c, err
+			}
+			return &genai.ChatProviderThinking{Provider: c, TagName: "think"}, nil
+		}
+	case "gemini":
+		if model == "" {
+			model = useGemini
+		}
+		getClient = func(model string) (genai.ChatProvider, error) {
+			return gemini.New("", model)
+		}
+	case "groq":
+		if model == "" {
+			model = useGroq
+		}
+		getClient = func(model string) (genai.ChatProvider, error) {
+			return groq.New("", model)
+		}
+	default:
+		return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
+	}
+	return loadProvider(ctx, getClient, model)
+}
+
+func loadProvider(ctx context.Context, getClient func(model string) (genai.ChatProvider, error), model string) (genai.ChatProvider, error) {
+	/*
+		c, err := getClient("")
 		if err == nil {
-			if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
+			if models, err2 := c.(genai.ModelProvider).ListModels(ctx); err2 == nil && len(models) > 0 {
 				modelNames := make([]string, 0, len(models))
 				found := false
 				for _, model := range models {
@@ -67,60 +111,12 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 				}
 			}
 		}
-		if c, err = gemini.New("", modelFlag); err != nil {
-			return nil, err
-		}
-		return &ChatProviderLog{c}, nil
+	*/
+	c, err := getClient(model)
+	if err != nil {
+		return nil, err
 	}
-	if useCerebras {
-		c, err := cerebras.New("", "")
-		if err == nil {
-			if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
-				modelNames := make([]string, 0, len(models))
-				found := false
-				for _, model := range models {
-					n := model.GetID()
-					if n == modelFlag {
-						found = true
-						break
-					}
-					modelNames = append(modelNames, n)
-				}
-				if !found {
-					return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
-				}
-			}
-		}
-		if c, err = cerebras.New("", modelFlag); err != nil {
-			return nil, err
-		}
-		return &ChatProviderLog{c}, nil
-	}
-	if useGroq {
-		c, err := groq.New("", "")
-		if err == nil {
-			if models, err2 := c.ListModels(ctx); err2 == nil && len(models) > 0 {
-				modelNames := make([]string, 0, len(models))
-				found := false
-				for _, model := range models {
-					n := model.GetID()
-					if n == modelFlag {
-						found = true
-						break
-					}
-					modelNames = append(modelNames, n)
-				}
-				if !found {
-					return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
-				}
-			}
-		}
-		if c, err = groq.New("", modelFlag); err != nil {
-			return nil, err
-		}
-		return &ChatProviderLog{c}, nil
-	}
-	return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
+	return &ChatProviderLog{c}, nil
 }
 
 // GetConfigDir returns the appropriate configuration directory based on the OS

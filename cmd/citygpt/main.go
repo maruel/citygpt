@@ -106,6 +106,8 @@ func mainImpl() error {
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
+	provider := flag.String("provider", "", "Provider to use for chat completions; one of gemini, groq, cerebras")
+	model := flag.String("model", "", "Model to use for chat completions; default to a relevant model for the provider")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unsupported argument")
@@ -113,7 +115,7 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProvider(ctx)
+	c, err := internal.LoadProvider(ctx, *provider, *model)
 	if err != nil {
 		return err
 	}

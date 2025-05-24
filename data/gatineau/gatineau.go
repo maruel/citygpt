@@ -2,8 +2,8 @@
 // Use of this source code is governed under the AGPL v3
 // that can be found in the LICENSE file.
 
-// Package ottawa embeds the data for Ottawa's By-Laws.
-package ottawa
+// Package Gatineau embeds the data pour les règlements de la Ville de Gatineau.
+package gatineau
 
 import (
 	"embed"
