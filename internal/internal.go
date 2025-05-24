@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -33,6 +34,7 @@ func init() {
 		useGemini = "gemini-2.5-flash-preview-04-17"
 	}
 	if os.Getenv("GROQ_API_KEY") != "" {
+		// Limited to 8K context?
 		useGroq = "meta-llama/llama-4-scout-17b-16e-instruct"
 	}
 	if os.Getenv("CEREBRAS_API_KEY") != "" {
@@ -46,7 +48,7 @@ func init() {
 }
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
-func LoadProvider(ctx context.Context, provider, model string) (genai.ChatProvider, error) {
+func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripper) (genai.ChatProvider, error) {
 	if provider == "" {
 		if useGemini != "" {
 			provider = "gemini"
@@ -65,25 +67,25 @@ func LoadProvider(ctx context.Context, provider, model string) (genai.ChatProvid
 			model = useCerebras
 		}
 		getClient = func(model string) (genai.ChatProvider, error) {
-			c, err := cerebras.New("", model)
+			c, err := cerebras.New("", model, r)
 			if err != nil {
 				return c, err
 			}
-			return &genai.ChatProviderThinking{Provider: c, TagName: "think"}, nil
+			return &genai.ChatProviderThinking{ChatProvider: c, TagName: "think"}, nil
 		}
 	case "gemini":
 		if model == "" {
 			model = useGemini
 		}
 		getClient = func(model string) (genai.ChatProvider, error) {
-			return gemini.New("", model)
+			return gemini.New("", model, r)
 		}
 	case "groq":
 		if model == "" {
 			model = useGroq
 		}
 		getClient = func(model string) (genai.ChatProvider, error) {
-			return groq.New("", model)
+			return groq.New("", model, r)
 		}
 	default:
 		return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
@@ -92,32 +94,27 @@ func LoadProvider(ctx context.Context, provider, model string) (genai.ChatProvid
 }
 
 func loadProvider(ctx context.Context, getClient func(model string) (genai.ChatProvider, error), model string) (genai.ChatProvider, error) {
-	/*
-		c, err := getClient("")
-		if err == nil {
-			if models, err2 := c.(genai.ModelProvider).ListModels(ctx); err2 == nil && len(models) > 0 {
-				modelNames := make([]string, 0, len(models))
-				found := false
-				for _, model := range models {
-					n := model.GetID()
-					if n == modelFlag {
-						found = true
-						break
-					}
-					modelNames = append(modelNames, n)
-				}
-				if !found {
-					return nil, fmt.Errorf("bad model. Available models:\n  %s", strings.Join(modelNames, "\n  "))
-				}
-			}
-		}
-	*/
 	c, err := getClient(model)
 	if err != nil {
 		return nil, err
 	}
 	return &ChatProviderLog{c}, nil
 }
+
+/*
+func confirmModel(ctx context.Context, c genai.ModelProvider, model string) error {
+	models, err := c.ListModels(ctx)
+	if err != nil {
+		return err
+	}
+	for _, m := range models {
+		if m.GetID() == model {
+			return nil
+		}
+	}
+	return fmt.Errorf("bad model %s. Available models:\n  %s", model, strings.Join(m.GetID(), "\n  "))
+}
+*/
 
 // GetConfigDir returns the appropriate configuration directory based on the OS
 func GetConfigDir() (string, error) {

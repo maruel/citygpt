@@ -115,7 +115,7 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProvider(ctx, *provider, *model)
+	c, err := internal.LoadProvider(ctx, *provider, *model, nil)
 	if err != nil {
 		return err
 	}

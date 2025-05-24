@@ -37,10 +37,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Throttle implements a time based algorithm to smooth out HTTP requests at exactly QPS or less.
+// TransportThrottle implements a time based algorithm to smooth out HTTP requests at exactly QPS or less.
 //
 // It doesn't have allowance for bursty requests.
-type Throttle struct {
+type TransportThrottle struct {
 	Transport http.RoundTripper
 	QPS       float64
 
@@ -48,7 +48,7 @@ type Throttle struct {
 	lastRequest time.Time
 }
 
-func (t *Throttle) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t *TransportThrottle) RoundTrip(req *http.Request) (*http.Response, error) {
 	var sleep time.Duration
 	t.mu.Lock()
 	now := time.Now()
@@ -83,6 +83,9 @@ func trimURLFragment(u string) (string, error) {
 	return parsedURL.String(), nil
 }
 
+// extractLinks extracts links that are rooted at baseURL from an HTML page in r at url u.
+//
+// baseURL and u must be full URLs.
 func extractLinks(baseURL, u string, r io.Reader) ([]string, error) {
 	// baseURL is the base URL for resolving relative links
 	parsedURL, err := url.Parse(u)
@@ -152,33 +155,34 @@ type summaryWorkers struct {
 	newIndex internal.Index
 }
 
-func urlToMDName(baseURL, u string) (string, error) {
+func urlToMDName(baseURL, targetURL string) (string, error) {
 	// TODO: Repetitive work.
 	parsedBaseURL, err := url.Parse(baseURL)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse URL %s: %w", u, err)
+		return "", fmt.Errorf("failed to parse URL %s: %w", targetURL, err)
 	}
-	parsedURL, err := url.Parse(u)
+	parsedURL, err := url.Parse(targetURL)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse URL %s: %w", u, err)
+		return "", fmt.Errorf("failed to parse URL %s: %w", targetURL, err)
 	}
 	// Normally web server are case sensitive, except Windows.
 	if !strings.HasPrefix(strings.ToLower(parsedURL.Path), strings.ToLower(parsedBaseURL.Path)) {
-		return "", fmt.Errorf("url %s is not a subpath of %s", u, baseURL)
+		return "", fmt.Errorf("url %s is not a subpath of %s", targetURL, baseURL)
 	}
-	md := url.PathEscape(strings.TrimSuffix(u[len(baseURL):], "/"))
+	md := url.PathEscape(strings.TrimSuffix(targetURL[len(baseURL):], "/"))
 	if md == "" {
 		md = "index"
 	}
 	return md + ".md", nil
 }
 
-func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, []string, error) {
+func (s *summaryWorkers) worker(ctx context.Context, baseURL, urlToVisit string) (bool, []string, error) {
 	// Always download a fresh copy of the HTML page in case it changed.
-	resp, err := s.client.Get(u)
+	resp, err := s.client.Get(urlToVisit)
 	if err != nil {
-		return false, nil, fmt.Errorf("failed to fetch %s: %w", u, err)
+		return false, nil, fmt.Errorf("failed to fetch %s: %w", urlToVisit, err)
 	}
+	// Read the page in memory because we parse it twice.
 	b, err := io.ReadAll(resp.Body)
 	if err2 := resp.Body.Close(); err == nil {
 		err = err2
@@ -191,10 +195,10 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 			// The web site has broken links.
 			return false, nil, nil
 		}
-		return false, nil, fmt.Errorf("received non-200 response for %s: %d", u, resp.StatusCode)
+		return false, nil, fmt.Errorf("received non-200 response for %s: %d", urlToVisit, resp.StatusCode)
 	}
 
-	links, err := extractLinks(baseURL, u, bytes.NewReader(b))
+	links, err := extractLinks(baseURL, urlToVisit, bytes.NewReader(b))
 	if err != nil {
 		return false, links, err
 	}
@@ -203,7 +207,7 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 		return false, links, fmt.Errorf("failed to extract text: %w", err)
 	}
 
-	mdName, err := urlToMDName(baseURL, u)
+	mdName, err := urlToMDName(baseURL, urlToVisit)
 	if err != nil {
 		return false, links, err
 	}
@@ -213,7 +217,7 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 	}
 	now := time.Now().Round(time.Second)
 	created := now
-	if i, ok := s.urlLookup[u]; ok {
+	if i, ok := s.urlLookup[urlToVisit]; ok {
 		prev := s.previousIndex.Items[i]
 		if prev.Name == mdName && prev.Title == title {
 			// We saw this page in a previous run.
@@ -234,7 +238,14 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 	if err = os.WriteFile(mdPath, []byte(md), 0o644); err != nil {
 		return false, links, err
 	}
-	item := internal.Item{URL: u, Title: title, Name: mdName, Created: created, Modified: now}
+	item := internal.Item{
+		URL:      urlToVisit,
+		Title:    title,
+		Name:     mdName,
+		Created:  created,
+		Modified: now,
+		Model:    s.c.ModelID(),
+	}
 	item.Summary, err = internal.Summarize(ctx, s.c, md)
 	if err != nil {
 		return false, links, err
@@ -246,8 +257,8 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, u string) (bool, [
 }
 
 type dataIngestor struct {
-	// targetURL is the URL to fetch links from.
-	targetURL string
+	// startURL is the URL to fetch links from.
+	startURL string
 	// baseURL is the base URL of the content we care about. Generally under targetURL but not always.
 	baseURL string
 }
@@ -256,7 +267,7 @@ type dataIngestor struct {
 func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, outputDir string) (*internal.Index, error) {
 	// Number of workers to process URLs and generate summaries in parallel. Generating summaries is slow so it
 	// needs to be significantly higher than 1/qps.
-	const numWorkers = 8
+	const numWorkers = 16
 	// Maximum queries per second to hit the HTTP server with HTTP GET. We don't want them to hate us.
 	const qps = 1.
 
@@ -268,7 +279,7 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatPro
 			Header: http.Header{"User-Agent": {"CityGPT"}},
 			Transport: &roundtrippers.Retry{
 				// Throttle retries too.
-				Transport: &Throttle{
+				Transport: &TransportThrottle{
 					QPS:       qps,
 					Transport: http.DefaultTransport,
 				},
@@ -287,7 +298,8 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatPro
 		w.urlLookup[w.previousIndex.Items[i].URL] = i
 	}
 
-	resp, err := client.Get(d.targetURL)
+	// Start with the first page.
+	resp, err := client.Get(d.startURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)
 	}
@@ -295,7 +307,7 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatPro
 		_ = resp.Body.Close()
 		return nil, fmt.Errorf("received non-200 response: %d", resp.StatusCode)
 	}
-	links, err := extractLinks(d.baseURL, d.targetURL, resp.Body)
+	links, err := extractLinks(d.baseURL, d.startURL, resp.Body)
 	_ = resp.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("error extracting links: %w", err)
@@ -314,12 +326,12 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatPro
 	eg, ctx := errgroup.WithContext(ctx)
 	for range numWorkers {
 		eg.Go(func() error {
-			for u := range jobs {
-				updated, newLinks, err3 := w.worker(ctx, d.baseURL, d.targetURL)
+			for urlToVisit := range jobs {
+				updated, newLinks, err3 := w.worker(ctx, d.baseURL, urlToVisit)
 				if err3 != nil {
 					return err3
 				}
-				done <- doneItem{u, updated, newLinks}
+				done <- doneItem{urlToVisit, updated, newLinks}
 			}
 			return nil
 		})
@@ -395,13 +407,13 @@ func cleanupOutputDir(outputDir string, index *internal.Index) error {
 
 var cities = map[string]dataIngestor{
 	"ottawa": {
-		targetURL: "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z",
-		baseURL:   "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z" + "/",
+		startURL: "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z",
+		baseURL:  "https://ottawa.ca/en/living-ottawa/laws-licences-and-permits/laws/laws-z" + "/",
 	},
 	"gatineau": {
 		// Requires PDF support.
-		targetURL: "https://www.gatineau.ca/portail/default.aspx?p=guichet_municipal/reglements_municipaux",
-		baseURL:   "https://docweb.gatineau.ca/Doc-Web/masson/documents/pdf/",
+		startURL: "https://www.gatineau.ca/portail/default.aspx?p=guichet_municipal/reglements_municipaux",
+		baseURL:  "https://docweb.gatineau.ca/Doc-Web/masson/documents/pdf/",
 	},
 }
 
@@ -455,18 +467,22 @@ func mainImpl() error {
 		Level.Set(slog.LevelDebug)
 	}
 	cs := cities[*city]
-	if cs.targetURL == "" {
+	if cs.startURL == "" {
 		return fmt.Errorf("unknown city: %s", *city)
 	}
 	if *outputDir == "" {
 		*outputDir = filepath.Join("data", *city, "ingested")
 	}
-	c, err := internal.LoadProvider(ctx, *provider, *model)
+	r := &TransportThrottle{
+		QPS:       1,
+		Transport: http.DefaultTransport,
+	}
+	c, err := internal.LoadProvider(ctx, *provider, *model, r)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Extracting links from %s\n", cs.targetURL)
+	fmt.Printf("Extracting links from %s\n", cs.startURL)
 	index, err := cs.downloadAndSaveTexts(ctx, c, *outputDir)
 	if err != nil {
 		return fmt.Errorf("error downloading texts: %w", err)
