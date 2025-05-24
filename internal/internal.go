@@ -70,7 +70,7 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		if c, err = gemini.New("", modelFlag); err != nil {
 			return nil, err
 		}
-		return &LoggingChatProvider{c}, nil
+		return &ChatProviderLog{c}, nil
 	}
 	if useCerebras {
 		c, err := cerebras.New("", "")
@@ -94,7 +94,7 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		if c, err = cerebras.New("", modelFlag); err != nil {
 			return nil, err
 		}
-		return &LoggingChatProvider{c}, nil
+		return &ChatProviderLog{c}, nil
 	}
 	if useGroq {
 		c, err := groq.New("", "")
@@ -118,7 +118,7 @@ func LoadProvider(ctx context.Context) (genai.ChatProvider, error) {
 		if c, err = groq.New("", modelFlag); err != nil {
 			return nil, err
 		}
-		return &LoggingChatProvider{c}, nil
+		return &ChatProviderLog{c}, nil
 	}
 	return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
 }
@@ -143,21 +143,21 @@ func GetConfigDir() (string, error) {
 	return filepath.Join(current.HomeDir, ".config"), nil
 }
 
-// LoggingChatProvider adds logs to the ChatProvider interface.
-type LoggingChatProvider struct {
+// ChatProviderLog adds logs to the ChatProvider interface.
+type ChatProviderLog struct {
 	genai.ChatProvider
 }
 
-func (l *LoggingChatProvider) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
+func (l *ChatProviderLog) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
 	start := time.Now()
 	resp, err := l.ChatProvider.Chat(ctx, msgs, opts)
-	slog.DebugContext(ctx, "genai", "fn", "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
+	slog.DebugContext(ctx, "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *LoggingChatProvider) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) error {
+func (l *ChatProviderLog) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) (genai.ChatResult, error) {
 	start := time.Now()
-	err := l.ChatProvider.ChatStream(ctx, msgs, opts, replies)
-	slog.DebugContext(ctx, "genai", "fn", "ChatStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
-	return err
+	resp, err := l.ChatProvider.ChatStream(ctx, msgs, opts, replies)
+	slog.DebugContext(ctx, "ChatStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
+	return resp, err
 }
