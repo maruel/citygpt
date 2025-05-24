@@ -17,7 +17,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sync"
 	"text/template"
@@ -93,14 +92,14 @@ func (s *State) save(p string) error {
 
 // SessionData holds both the chat messages and selected file for a session.
 type SessionData struct {
-	// Item is the selected file for the session.
-	Item internal.Item `json:"item"`
+	// Citations are the selected file for the session.
+	Citations []string `json:"citations,omitzero"`
 	// Messages is the chat history for the session.
-	Messages []Message `json:"messages"`
+	Messages genai.Messages `json:"messages,omitzero"`
 	// Created is when the session was created.
-	Created time.Time `json:"created"`
+	Created time.Time `json:"created,omitzero"`
 	// Modified is when the session was last modified.
-	Modified time.Time `json:"modified"`
+	Modified time.Time `json:"modified,omitzero"`
 
 	mu sync.Mutex
 }
@@ -116,15 +115,13 @@ var staticFS embed.FS
 // server represents the HTTP server that handles the chat application.
 type server struct {
 	// Immutable
-	c             genai.ChatProvider
-	cityData      fs.FS
-	appName       string
-	templates     map[string]*template.Template
-	index         internal.Index
-	files         map[string]internal.Item
-	summaryPrompt string
-	statePath     string          // statePath is the path to the state file on disk
-	ipChecker     ipgeo.IPChecker // ipChecker is used to check if an IP is from Canada
+	appName   string
+	cityData  fs.FS
+	files     map[string]internal.Item
+	cityAgent cityAgent
+	templates map[string]*template.Template
+	statePath string          // statePath is the path to the state file on disk
+	ipChecker ipgeo.IPChecker // ipChecker is used to check if an IP is from Canada
 
 	// Mutable
 	mu sync.Mutex
@@ -138,100 +135,6 @@ func generateSessionID() string {
 		return fmt.Sprintf("%d", time.Now().UnixNano())
 	}
 	return fmt.Sprintf("%x", b[:])
-}
-
-// askLLMForBestFile asks the LLM which file would be the best source of data for answering the query.
-//
-// It retries up to 3 times with increasing temperature.
-func (s *server) askLLMForBestFile(ctx context.Context, userMessage string) (internal.Item, error) {
-	msgs := genai.Messages{
-		genai.NewTextMessage(genai.User, "Here's a list of file names and their corresponding summary. The files contain information to answer the user's questions.:"),
-		genai.NewTextMessage(genai.User, s.summaryPrompt),
-		genai.NewTextMessage(genai.User, fmt.Sprintf("Using the previous summary information, determine which file would likely be the best source of information to answer this question. Please respond ONLY with the name of the single most relevant file.\n\nHere's the user's question: \"%s\"", userMessage)),
-	}
-	for attempt := range 3 {
-		// Increase temperature with each attempt
-		temperature := 0.1 * float64(attempt+1)
-		slog.InfoContext(ctx, "citygpt", "msg", "Asking LLM for best file", "attempt", attempt+1, "temperature", temperature)
-		opts := genai.ChatOptions{Seed: int64(attempt + 1), Temperature: temperature}
-		resp, err := s.c.Chat(ctx, msgs, &opts)
-		if err != nil {
-			slog.WarnContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "attempt", attempt+1, "err", err)
-			continue
-		}
-		if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-			slog.WarnContext(ctx, "citygpt", "msg", "No response from LLM when asking for best file", "attempt", attempt+1)
-			continue
-		}
-		response := strings.TrimSpace(resp.Message.Contents[0].Text)
-		slog.InfoContext(ctx, "citygpt", "msg", "LLM suggested file", "file", response)
-		if selected, ok := s.files[response]; ok {
-			return selected, nil
-		}
-		slog.WarnContext(ctx, "citygpt", "msg", "LLM suggested invalid file", "file", response, "attempt", attempt+1)
-	}
-
-	return internal.Item{}, fmt.Errorf("failed to get a valid file after 3 attempts")
-}
-
-func (s *server) genericReply(ctx context.Context, message string, history []Message) string {
-	msgs := make(genai.Messages, 0, len(history)+1)
-	for _, msg := range history {
-		msgs = append(msgs, genai.NewTextMessage(msg.Role, msg.Content))
-	}
-	msgs = append(msgs, genai.NewTextMessage(genai.User, message))
-
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-	resp, err := s.c.Chat(ctx, msgs, &opts)
-	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "err", err)
-		return "Sorry, there was an error processing your request."
-	}
-	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-		return "No response generated"
-	}
-	return resp.Message.Contents[0].Text
-}
-
-func (s *server) generateResponse(ctx context.Context, msg string, sd *SessionData) string {
-	msgs := make(genai.Messages, 0, len(sd.Messages)+1)
-	for _, msg := range sd.Messages {
-		msgs = append(msgs, genai.NewTextMessage(msg.Role, msg.Content))
-	}
-	var err error
-	if len(msgs) > 1 {
-		slog.InfoContext(ctx, "citygpt", "msg", "Follow up question", "file", sd.Item.Name, "msgs", len(msgs))
-		msgs = append(msgs, genai.NewTextMessage(genai.User, msg))
-	} else {
-		if sd.Item, err = s.askLLMForBestFile(ctx, msg); err != nil {
-			slog.ErrorContext(ctx, "citygpt", "msg", "Error asking LLM for best file", "err", err)
-			return s.genericReply(ctx, msg, sd.Messages)
-		}
-		slog.InfoContext(ctx, "citygpt", "msg", "Selected best file for response", "file", sd.Item.Name)
-		fileContent, err2 := fs.ReadFile(s.cityData, sd.Item.Name)
-		if err2 != nil {
-			slog.ErrorContext(ctx, "citygpt", "msg", "Error reading selected file", "file", sd.Item.Name, "err", err2)
-			return s.genericReply(ctx, msg, sd.Messages)
-		}
-		prompt := fmt.Sprintf(
-			"Using the following information from file '%s', please answer the user's questions in a concise way : \"%s\"\n\nFile content:\n%s",
-			sd.Item.Name,
-			msg,
-			string(fileContent),
-		)
-		msgs = append(msgs, genai.NewTextMessage(genai.User, prompt))
-	}
-
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.1}
-	resp, err := s.c.Chat(ctx, msgs, &opts)
-	if err != nil {
-		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "err", err)
-		return "Sorry, there was an error processing your request."
-	}
-	if len(resp.Contents) == 0 || resp.Contents[0].Text == "" {
-		return "No response generated"
-	}
-	return resp.Message.Contents[0].Text
 }
 
 func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
@@ -280,13 +183,11 @@ func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
 	s.mu.Unlock()
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
-	isNew := len(sd.Messages) == 0
 	// Add the user's message to the history
-	userMsg := Message{Role: "user", Content: req.Message}
-	sd.Messages = append(sd.Messages, userMsg)
-	resp := s.generateResponse(r.Context(), req.Message, sd)
-	respMsg := Message{Role: "assistant", Content: resp}
-	sd.Messages = append(sd.Messages, respMsg)
+	sd.Messages = append(sd.Messages, genai.NewTextMessage(genai.User, req.Message))
+	newMsgs, files := s.cityAgent.query(r.Context(), sd.Messages)
+	response := newMsgs[len(newMsgs)-1].AsText()
+	sd.Messages = append(sd.Messages, newMsgs...)
 	sd.Modified = time.Now().Round(time.Second)
 
 	// TODO: Run this asynchronously.
@@ -297,13 +198,19 @@ func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
 	}
 	s.mu.Unlock()
 
-	if isNew {
-		respMsg.Content = fmt.Sprintf("According to my understanding of <a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n\n%s",
-			html.EscapeString(sd.Item.URL),
-			html.EscapeString(sd.Item.Title),
-			html.EscapeString(resp))
+	respMsg := Message{Role: "assistant"}
+	if len(files) != 0 {
+		str := ""
+		for _, f := range files {
+			item := s.files[f]
+			str += fmt.Sprintf("<a href=\"%s\" target=\"_blank\"><i class=\"fa-solid fa-file-lines\"></i> %s</a>\n",
+				html.EscapeString(item.URL),
+				html.EscapeString(item.Title))
+		}
+		respMsg.Content = fmt.Sprintf("According to my understanding of %s\n\n%s",
+			str, html.EscapeString(response))
 	} else {
-		respMsg.Content = html.EscapeString(resp)
+		respMsg.Content = html.EscapeString(response)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ChatResponse{Message: respMsg, SessionID: req.SessionID})
@@ -472,7 +379,7 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 }
 
 func newServer(ctx context.Context, c genai.ChatProvider, appName string, files fs.FS) (*server, error) {
-	s := &server{c: c, cityData: files, appName: appName, files: map[string]internal.Item{}}
+	s := &server{appName: appName, cityData: files}
 	var err error
 	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {
 		slog.WarnContext(ctx, "citygpt", "msg", "Failed to initialize GeoIP database, IP restriction disabled", "err", err)
@@ -492,16 +399,13 @@ func newServer(ctx context.Context, c genai.ChatProvider, appName string, files 
 	if err = s.state.load(ctx, s.statePath); err != nil {
 		return nil, err
 	}
-	if err = s.index.Load(s.cityData, "index.json"); err != nil {
+	if err = s.cityAgent.init(c, files); err != nil {
 		return nil, err
 	}
-	content := make([]string, 0, len(s.index.Items))
-	for _, item := range s.index.Items {
+	s.files = make(map[string]internal.Item, len(s.cityAgent.index.Items))
+	for _, item := range s.cityAgent.index.Items {
 		s.files[item.Name] = item
-		content = append(content, fmt.Sprintf("- %s: %s", item.Name, item.Summary))
 	}
-	sort.Strings(content)
-	s.summaryPrompt = strings.Join(content, "\n")
 	return s, nil
 }
 

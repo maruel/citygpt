@@ -119,6 +119,7 @@ func mainImpl() error {
 	if err != nil {
 		return err
 	}
+	slog.InfoContext(ctx, "citygpt", "msg", "Starting server", "app-name", *appName, "port", *port, "provider", *provider, "model", c.ModelID())
 	s, err := newServer(ctx, c, *appName, ottawa.DataFS)
 	if err != nil {
 		return err
