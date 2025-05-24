@@ -57,7 +57,7 @@ func (i *Index) Save(path string) error {
 		return err
 	}
 	tmpPath := path + ".tmp"
-	if err := os.WriteFile(path, d, 0o644); err != nil {
+	if err := os.WriteFile(tmpPath, d, 0o644); err != nil {
 		return err
 	}
 	return os.Rename(tmpPath, path)

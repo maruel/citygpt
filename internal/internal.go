@@ -31,7 +31,7 @@ var (
 
 func init() {
 	if os.Getenv("GEMINI_API_KEY") != "" {
-		useGemini = "gemini-2.5-flash-preview-04-17"
+		useGemini = "gemini-2.5-flash-preview-05-20"
 	}
 	if os.Getenv("GROQ_API_KEY") != "" {
 		// Limited to 8K context?

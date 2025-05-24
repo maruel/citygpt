@@ -1,56 +1,18 @@
-Updated January 2024
 Amending by-law numbers:
-2004-128
-2005-142
-2006-44
-2007-109
-2008-89
-2009-74
-2010-103
-2010-223
-2011-143
-2011-185
-2012-79
-2012-85
-2012-202
-2012-453
-2013-398
-2015-86
-2015-153
-2016-21
-2016-304
-2017-10
-2017-92
-2018-9
-2019-58
-2021-396
-2024-08
-A by-law of the City of Ottawa to regulate encroachments on City highways.
+2010-223, 2011-185, 2012-085, 2012-202, 2015-153, 2016-304, 2017-92, 2018-009, 2020-169, 2021-396, 2022-021, 2025-165
 The Council of the City of Ottawa enacts as follows:
-### Section 1 - Definitions
+## Section 1 - Definitions
 
 For the purpose of this by-law,
 “
 appurtenances
 ” means anything attached to a structure including but not limited to canopies, umbrellas, tables, chairs and wrought iron railings;
 “
-ashtray
-” means a receptacle for tobacco ashes and for cigar and cigarette butts; (2012-85)
-“
 boulevard
 ” means all parts of the highway save and except any roadway, shoulder or sidewalk, and “outer boulevard” means that part of the highway lying between any sidewalk and the roadway or the near edge of the shoulder where such exists;
-"
-café seating
-" means one or two tables each with a maximum width of 76cm and each with a maximum length of 101 cm, each table having one or two chairs, and each chair with a maximum width of 76cm and a maximum depth of 76cm, all of which encroach upon a highway; (2010-223)
-"
-cafe seating permit
-" means the City's authorization for a café seating encroachment;
 “
 canopy
 ” means any canopy, marquee, awning or similar fixed device, used to cover or shelter a walkway, entrance or front of a building;
-“
-charcoal”
-means a combustible substance whose primary purpose is to burn or heat a smoking product; (2016-304)
 “
 City
 ” means the municipal corporation of the City of Ottawa or the geographic area as the context requires;
@@ -64,9 +26,6 @@ customer service box
 courier drop box
 ” means an unattended box into which any member of the general public may deposit letters or parcels to be delivered by courier companies;
 “
-Electronic Cigarettes Act
-” means the Electronic Cigarettes Act, 2015, S.O. 2015, c. 7, Sch. 3, as amended, and any regulation passed under it; (2016-304)
-“
 encroachment
 ” means anything man-made that encroaches on a highway whether below, at, or above the highway surface and includes,
 1. an aerial encroachment;
@@ -78,13 +37,10 @@ encroachment fee
 ” means the fee that is based on the compensation rate for the occupied area;
 “
 General Manager
-” means the General Manager of the City’s Department of Planning and Growth Management or authorized representative; (2011-185)
+” means the General Manager of the City’s Planning, Development and Building Services Department, or authorized representative; (2025-165)
 “
 highway
 ” means a common and public highway and includes any bridge, trestle, viaduct or other structure forming part of the highway and, except as otherwise provided, includes a portion of a highway and includes the area between the lateral property lines thereof;
-“
-outdoor patio
-” means an encroachment on a sidewalk or boulevard outside of or immediately adjacent to a building or other structure providing services in the nature of a restaurant or tavern or like business, and within or on which may be included objects such as tables, chairs, temporary entrance shelters, canopies, umbrellas, parasols and decorative planters; but does not include café seating;
 “
 permanent aerial encroachment
 ” means an encroachment which is at least two and one-half metres (2.5 m) above the elevation of the centreline of the road immediately facing the encroachment and which meets current standards of the Canadian Safety Association and the Ontario Electrical Safety Code;
@@ -113,33 +69,19 @@ roadway
 sidewalk
 ” means that part of a highway set aside by the City for the use of pedestrians;
 “
-smoke” or “smoking
-” includes the carrying of a lighted cigar, cigarette, pipe or any other lighted smoking equipment;
-“
-smoking product
-” means any substance whose primary purpose is to be burned or heated to produce vapours, gases, or smoke, which may be inhaled, and shall include but is not limited to non-tobacco herbal shisha, and other plant material or oils intended for inhalation; (2016-304)
-“
 snow plow driveway marker
 ” means a temporary, non-illuminated indicator or guide inserted with a vertical orientation into the ground on private property or a City right of way that serves to mark the edge of a driveway for a licensed snow plow contractor, and which is permitted under and complies with the requirements of the City of Ottawa’s Licensing by-laws; (2018-9)
 “
 temporary aerial encroachment
-” means an encroachment, the lowest portion of which is at least two and one-half metres (2.5 m) above the elevation of the highway immediately below the encroachment and which,
-1. is withdrawn for at least eight (8) hours in every twenty-four (24) hour period; or
-1. is used only to facilitate the construction, repair, renovation, alteration, maintenance or demolition of a building;
-
+” means an encroachment, the lowest portion of which is at least two and one-half metres (2.5 m) above the elevation of the highway immediately below the encroachment and which is withdrawn for at least eight (8) hours every twenty-four (24) hour period; (2025-XX)
 “
 temporary miscellaneous encroachment”
 means a tourist information directory, a tourist information kiosk, a waste receptacle or Christmas decorations;
 “
-temporary sub-surface encroachment
-” means an encroachment under the highway surface that is used to facilitate the construction, repair, renovation, alteration, maintenance or demolition of a building or is erected in order to comply with this or any other by-law and includes, but is not limited to, a tie back, rock anchor, or other type of support placed under the highway to support an excavation wall;
-“
 temporary surface encroachment
 ” means an encroachment on the surface of a highway, all of which is less than two and one-half metres (2.5 m) above the elevation of the highway immediately below the encroachment, that is used,
-1. to facilitate the construction, repair, renovation, alteration, maintenance or demolition of a building, and includes, but is not limited to, vehicles, materials, equipment, covered sidewalks and hoarding;
 1. for parking a vehicle for the purpose of loading or unloading goods or merchandise at locations where loading and unloading is not permitted by the Traffic and Parking By-law of the City and includes material and equipment;
-1. as a customer service box, tourist information directory, tourist information kiosk or waste receptacle;
-1. as an outdoor patio; or
+1. as a customer service box, tourist information directory, tourist information kiosk or waste receptacle; or,
 1. to facilitate a tourism industry related activity and includes, but is not limited to, vehicles, materials, equipment, commercial filming and tourist information kiosks;
 
 “
@@ -148,22 +90,16 @@ tourist information directory
 “
 tourist information kiosk
 ” means a portable, attended structure used for selling admission tickets and to provide printed tourist related information to the public, such as, but not limited to, city maps and printed advertisement brochures and which occupies an area of the highway not greater than four square metres (4m²);
-"
-use
-”, with respect to a water pipe, includes the carrying of any lighted or heated water pipe as well as inhaling or exhaling vapour, smoke, or gas associated with or resulting from water pipe use; (2016-304)
 “
 vehicle
 ” includes a motor vehicle, trailer, traction engine, farm tractor, road-building machine, bicycle and any vehicle drawn, propelled or driven by any kind of power, including muscular power, but does not include a motorized snow vehicle or a street car;
 “
 waste receptacle
 ” means a portable and water impermeable container of less than twenty-three kilograms (23 kg) for the sole use of the public to dispose of waste generated from a food premise or from smoking activity.
-“
-water pipe
-” means a device, whether called a water pipe, hookah or any other name, that burns or heats a tobacco or non-tobacco substance or a combination thereof, with which the vapour, smoke or gases may pass through liquid prior to being inhaled, and excludes an electronic cigarette as defined under the Electronic Cigarettes Act (2016-304).
-### Section 2 - Exemptions
+## Section 2 - Exemptions
 
 1. The provisions of this by-law do not apply to:
-  1. lawns and private entrance walkways or private approaches placed or constructed in accordance with the City’s by-laws;
+  1. lawns, boulevard gardens, free library boxes, pop-up retail display and vending, private entrance walkways or private approaches placed or constructed in accordance with the City’s by-laws; (2025-XX)
   1. flags and flag-poles located at a height of two and one-half metres (2.5 m) or more above the elevation of the centreline of the roadway immediately facing the flag or flag-pole that are not used for advertising purposes;
   1. existing footings that,
     1. do not encroach on a highway by more than three hundred millimetres (300 mm),
@@ -171,24 +107,21 @@ water pipe
     1. do not interfere with any public utility;
   1. existing permanent aerial encroachments that encroach by not more than three hundred millimetres (300 mm);
   1. signs authorized by any City by-law; (f) works, equipment, assets and infrastructure of the City or of an agency of the City or a public utility;
+  1. works, equipment, assets and infrastructure of the City or of an agency of the City or a public utility;
   1. works and equipment of any person performing construction or maintenance operations on a City highway, to the extent that such works are lawfully authorized by any agreement with, or a by-law of, the City; or
   1. individual buildings, structures, sites or related appurtenances designated as properties of cultural heritage value under Part IV or Part V of the Ontario Heritage Act, R.S.O. 1990, Chap. O.18, as amended.
   1. snow plow driveway marker (2018-9).
 
-### Section 3 to 4 - Permit required
-
-#### Section 3
+## Sections 3 to 4 - Permit required
 
 1. No person shall construct, erect or alter an encroachment without first obtaining a permit in accordance with the provisions of this by-law.
 1. Despite subsection (1), no person shall erect a permanent surface encroachment.
-
-#### Section 4
 
 1. Despite subsection 3(2), the General Manager may approve the following:
   1. a permanent surface encroachment that existed prior to the enactment of this by-law; or
   1. a ramp located in a barrier-free path of travel to and from an entrance to a building.
 
-### Section 5 - Authority of the General Manager
+## Section 5 - Authority of the General Manager
 
 1. The General Manager may reject an application for an encroachment on the basis of its potential interference or inconsistency with:
   1. safety,
@@ -248,19 +181,7 @@ If, at any time after the construction of a permanent sub-surface encroachment, 
 1. The granting of a permit in respect of a permanent encroachment does not create any vested right in the owner or occupant of the premises to which the encroachment is appurtenant, or in any other person, and the permit may be revoked at any time as hereinafter provided.
 1. The execution of an agreement pursuant to Section 8 in respect of an encroachment does not create any vested right in the owner or occupant of the premises to which the encroachment is appurtenant, or in any other person, and the agreement is always subject to termination by either party on one month’s notice in writing.
 
-1. Reserved for future use.
-
-18. Reserved for future use.
-19. Reserved for future use.
-20. Reserved for future use.
-21. Reserved for future use.
-22. Reserved for future use.
-23. Reserved for future use.
-24. Reserved for future use.
-1. Reserved for future use.
-
-26. Reserved for future use.
-27. Reserved for future use.
+Repealed by By-law 2021-396, being a by-law of the City of Ottawa to amend By-law 2003-445 respecting the regulation of road activity on City highways and By-law 2003-446 respecting the regulation of encroachments on City highways.
 ### Section 28 to 33 - Tourist information directories & tourist information kiosks
 
 #### Section 28 - Procedure for application
@@ -454,74 +375,7 @@ A customer service box on an outer boulevard shall be removed on the 15th day of
 #### Section 62
 
 A customer service box on a sidewalk shall be placed so that the front of the box is parallel to the direction of the sidewalk or pedestrian flow, and where there is more than one customer service box in a row, the front surfaces of the boxes must line up with one another, and provide for an unencumbered sidewalk width as defined in Schedule “C” of this by-law.
-OUTDOOR PATIO ENCROACHMENTS
-PROCEDURE FOR APPLICATION
-63.       (Repealed by 2017-92)
-APPROVAL OF APPLICATIONS
-64.       (Repealed by 2017-92)
-65.       (Repealed by 2017-92)
-66.       (Repealed by 2017-92)
-67.       (Repealed by 2017-92)
-EFFECT OF APPROVAL
-68.       (Repealed by 2017-92)
-RENEWAL
-69.       (Repealed by 2017-92)
-INDEMNIFICATION
-70.       (Repealed by 2017-92)
-INSURANCE
-71.       (Repealed by 2017-92)
-72.       (Repealed by 2017-92)
-REVOCATION
-73.       (Repealed by 2017-92)
-GENERAL REGULATIONS
-74.       (Repealed by 2017-92)
-75.       (Repealed by 2017-92)
-76.       (Repealed by 2017-92)
-77.       (Repealed by 2017-92)
-78.       (Repealed by 2017-92)
-79.       (Repealed by 2017-92)
-80.       (Repealed by 2017-92)
-81.       (Repealed by 2017-92)
-82.       (Repealed by 2017-92)
-83.       (Repealed by 2017-92)
-84.       (Repealed by 2017-92)
-85.       (Repealed by 2017-92)
-86.       (Repealed by 2017-92)
-87.       (Repealed by 2017-92)
-88.       (Repealed by 2017-92)
-89.       (Repealed by 2017-92)
-90.       (Repealed by 2017-92)
-91.       (Repealed by 2017-92)
-CAFÉ SEATING ENCROACHMENTS  (2010-223)
-PROCEDURE FOR APPLICATION  (2010-223)
-91A.    (Repealed by 2017-92)
-APPROVAL OF APPLICATIONS  (2010-223)
-91B.    (Repealed by 2017-92)
-EFFECT OF ISSUANCE  (2010-223)
-91C.    (Repealed by 2017-92)
-RENEWAL  (2010-223)
-91D.    (Repealed by 2017-92)
-INDEMNIFICATION  (2010-223)
-91E.     (Repealed by 2017-92)
-INSURANCE  (2010-223)
-91F.     (Repealed by 2017-92)
-REVOCATION  (2010-223)
-91G.    (Repealed by 2017-92)
-GENERAL REGULATIONS  (2010-223)
-91H.    (Repealed by 2017-92)
-91I.      (Repealed by 2017-92)
-91J.      (Repealed by 2017-92)
-91K.    (Repealed by 2017-92)
-91L.     (Repealed by 2017-92)
-91M.    (Repealed by 2017-92)
-91N.    (Repealed by 2017-92)
-91O.    (Repealed by 2017-92)
-91P.   (Repealed by 2017-92)
-91Q.    (Repealed by 2017-92)
-91R.    (Repealed by 2017-92)
-91S.     (Repealed by 2017-92)
-91T.     (Repealed by 2017-92)
-91U.    (Repealed by 2017-92)
+Repealed by By-law 2017-92, being a by-law of the City of Ottawa to regulate Right of Way patios on City highways.
 ### Section 92 - Waiver of fees
 
 The General Manager may waive all or part of the encroachment permit fees in Schedule "B" of this by-law for registered charitable and non-profit organizations, such as the United Way and the Santa Claus Parade, where deemed appropriate by the City.
