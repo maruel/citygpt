@@ -378,7 +378,7 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func newServer(ctx context.Context, c genai.ChatProvider, appName string, files fs.FS) (*server, error) {
+func newServer(ctx context.Context, c genai.ProviderChat, appName string, files fs.FS) (*server, error) {
 	s := &server{appName: appName, cityData: files}
 	var err error
 	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {

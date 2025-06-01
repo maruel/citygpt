@@ -146,7 +146,7 @@ func isValidContentURL(link, baseURL string) bool {
 
 type summaryWorkers struct {
 	client        http.Client
-	c             genai.ChatProvider
+	c             genai.ProviderChat
 	outputDir     string
 	previousIndex internal.Index
 	urlLookup     map[string]int
@@ -264,7 +264,7 @@ type dataIngestor struct {
 }
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ChatProvider, outputDir string) (*internal.Index, error) {
+func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ProviderChat, outputDir string) (*internal.Index, error) {
 	// Number of workers to process URLs and generate summaries in parallel. Generating summaries is slow so it
 	// needs to be significantly higher than 1/qps.
 	const numWorkers = 16

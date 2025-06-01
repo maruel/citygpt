@@ -48,7 +48,7 @@ func init() {
 }
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
-func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripper) (genai.ChatProvider, error) {
+func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripper) (genai.ProviderChat, error) {
 	if provider == "" {
 		if useGemini != "" {
 			provider = "gemini"
@@ -60,31 +60,31 @@ func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripp
 			return nil, errors.New("no provider available")
 		}
 	}
-	var getClient func(model string) (genai.ChatProvider, error)
+	var getClient func(model string) (genai.ProviderChat, error)
 	switch provider {
 	case "cerebras":
 		if model == "" {
 			model = useCerebras
 		}
-		getClient = func(model string) (genai.ChatProvider, error) {
+		getClient = func(model string) (genai.ProviderChat, error) {
 			c, err := cerebras.New("", model, r)
 			if err != nil {
 				return c, err
 			}
-			return &genai.ChatProviderThinking{ChatProvider: c, TagName: "think"}, nil
+			return &genai.ProviderChatThinking{ProviderChat: c, TagName: "think"}, nil
 		}
 	case "gemini":
 		if model == "" {
 			model = useGemini
 		}
-		getClient = func(model string) (genai.ChatProvider, error) {
+		getClient = func(model string) (genai.ProviderChat, error) {
 			return gemini.New("", model, r)
 		}
 	case "groq":
 		if model == "" {
 			model = useGroq
 		}
-		getClient = func(model string) (genai.ChatProvider, error) {
+		getClient = func(model string) (genai.ProviderChat, error) {
 			return groq.New("", model, r)
 		}
 	default:
@@ -93,12 +93,12 @@ func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripp
 	return loadProvider(ctx, getClient, model)
 }
 
-func loadProvider(ctx context.Context, getClient func(model string) (genai.ChatProvider, error), model string) (genai.ChatProvider, error) {
+func loadProvider(ctx context.Context, getClient func(model string) (genai.ProviderChat, error), model string) (genai.ProviderChat, error) {
 	c, err := getClient(model)
 	if err != nil {
 		return nil, err
 	}
-	return &ChatProviderLog{c}, nil
+	return &ProviderChatLog{c}, nil
 }
 
 /*
@@ -136,21 +136,21 @@ func GetConfigDir() (string, error) {
 	return filepath.Join(current.HomeDir, ".config"), nil
 }
 
-// ChatProviderLog adds logs to the ChatProvider interface.
-type ChatProviderLog struct {
-	genai.ChatProvider
+// ProviderChatLog adds logs to the ProviderChat interface.
+type ProviderChatLog struct {
+	genai.ProviderChat
 }
 
-func (l *ChatProviderLog) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
+func (l *ProviderChatLog) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
 	start := time.Now()
-	resp, err := l.ChatProvider.Chat(ctx, msgs, opts)
+	resp, err := l.ProviderChat.Chat(ctx, msgs, opts)
 	slog.DebugContext(ctx, "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *ChatProviderLog) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) (genai.ChatResult, error) {
+func (l *ProviderChatLog) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) (genai.ChatResult, error) {
 	start := time.Now()
-	resp, err := l.ChatProvider.ChatStream(ctx, msgs, opts, replies)
+	resp, err := l.ProviderChat.ChatStream(ctx, msgs, opts, replies)
 	slog.DebugContext(ctx, "ChatStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
 	return resp, err
 }
