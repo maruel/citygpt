@@ -151,7 +151,7 @@ func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
 		} else if countryCode != "CA" && countryCode != "local" {
-			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "denied", "ip", clientIP, "country", countryCode)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusForbidden)
 			_ = json.NewEncoder(w).Encode(ChatResponse{Message: Message{Role: "assistant", Content: "I'm sorry, I can only be used within Canada"}})
@@ -310,17 +310,12 @@ func (s *server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		if countryCode, err := s.ipChecker.GetCountry(clientIP); err != nil {
 			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
 		} else if countryCode != "CA" && countryCode != "local" {
-			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "denied", "ip", clientIP, "country", countryCode)
 		} else {
 			slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP, "country", countryCode)
 		}
 	} else {
 		slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP)
-	}
-	// Refuse random subpaths after checking the IP.
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
@@ -352,7 +347,7 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 		if countryCode, err := s.ipChecker.GetCountry(clientIP); err != nil {
 			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Failed to check IP country code", "ip", clientIP, "err", err)
 		} else if countryCode != "CA" && countryCode != "local" {
-			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "Non-Canadian IP", "ip", clientIP, "country", countryCode)
+			slog.WarnContext(ctx, "citygpt", "path", r.URL.Path, "msg", "denied", "ip", clientIP, "country", countryCode)
 		} else {
 			slog.InfoContext(ctx, "citygpt", "path", r.URL.Path, "ip", clientIP, "country", countryCode)
 		}
@@ -376,6 +371,29 @@ func (s *server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	if err := s.templates["/about"].Execute(w, data); err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Template execution error", "err", err)
 	}
+}
+
+var trashPaths = []string{
+	"/.aws/",
+	"/.env",
+	"/.git/",
+	"/_profiler/",
+	"/admin/",
+	"/config.phpinfo",
+	"/media/",
+	"/php.php",
+	"/php_info.php",
+	"/phpinfo",
+	"/phpinfo.php",
+	"/pi.php",
+	"/test.php",
+	"/wordpress/",
+	"/wp-admin/",
+	"/wp-includes/",
+}
+
+func (s *server) handleTrash(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusMovedPermanently)
 }
 
 func newServer(ctx context.Context, c genai.ProviderChat, appName string, files fs.FS) (*server, error) {
@@ -436,7 +454,10 @@ func (n noDirectoryFS) Open(name string) (fs.File, error) {
 
 func (s *server) start(ctx context.Context, port string) error {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", s.handleIndex)
+	for _, t := range trashPaths {
+		mux.HandleFunc("GET "+t, s.handleTrash)
+	}
+	mux.HandleFunc("GET /{$}", s.handleIndex)
 	mux.HandleFunc("GET /about", s.handleAbout)
 	mux.HandleFunc("POST /api/chat", s.handleRoot)
 	mux.HandleFunc("GET /city-data/", s.handleCityData)
