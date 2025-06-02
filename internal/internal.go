@@ -141,14 +141,14 @@ type ProviderChatLog struct {
 	genai.ProviderChat
 }
 
-func (l *ProviderChatLog) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.ChatResult, error) {
+func (l *ProviderChatLog) Chat(ctx context.Context, msgs genai.Messages, opts genai.Validatable) (genai.Result, error) {
 	start := time.Now()
 	resp, err := l.ProviderChat.Chat(ctx, msgs, opts)
 	slog.DebugContext(ctx, "Chat", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *ProviderChatLog) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) (genai.ChatResult, error) {
+func (l *ProviderChatLog) ChatStream(ctx context.Context, msgs genai.Messages, opts genai.Validatable, replies chan<- genai.MessageFragment) (genai.Result, error) {
 	start := time.Now()
 	resp, err := l.ProviderChat.ChatStream(ctx, msgs, opts, replies)
 	slog.DebugContext(ctx, "ChatStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
