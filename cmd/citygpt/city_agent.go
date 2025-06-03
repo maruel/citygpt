@@ -49,7 +49,7 @@ func (c *cityAgent) init(cp genai.ProviderGen, cityData fs.FS) error {
 
 func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messages, []string) {
 	var files []string
-	opts := genai.TextOptions{
+	opts := genai.OptionsText{
 		Seed:         1,
 		SystemPrompt: c.systemPrompt,
 		// Temperature: 0.1,

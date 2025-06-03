@@ -73,7 +73,7 @@ func Summarize(ctx context.Context, c genai.ProviderGen, content string) (string
 		genai.NewTextMessage(genai.User, summarizationPrompt),
 		genai.NewTextMessage(genai.User, content),
 	}
-	opts := genai.TextOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
+	opts := genai.OptionsText{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
 	resp, err := c.GenSync(ctx, messages, &opts)
 	if err != nil {
 		return "", err
