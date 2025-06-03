@@ -21,7 +21,7 @@ type bylaws struct {
 }
 
 type cityAgent struct {
-	c        genai.ProviderChat
+	c        genai.ProviderGen
 	cityData fs.FS
 
 	systemPrompt string
@@ -29,7 +29,7 @@ type cityAgent struct {
 	index        internal.Index
 }
 
-func (c *cityAgent) init(cp genai.ProviderChat, cityData fs.FS) error {
+func (c *cityAgent) init(cp genai.ProviderGen, cityData fs.FS) error {
 	c.c = cp
 	c.cityData = cityData
 	if err := c.index.Load(c.cityData, "index.json"); err != nil {
@@ -49,7 +49,7 @@ func (c *cityAgent) init(cp genai.ProviderChat, cityData fs.FS) error {
 
 func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messages, []string) {
 	var files []string
-	opts := genai.ChatOptions{
+	opts := genai.TextOptions{
 		Seed:         1,
 		SystemPrompt: c.systemPrompt,
 		// Temperature: 0.1,
@@ -75,7 +75,7 @@ func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messa
 	if len(msgs) < 2 {
 		opts.ToolCallRequest = genai.ToolCallRequired
 	}
-	newMsgs, usage, err := genai.ChatWithToolCallLoop(ctx, c.c, msgs, &opts)
+	newMsgs, usage, err := genai.GenSyncWithToolCallLoop(ctx, c.c, msgs, &opts)
 	if _, ok := err.(*genai.UnsupportedContinuableError); ok {
 		err = nil
 	}

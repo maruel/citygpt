@@ -396,7 +396,7 @@ func (s *server) handleTrash(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", http.StatusMovedPermanently)
 }
 
-func newServer(ctx context.Context, c genai.ProviderChat, appName string, files fs.FS) (*server, error) {
+func newServer(ctx context.Context, c genai.ProviderGen, appName string, files fs.FS) (*server, error) {
 	s := &server{appName: appName, cityData: files}
 	var err error
 	if s.ipChecker, err = ipgeo.NewGeoIPChecker(); err != nil {

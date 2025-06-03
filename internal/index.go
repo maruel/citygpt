@@ -68,13 +68,13 @@ func (i *Index) Save(path string) error {
 const summarizationPrompt = "You are a helpful assistant that summarizes text content accurately and concisely. Do not mention what you are doing or your constraints. Do not mention the city or the fact it is about by-laws. Please summarize the subject of following text as a single long line:"
 
 // Summarize creates a summary of a the provided content.
-func Summarize(ctx context.Context, c genai.ProviderChat, content string) (string, error) {
+func Summarize(ctx context.Context, c genai.ProviderGen, content string) (string, error) {
 	messages := genai.Messages{
 		genai.NewTextMessage(genai.User, summarizationPrompt),
 		genai.NewTextMessage(genai.User, content),
 	}
-	opts := genai.ChatOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
-	resp, err := c.Chat(ctx, messages, &opts)
+	opts := genai.TextOptions{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
+	resp, err := c.GenSync(ctx, messages, &opts)
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +82,7 @@ func Summarize(ctx context.Context, c genai.ProviderChat, content string) (strin
 }
 
 // ProcessHTML from a single URL and saves it
-func ProcessHTML(ctx context.Context, c genai.ProviderChat, r io.Reader, mdPath string) (string, string, error) {
+func ProcessHTML(ctx context.Context, c genai.ProviderGen, r io.Reader, mdPath string) (string, string, error) {
 	md, title, err := htmlparse.ExtractTextFromHTML(r)
 	if err != nil {
 		return title, "", fmt.Errorf("failed to extract text: %w", err)
