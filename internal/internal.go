@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/maruel/genai"
+	"github.com/maruel/genai/adapter"
 	"github.com/maruel/genai/cerebras"
 	"github.com/maruel/genai/gemini"
 	"github.com/maruel/genai/groq"
@@ -71,7 +72,7 @@ func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripp
 			if err != nil {
 				return c, err
 			}
-			return &genai.ProviderGenThinking{ProviderGen: c, TagName: "think"}, nil
+			return &adapter.ProviderGenThinking{ProviderGen: c, TagName: "think"}, nil
 		}
 	case "gemini":
 		if model == "" {
