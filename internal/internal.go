@@ -18,9 +18,9 @@ import (
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/adapter"
-	"github.com/maruel/genai/cerebras"
-	"github.com/maruel/genai/gemini"
-	"github.com/maruel/genai/groq"
+	"github.com/maruel/genai/providers/cerebras"
+	"github.com/maruel/genai/providers/gemini"
+	"github.com/maruel/genai/providers/groq"
 )
 
 var (
