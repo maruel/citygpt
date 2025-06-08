@@ -441,12 +441,12 @@ func (n noDirectoryFS) Open(name string) (fs.File, error) {
 	}
 	stat, err := f.Stat()
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	// Return an error if this is a directory to prevent listing
 	if stat.IsDir() {
-		f.Close()
+		_ = f.Close()
 		return nil, fs.ErrNotExist
 	}
 	return f, nil

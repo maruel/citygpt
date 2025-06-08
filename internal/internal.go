@@ -24,7 +24,6 @@ import (
 )
 
 var (
-	modelFlag   string
 	useCerebras string
 	useGemini   string
 	useGroq     string
