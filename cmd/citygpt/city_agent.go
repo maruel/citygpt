@@ -14,7 +14,7 @@ import (
 
 	"github.com/maruel/citygpt/internal"
 	"github.com/maruel/genai"
-	"github.com/maruel/genai/adapter"
+	"github.com/maruel/genai/adapters"
 )
 
 type bylaws struct {
@@ -76,7 +76,7 @@ func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messa
 	if len(msgs) < 2 {
 		opts.ToolCallRequest = genai.ToolCallRequired
 	}
-	newMsgs, usage, err := adapter.GenSyncWithToolCallLoop(ctx, c.c, msgs, &opts)
+	newMsgs, usage, err := adapters.GenSyncWithToolCallLoop(ctx, c.c, msgs, &opts)
 	if _, ok := err.(*genai.UnsupportedContinuableError); ok {
 		err = nil
 	}

@@ -417,6 +417,13 @@ var cities = map[string]dataIngestor{
 	},
 }
 
+func throttler(r http.RoundTripper) http.RoundTripper {
+	return &TransportThrottle{
+		QPS:       1,
+		Transport: r,
+	}
+}
+
 func mainImpl() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	defer cancel()
@@ -473,11 +480,7 @@ func mainImpl() error {
 	if *outputDir == "" {
 		*outputDir = filepath.Join("data", *city, "ingested")
 	}
-	r := &TransportThrottle{
-		QPS:       1,
-		Transport: http.DefaultTransport,
-	}
-	c, err := internal.LoadProvider(ctx, *provider, *model, r)
+	c, err := internal.LoadProvider(ctx, *provider, *model, throttler)
 	if err != nil {
 		return err
 	}

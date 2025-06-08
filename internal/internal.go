@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/maruel/genai"
-	"github.com/maruel/genai/adapter"
+	"github.com/maruel/genai/adapters"
 	"github.com/maruel/genai/providers/cerebras"
 	"github.com/maruel/genai/providers/gemini"
 	"github.com/maruel/genai/providers/groq"
@@ -49,7 +49,7 @@ func init() {
 }
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
-func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripper) (genai.ProviderGen, error) {
+func LoadProvider(ctx context.Context, provider, model string, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
 	if provider == "" {
 		if useGemini != "" {
 			provider = "gemini"
@@ -68,25 +68,25 @@ func LoadProvider(ctx context.Context, provider, model string, r http.RoundTripp
 			model = useCerebras
 		}
 		getClient = func(model string) (genai.ProviderGen, error) {
-			c, err := cerebras.New("", model, r)
+			c, err := cerebras.New("", model, wrapper)
 			if err != nil {
 				return c, err
 			}
-			return &adapter.ProviderGenThinking{ProviderGen: c, TagName: "think"}, nil
+			return &adapters.ProviderGenThinking{ProviderGen: c, TagName: "think"}, nil
 		}
 	case "gemini":
 		if model == "" {
 			model = useGemini
 		}
 		getClient = func(model string) (genai.ProviderGen, error) {
-			return gemini.New("", model, r)
+			return gemini.New("", model, wrapper)
 		}
 	case "groq":
 		if model == "" {
 			model = useGroq
 		}
 		getClient = func(model string) (genai.ProviderGen, error) {
-			return groq.New("", model, r)
+			return groq.New("", model, wrapper)
 		}
 	default:
 		return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
