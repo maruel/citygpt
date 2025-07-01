@@ -37,43 +37,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// TransportThrottle implements a time based algorithm to smooth out HTTP requests at exactly QPS or less.
-//
-// It doesn't have allowance for bursty requests.
-type TransportThrottle struct {
-	Transport http.RoundTripper
-	QPS       float64
-
-	mu          sync.Mutex
-	lastRequest time.Time
-}
-
-func (t *TransportThrottle) RoundTrip(req *http.Request) (*http.Response, error) {
-	var sleep time.Duration
-	t.mu.Lock()
-	now := time.Now()
-	if t.lastRequest.IsZero() {
-		t.lastRequest = now
-	} else {
-		if sleep = time.Duration(t.QPS * float64(time.Second)); sleep < 0 {
-			sleep = 0
-			t.lastRequest = now
-		} else {
-			t.lastRequest = t.lastRequest.Add(sleep)
-		}
-	}
-	t.mu.Unlock()
-	if sleep != 0 {
-		ctx := req.Context()
-		select {
-		case <-time.After(sleep):
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		}
-	}
-	return t.Transport.RoundTrip(req)
-}
-
 func trimURLFragment(u string) (string, error) {
 	parsedURL, err := url.Parse(u)
 	if err != nil {
@@ -279,7 +242,7 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.Provide
 			Header: http.Header{"User-Agent": {"CityGPT"}},
 			Transport: &roundtrippers.Retry{
 				// Throttle retries too.
-				Transport: &TransportThrottle{
+				Transport: &roundtrippers.Throttle{
 					QPS:       qps,
 					Transport: http.DefaultTransport,
 				},
@@ -418,7 +381,7 @@ var cities = map[string]dataIngestor{
 }
 
 func throttler(r http.RoundTripper) http.RoundTripper {
-	return &TransportThrottle{
+	return &roundtrippers.Throttle{
 		QPS:       1,
 		Transport: r,
 	}

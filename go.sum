@@ -22,8 +22,8 @@ github.com/maruel/genai v0.0.0-20250613192908-ef6f12e1f376 h1:ipKrvS4wNX9rWkq/TE
 github.com/maruel/genai v0.0.0-20250613192908-ef6f12e1f376/go.mod h1:lg+i8UzjK47LxGC8UHRMZQBIm86Cbxt9NaN8J2rPxBw=
 github.com/maruel/httpjson v0.4.2 h1:lDZZGZvOWi++QrznUOMymeOJx5HGJaAb9b+ktLeFQgw=
 github.com/maruel/httpjson v0.4.2/go.mod h1:Rbue+VwOe1TC6doGXddW8EWg2fW4Je6RhCo7iPuNpTo=
-github.com/maruel/roundtrippers v0.3.3 h1:5zsSOu4cEQVZfDwWUg6o7Lu4cFUOFoRVJrBMUtzaAeU=
-github.com/maruel/roundtrippers v0.3.3/go.mod h1:By9wgqtmfQEs7hQmz7m8N2jr2m8VDPXNIRxOtK/042U=
+github.com/maruel/roundtrippers v0.4.0 h1:bB9vWcAzh/Ejw4vE16bS69NjVTVSPjBRqr3V0IUe/Yg=
+github.com/maruel/roundtrippers v0.4.0/go.mod h1:By9wgqtmfQEs7hQmz7m8N2jr2m8VDPXNIRxOtK/042U=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
 github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
