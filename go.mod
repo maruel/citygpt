@@ -4,18 +4,18 @@ go 1.24.2
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/lmittmann/tint v1.0.7
-	github.com/maruel/genai v0.0.0-20250613192908-ef6f12e1f376
+	github.com/lmittmann/tint v1.1.2
+	github.com/maruel/genai v0.0.0-20250630185254-48286dbcd49b
 	github.com/maruel/roundtrippers v0.4.0
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
 	github.com/oschwald/maxminddb-golang/v2 v2.0.0-beta.3
-	golang.org/x/net v0.39.0
+	golang.org/x/net v0.41.0
 	golang.org/x/sync v0.15.0
 )
 
 require (
-	github.com/andybalholm/brotli v1.1.1 // indirect
+	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/invopop/jsonschema v0.13.0 // indirect
