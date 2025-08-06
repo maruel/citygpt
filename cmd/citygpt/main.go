@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/lmittmann/tint"
 	"github.com/maruel/citygpt/data/ottawa"
 	"github.com/maruel/citygpt/internal"
+	"github.com/maruel/genai"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
 )
@@ -102,12 +104,14 @@ func mainImpl() error {
 	if err := watchExecutable(ctx, cancel); err != nil {
 		return err
 	}
+	names := internal.ListProviderGen()
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
-	provider := flag.String("provider", "", "Provider to use for chat completions; one of gemini, groq, cerebras")
-	model := flag.String("model", "", "Model to use for chat completions; default to a relevant model for the provider")
+	provider := flag.String("provider", "", "backend to use: "+strings.Join(names, ", "))
+	remote := flag.String("remote", "", "URL to use, useful for local backend")
+	model := flag.String("model", "", "model to use, defaults to a good model; use either the model ID or PREFERRED_CHEAP and PREFERRED_SOTA to automatically select cheaper or better models")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unsupported argument")
@@ -115,7 +119,7 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProvider(ctx, *provider, *model, nil)
+	c, err := internal.LoadProviderGen(ctx, *provider, &genai.OptionsProvider{Remote: *remote, Model: *model}, nil)
 	if err != nil {
 		return err
 	}

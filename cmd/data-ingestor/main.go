@@ -306,7 +306,7 @@ func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.Provide
 	}
 	total := len(links)
 breakLoop:
-	for processed := 0; processed < total; processed++ {
+	for processed := range total {
 		select {
 		case <-ctx.Done():
 			break breakLoop
@@ -424,11 +424,14 @@ func mainImpl() error {
 		},
 	}))
 	slog.SetDefault(logger)
+	names := internal.ListProviderGen()
+
 	outputDir := flag.String("output-dir", "", "Directory to save downloaded markdown files; defaults to data/<city>/ingested")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
 	city := flag.String("city", "", "City to fetch from, one of ottawa, gatineau")
-	provider := flag.String("provider", "", "Provider to use for chat completions; one of gemini, groq, cerebras")
-	model := flag.String("model", "", "Model to use for chat completions; default to a relevant model for the provider")
+	provider := flag.String("provider", "", "backend to use: "+strings.Join(names, ", "))
+	remote := flag.String("remote", "", "URL to use, useful for local backend")
+	model := flag.String("model", "", "model to use, defaults to a good model; use either the model ID or PREFERRED_CHEAP and PREFERRED_SOTA to automatically select cheaper or better models")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
@@ -443,7 +446,12 @@ func mainImpl() error {
 	if *outputDir == "" {
 		*outputDir = filepath.Join("data", *city, "ingested")
 	}
-	c, err := internal.LoadProvider(ctx, *provider, *model, throttler)
+	wrapper := throttler
+	if *remote != "" {
+		// Assume that if we use a local model, we don't need to throttle.
+		wrapper = nil
+	}
+	c, err := internal.LoadProviderGen(ctx, *provider, &genai.OptionsProvider{Remote: *remote, Model: *model}, wrapper)
 	if err != nil {
 		return err
 	}

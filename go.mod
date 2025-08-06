@@ -5,11 +5,11 @@ go 1.24.2
 require (
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/lmittmann/tint v1.1.2
-	github.com/maruel/genai v0.0.0-20250630185254-48286dbcd49b
+	github.com/maruel/genai v0.0.0-20250808191819-419a4becbad4
 	github.com/maruel/roundtrippers v0.4.2
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
-	github.com/oschwald/maxminddb-golang/v2 v2.0.0-beta.3
+	github.com/oschwald/maxminddb-golang/v2 v2.0.0-beta.8
 	golang.org/x/net v0.42.0
 	golang.org/x/sync v0.16.0
 )
@@ -23,11 +23,11 @@ require (
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/maruel/httpjson v0.5.0 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.4 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/maruel/genai => ../genai
+// replace github.com/maruel/genai => ../genai
 
 replace github.com/maruel/roundtrippers => ../roundtrippers

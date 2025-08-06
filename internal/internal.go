@@ -14,107 +14,77 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"slices"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/adapters"
-	"github.com/maruel/genai/providers/cerebras"
-	"github.com/maruel/genai/providers/gemini"
-	"github.com/maruel/genai/providers/groq"
+	"github.com/maruel/genai/base"
+	"github.com/maruel/genai/providers"
 )
 
-var (
-	useCerebras string
-	useGemini   string
-	useGroq     string
-)
-
-func init() {
-	if os.Getenv("GEMINI_API_KEY") != "" {
-		useGemini = "gemini-2.5-flash-preview-05-20"
+// ListProviderGen list the available providers.
+func ListProviderGen() []string {
+	var names []string
+	for name, f := range providers.Available() {
+		c, err := f(&genai.OptionsProvider{Model: base.NoModel}, nil)
+		if err != nil {
+			continue
+		}
+		if _, ok := c.(genai.ProviderGen); ok {
+			names = append(names, name)
+		}
 	}
-	if os.Getenv("GROQ_API_KEY") != "" {
-		// Limited to 8K context?
-		useGroq = "meta-llama/llama-4-scout-17b-16e-instruct"
-	}
-	if os.Getenv("CEREBRAS_API_KEY") != "" {
-		// Cerebras limits to 8K context on free tier.
-		// llama3.1-8b
-		// llama-3.3-70b
-		// llama-4-scout-17b-16e-instruct
-		// qwen-3-32b
-		useCerebras = "qwen-3-32b"
-	}
+	sort.Strings(names)
+	return names
 }
 
-// LoadProvider loads the first available provider, prioritizing the one requested first.
-func LoadProvider(ctx context.Context, provider, model string, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
+// LoadProviderGen loads the first available provider, prioritizing the one requested first.
+func LoadProviderGen(ctx context.Context, provider string, opts *genai.OptionsProvider, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
+	var f func(opts *genai.OptionsProvider, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
 	if provider == "" {
-		if useGemini != "" {
-			provider = "gemini"
-		} else if useGroq != "" {
-			provider = "groq"
-		} else if useCerebras != "" {
-			provider = "cerebras"
-		} else {
-			return nil, errors.New("no provider available")
+		avail := providers.Available()
+		if len(avail) == 0 {
+			return nil, errors.New("no provider available; please set environment variables or specify a provider and API keys or remote URL")
 		}
-	}
-	var getClient func(model string) (genai.ProviderGen, error)
-	switch provider {
-	case "cerebras":
-		if model == "" {
-			model = useCerebras
-		}
-		getClient = func(model string) (genai.ProviderGen, error) {
-			c, err := cerebras.New("", model, wrapper)
-			if err != nil {
-				return c, err
+		if len(avail) > 1 {
+			names := make([]string, 0, len(avail))
+			for name := range avail {
+				names = append(names, name)
 			}
-			return &adapters.ProviderGenThinking{ProviderGen: c, TagName: "think"}, nil
+			sort.Strings(names)
+			return nil, fmt.Errorf("multiple providers available, select one of: %s", strings.Join(names, ", "))
 		}
-	case "gemini":
-		if model == "" {
-			model = useGemini
+		for name, fac := range avail {
+			provider = name
+			f = fac
 		}
-		getClient = func(model string) (genai.ProviderGen, error) {
-			return gemini.New("", model, wrapper)
-		}
-	case "groq":
-		if model == "" {
-			model = useGroq
-		}
-		getClient = func(model string) (genai.ProviderGen, error) {
-			return groq.New("", model, wrapper)
-		}
-	default:
-		return nil, errors.New("set either CEREBRAS_API_KEY, GEMINI_API_KEY or GROQ_API_KEY")
+	} else if f = providers.All[provider]; f == nil {
+		return nil, fmt.Errorf("unknown provider %q", provider)
 	}
-	return loadProvider(ctx, getClient, model)
-}
-
-func loadProvider(ctx context.Context, getClient func(model string) (genai.ProviderGen, error), model string) (genai.ProviderGen, error) {
-	c, err := getClient(model)
+	c, err := f(opts, wrapper)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderGenLog{c}, nil
-}
-
-/*
-func confirmModel(ctx context.Context, c genai.ModelProvider, model string) error {
-	models, err := c.ListModels(ctx)
-	if err != nil {
-		return err
+	p, ok := c.(genai.ProviderGen)
+	if !ok {
+		return nil, fmt.Errorf("provider %q doesn't implement genai.ProviderGen", provider)
 	}
-	for _, m := range models {
-		if m.GetID() == model {
-			return nil
+	if s, ok := c.(genai.ProviderScoreboard); ok {
+		id := c.ModelID()
+		for _, sc := range s.Scoreboard().Scenarios {
+			if slices.Contains(sc.Models, id) {
+				if sc.ThinkingTokenStart != "" {
+					p = &adapters.ProviderGenThinking{ProviderGen: p, ThinkingTokenStart: sc.ThinkingTokenStart, ThinkingTokenEnd: sc.ThinkingTokenEnd}
+				}
+				break
+			}
 		}
 	}
-	return fmt.Errorf("bad model %s. Available models:\n  %s", model, strings.Join(m.GetID(), "\n  "))
+	return &ProviderGenLog{p}, nil
 }
-*/
 
 // GetConfigDir returns the appropriate configuration directory based on the OS
 func GetConfigDir() (string, error) {
@@ -153,4 +123,8 @@ func (l *ProviderGenLog) GenStream(ctx context.Context, msgs genai.Messages, rep
 	resp, err := l.ProviderGen.GenStream(ctx, msgs, replies, opts)
 	slog.DebugContext(ctx, "GenStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
 	return resp, err
+}
+
+func (l *ProviderGenLog) Unwrap() genai.Provider {
+	return l.ProviderGen
 }
