@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
 	github.com/oschwald/maxminddb-golang/v2 v2.0.0-beta.8
-	golang.org/x/net v0.42.0
+	golang.org/x/net v0.43.0
 	golang.org/x/sync v0.16.0
 )
 
@@ -30,4 +30,4 @@ require (
 
 // replace github.com/maruel/genai => ../genai
 
-replace github.com/maruel/roundtrippers => ../roundtrippers
+// replace github.com/maruel/roundtrippers => ../roundtrippers
