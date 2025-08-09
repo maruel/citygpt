@@ -184,7 +184,7 @@ func (s *server) handleRoot(w http.ResponseWriter, r *http.Request) {
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
 	// Add the user's message to the history
-	sd.Messages = append(sd.Messages, genai.NewTextMessage(genai.User, req.Message))
+	sd.Messages = append(sd.Messages, genai.NewTextMessage(req.Message))
 	newMsgs, files := s.cityAgent.query(r.Context(), sd.Messages)
 	response := newMsgs[len(newMsgs)-1].AsText()
 	sd.Messages = append(sd.Messages, newMsgs...)

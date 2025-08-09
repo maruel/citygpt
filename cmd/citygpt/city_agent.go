@@ -82,7 +82,7 @@ func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messa
 	}
 	if err != nil {
 		slog.ErrorContext(ctx, "citygpt", "msg", "Error generating response", "err", err, "usage", usage)
-		m := genai.Messages{genai.NewTextMessage(genai.Assistant, "Sorry, there was an error processing your request.")}
+		m := genai.Messages{genai.Message{Role: genai.Assistant, Contents: []genai.Content{{Text: "Sorry, there was an error processing your request."}}}}
 		return m, files
 	}
 	slog.InfoContext(ctx, "citygpt", "usage", usage)
