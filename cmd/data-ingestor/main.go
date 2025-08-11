@@ -20,6 +20,7 @@ import (
 	"os/signal"
 	"path"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -33,6 +34,13 @@ import (
 	"github.com/maruel/roundtrippers"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/css"
+	htmlMinify "github.com/tdewolff/minify/v2/html"
+	"github.com/tdewolff/minify/v2/js"
+	"github.com/tdewolff/minify/v2/json"
+	"github.com/tdewolff/minify/v2/svg"
+	"github.com/tdewolff/minify/v2/xml"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
 )
@@ -146,7 +154,7 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, urlToVisit string)
 		return false, nil, fmt.Errorf("failed to fetch %s: %w", urlToVisit, err)
 	}
 	// Read the page in memory because we parse it twice.
-	b, err := io.ReadAll(resp.Body)
+	htmlBodyRaw, err := io.ReadAll(resp.Body)
 	if err2 := resp.Body.Close(); err == nil {
 		err = err2
 	}
@@ -161,23 +169,43 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, urlToVisit string)
 		return false, nil, fmt.Errorf("received non-200 response for %s: %d", urlToVisit, resp.StatusCode)
 	}
 
-	links, err := extractLinks(baseURL, urlToVisit, bytes.NewReader(b))
+	mdName, err := urlToMDName(baseURL, urlToVisit)
+	if err != nil {
+		return false, nil, err
+	}
+	mdPath := filepath.Join(s.outputDir, mdName)
+	htmlPath := filepath.Join(s.outputDir, strings.TrimSuffix(mdName, ".md")+".html")
+	if err = os.MkdirAll(filepath.Dir(mdPath), 0o755); err != nil {
+		return false, nil, err
+	}
+
+	// Compact the HTML first.
+	m := minify.New()
+	m.AddFunc("text/html", htmlMinify.Minify)
+	m.AddFunc("text/css", css.Minify)
+	m.AddFunc("image/svg+xml", svg.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]json$"), json.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
+	m.URL, _ = url.Parse(urlToVisit)
+	htmlMin := bytes.Buffer{}
+	if err := m.Minify("text/html", &htmlMin, bytes.NewReader(htmlBodyRaw)); err != nil {
+		return false, nil, err
+	}
+	if err = os.WriteFile(htmlPath, htmlMin.Bytes(), 0o644); err != nil {
+		return false, nil, err
+	}
+	// Then extract links.
+	links, err := extractLinks(baseURL, urlToVisit, bytes.NewReader(htmlMin.Bytes()))
 	if err != nil {
 		return false, links, err
 	}
-	md, title, err := htmlparse.ExtractTextFromHTML(bytes.NewReader(b))
+	// Then extract markdown.
+	md, title, err := htmlparse.ExtractTextFromHTML(bytes.NewReader(htmlMin.Bytes()))
 	if err != nil {
 		return false, links, fmt.Errorf("failed to extract text: %w", err)
 	}
 
-	mdName, err := urlToMDName(baseURL, urlToVisit)
-	if err != nil {
-		return false, links, err
-	}
-	mdPath := filepath.Join(s.outputDir, mdName)
-	if err = os.MkdirAll(filepath.Dir(mdPath), 0o755); err != nil {
-		return false, links, err
-	}
 	now := time.Now().Round(time.Second)
 	created := now
 	if i, ok := s.urlLookup[urlToVisit]; ok {
@@ -187,7 +215,9 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, urlToVisit string)
 			if !prev.Created.IsZero() {
 				created = prev.Created
 			}
-			if b, err2 := os.ReadFile(mdPath); err2 == nil && string(b) == md {
+			// We don't care if the HTML changed if the resulting markdown is the same.
+			if oldMD, err2 := os.ReadFile(mdPath); err2 == nil && string(oldMD) == md {
+				// Markdown content is the same
 				// No need to re-create the summary, the content didn't change.
 				s.mu.Lock()
 				s.newIndex.Items = append(s.newIndex.Items, prev)
@@ -197,10 +227,11 @@ func (s *summaryWorkers) worker(ctx context.Context, baseURL, urlToVisit string)
 		}
 	}
 
-	// Content changed or is new, create a summary.
+	// Content changed or is new, create both markdown and HTML files.
 	if err = os.WriteFile(mdPath, []byte(md), 0o644); err != nil {
 		return false, links, err
 	}
+
 	item := internal.Item{
 		URL:      urlToVisit,
 		Title:    title,
@@ -348,6 +379,8 @@ func cleanupOutputDir(outputDir string, index *internal.Index) error {
 	validFiles := make(map[string]struct{}, len(index.Items)+1)
 	for _, item := range index.Items {
 		validFiles[item.Name] = struct{}{}
+		// Also add the corresponding HTML file
+		validFiles[strings.TrimSuffix(item.Name, ".md")+".html"] = struct{}{}
 	}
 	validFiles["index.json"] = struct{}{}
 	return filepath.WalkDir(outputDir, func(path string, d fs.DirEntry, err error) error {

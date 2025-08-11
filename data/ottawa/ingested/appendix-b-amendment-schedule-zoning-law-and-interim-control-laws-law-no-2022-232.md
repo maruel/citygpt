@@ -13,20 +13,43 @@ City Archives
 613-580-2857
 Please Note
 : This Appendix does not form part of the Zoning By-law, but is provided for reference purposes only. Although the Appendix is updated regularly, the amending provisions of individual amending by-laws are incorporated into the Consolidation’s text, schedules and zoning map, only upon an amendment coming into full force and effect, i.e. the amending by-law’s appeal period has expired and no appeals against the by-law have been received, or appeals were received and a decision to uphold the by-law has been received from the Ontario Land Tribunal.
-| BY-LAW NUMBER | AFFECTED LANDS/SECTION/ EXCEPTION/SCHEDULE | DATE BY-LAW ENACTED BY COUNCIL | STATUS | OMB ORDER NUMBER /DATE | REPEALS BY-LAW | AMENDS BY-LAW | REPEALED BY BY-LAW | AMENDED BY BY-LAW |
+| BY-LAW NUMBER | AFFECTED LANDS/SECTION/ EXCEPTION/SCHEDULE | DATE BY-LAW ENACTED BY COUNCIL | STATUS | OLT ORDER NUMBER /DATE | REPEALS BY-LAW | AMENDS BY-LAW | REPEALED BY BY-LAW | AMENDED BY BY-LAW |
 | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
+| 2025-264 | To change the zoning of lands known municipally as 1950 Scott Street and 312 and 314 Clifton Road. | June 25, 2025Minutes 61 | In Effect |  |  | 2008-250 |  |  |
+| 2025-261 | To change the zoning of lands known municipally as 5618 Hazeldean Road and 5101 Abott Street. | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-260 | To change the zoning of lands known municipally as 930, 1010, and 1030 Somerset Street West. | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-258 | To change the zoning of lands known municipally as 3930 Riverside Drive. | June 25, 2025Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-257 | To change the zoning of lands known municipally as 640 Compass Street | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-256 | To change the zoning of lands known municipally as 3990 and 4000 Old Richmond Road, 572 Moodie Drive. | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-255 | To change the zoning of lands known municipally as 73, 79, and 83 Ste-Cecile Street | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-254 | To change the zoning of lands known municipally as 910 Crested Lark Way, 25 Pine Warbler Way, Part of 670 Dundonald Drive. | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-253 | To change the zoning of lands known municipally as 254 Argyle Avenue. | June 25, 2025​​​​​​​Minutes 61PC Report 49 | In Effect |  |  | 2008-250 |  |  |
+| 2025-237 | To remove the holding symbol of part of the lands known municipally as 2475 Regina Street. | June 11, 2025Minutes 60 | In Effect |  |  | 2008-250 |  |  |
+| 2025-236 | To change the zoning of lands known municipally as 3285 and 3305 Borrisokane Road. | June 11, 2025Minutes 60PC Report 48 | In Effect |  |  | 2008-250 |  |  |
+| 2025-235 | To remove the holding symbol of the lands known municipally as 744, 748, 760, 774, 784, and 796 Fairline Row. | June 11, 2025Minutes 60 | In Effect |  |  | 2008-250 |  |  |
+| 2025-234 | To change the zoning of lands known municipally as 245 and 275 Lamarche Avenue. | June 11, 2025Minutes 60PC Report 48 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-223 | To change the zoning of lands known municipally as 1835 Stittsville Main Street. | May 28, 2025Minutes 59Motion | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-222 | To remove the holding symbol of part of the lands known municipally as 6160 Thunder Road and 5368 Boundary Road. | May 28, 2025Minutes 59 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-221 | To change the zoning of lands known municipally as 535 Legget Drive. | May 28, 2025Minutes 59PC Report 47 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-220 | To change the zoning of lands known municipally as 295 and 355 Deschâtelets Avenue. | May 28, 2025Minutes 59PC Report 47 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-219 | To change the zoning of lands known municipally as 4401 Fallowfield Road. | May 28, 2025Minutes 59PC Report 47 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-192 | To change the zoning of lands known municipally as 300 Eagleson Road. | May 14, 2025Minutes 58 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-173 | To change the zoning of lands known municipally as 3043 Dunning Road. | April 30, 2025Minutes 57 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-172 | To change the zoning of lands known municipally as 5940 Brophy Drive. | April 30, 2025Minutes 57 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-171 | To change the zoning of lands known municipally as 1058, 1062, 1066 Silver Street & 1291, 1295, and 1305 Summerville Avenue. | April 30, 2025Minutes 57 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-170 | To change the zoning of lands known municipally as 4175 Strandherd Drive | April 30, 2025Minutes 57PC Report 45 | In Effect |  |  | 2008-250 |  |  |
 |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |
+| By-law 2025-152 | To change the zoning of lands known municipally as 3973 and 3979 Yorks Corners Road. | April 16, 2025Minutes 56ARAC Report 23 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-151 | To change the zoning of lands known municipally as 433 Lyon Street North. | April 16, 2025Minutes 56PC Report 44 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-148 | To change the zoning of lands known municipally as 609, 611, 613 and 615 Parkview Road. | April 16, 2025Minutes 56PC Report 44 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-147 | To permit shelters in all zones other than EP – Environmental Protection, ME – Mineral Extraction, IH – Heavy Industrial, IG – General Industrial, IL – Light Industrial and IP – Business Park zones. | April 16, 2025Minutes 56PC Report 44 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-116 | To change the zoning of part of lands known municipally as 785 Cope Drive and 130, 132, 134, 136, 138, 140, and 142 Dagenham Street. | March 26, 2025Minutes 54PC Report 43 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-115 | To change the zoning of lands known municipally as 6079 and 6105 McVagh Road. | March 26, 2025Minutes 54 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-114 | To change the zoning of lands known municipally as 388 Richmond Road. | March 26, 2025Minutes 54 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-113 | To change the zoning of lands known municipally as 50 Bayswater Avenue and 1088 Somerset Street West. | March 26, 2025Minutes 54PC Report 43 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-111 | To change the zoning of part of the lands known municipally as 1104 Halton Terrace. | March 26, 2025Minutes 54PC Report 43 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-109 | To change the zoning of lands known municipally as 1811 Richardson Side Road. | March 26, 2025Minutes 54ARAC Report 22 | In Effect |  |  | 2008-250 |  |  |
+| By-law 2025-108 | To remove the holding symbol of lands known municipally as 2475 Regina Street. | March 26, 2025Minutes 54 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-087 | To change the zoning of lands known municipally as 2040 Arrowsmith Drive. | February 26, 2025Minutes 52PC Report 42 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-086 | To change the zoning of lands known municipally as 35 MacKay Street and 71 Thomas Street. | February 26, 2025Minutes 52PC Report 42 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-085 | To change the zoning of lands known municipally as 1020 and 1070 March Road, 1345 March Valley Road, and part of an unaddressed parcel abutting 1345 March Valley Road with PIN 045271025. | February 26, 2025Minutes 52PC Report 42 | In Effect |  |  | 2008-250 |  |  |
@@ -34,7 +57,8 @@ Please Note
 | By-law 2025-076 | To change the zoning of lands known municipally as 1579 9th Line Road. | February 12, 2025Minutes 51ARAC report 21 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-075 | To change the zoning of lands known municipally as 225 Cope Drive and 166 Shelleright Street. | February 12, 2025Minutes 51PC report 41 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-074 | To amend By-law No. 2008-250 to change the zoning of lands known municipally as 16 Anna Avenue and 1160 Carling Avenue. | February 12, 2025Minutes 51PC Report 41 | In Effect |  |  | 2008-250 |  |  |
-|  |  |  |  |  |  |  |  |  |
+| By-law 2025-072 | To amend By-law No. 2008-250 to implement zoning related to Battery Energy Storage Systems | February 12, 2025Minutes 51PC Report 41 | In Effect | OLT # OLT-25-000234
+has been withdrawn. |  | 2008-250 |  |  |
 | By-law 2025-043 | To change the zoning of lands known municipally as 3057 Greenland Road. | January 29, 2025Disposition 50ARAC Report 20 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-042 | To change the zoning of lands known municipally as 6980 Mansfield Road. | January 29, 2025Disposition 50ARAC Report 20 | In Effect |  |  | 2008-250 |  |  |
 | By-law 2025-041 | To change the zoning of lands known municipally as 1450, 1454, 1458, 1464, and 1468 Bankfield Road and 5479 and 5485 Elijah Court. | January 29, 2025Disposition 50ARAC Report 20 | In Effect |  |  | 2008-250 |  |  |
@@ -156,8 +180,7 @@ Please Note
 | 2023-536 | To change the zoning of the lands known municipally as 4348 and 4560 Dunning Road. | December 6, 2023Disposition 28ARAC Report 9 | In Effect |  |  | 2008-250 |  |  |
 | 2023-535 | To change the zoning of the lands known municipally as 480 and 486 CitiGate Drive (formerly 575 Dealership Drive). | December 6, 2023Disposition 28PC Report 19 | In Effect |  |  | 2008-250 |  |  |
 | 2023-510 | To change the zoning of lands known municipally as 945 and 1015 Bank Street. | November 22, 2023Disposition 27 | In Effect
-
-			Appeal(s) Received | OLT-23-001316July 9, 2024 |  | 2008-250 |  |  |
+Appeal(s) Received | OLT-23-001316July 9, 2024 |  | 2008-250 |  |  |
 | 2023-508 | To change the zoning of lands known municipally as 3040 and 3044 Innes Road | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-507 | To change the zoning of lands known municipally as 253, 255, 257 York Street and 78 and 80 Nelson Street. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-506 | To change the zoning of lands known municipally as 300 Goulbourn Forced Road. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
@@ -165,8 +188,8 @@ Please Note
 | 2023-504 | To change the zoning of lands known municipally as 5957 and 5969 Fernbank Road. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-503 | To change the zoning of lands known municipally as 770 and 774 Bronson Avenue and 557 Cambridge Street South | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-502 | To change the zoning of lands known municipally as 110 York Street and 137 George Street. | November 22, 2023Disposition 27PC Report 18 | In Effect | Appeal Withdrawn
-			March 15, 2024
-			#OLT-23-001321 |  | 2008-250 |  |  |
+March 15, 2024
+#OLT-23-001321 |  | 2008-250 |  |  |
 | 2023-501 | To change the zoning of lands known municipally as 68 Sweetland Avenue and 146, 154, 156, 160, and 168 Osgoode Street. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-500 | To change the zoning of lands known municipally as 283 and 285 McLeod Street. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
 | 2023-498 | To change the zoning of lands known municipally as 384 Arlington Avenue. | November 22, 2023Disposition 27PC Report 18 | In Effect |  |  | 2008-250 |  |  |
@@ -180,7 +203,7 @@ Please Note
 | 2023-465 | To change the zoning of lands known municipally as 4338 Innes Road. | November 8, 2023Disposition 24PC Report 17 | In Effect |  |  | 2008- |  |  |
 | 2023-435 | To align it with Bill 23 concerning Additional Dwelling Units and other related matters. | October 11, 2023Disposition 22ARAC Report 7 | In Effect |  |  | 2008-250 |  |  |
 | 2023-434 | To change the zoning of part of lands known municipally as 5134 Piperville Road. | October 11, 2023Disposition 22ARAC Report 7 | In Effect | OLT DecisionOLT-23-001132
-			April 4, 2024 |  | 2008-250 |  |  |
+April 4, 2024 |  | 2008-250 |  |  |
 | 2023-433 | To change the zoning of lands known municipally as 5646 and 5650 Manotick Main Street. | October 11, 2023Disposition 22ARAC Report 7 | In Effect |  |  | 2008-250 |  |  |
 | 2023-432 | To change the zoning of lands known municipally as 2545 9th Line Road. | October 11, 2023Disposition 22ARAC Report 7 | In Effect |  |  | 2008-250 |  |  |
 | 2023-430 | To change the zoning of lands known municipally as 12, 14, 16, 18, 20, 22, and 24 Hawthorne Avenue. | October 11, 2023Disposition 22PC Report 16 | In Effect |  |  | 2008-250 |  |  |
@@ -219,7 +242,7 @@ Please Note
 | 2023-311 | To change the zoning of lands known municipally as 2420 Don Reid Drive. | June 28, 2023Disposition 17PC Report 11 | In Effect |  |  | 2008-250 |  |  |
 | 2023-310 | To change the zoning of lands known municipally as 211 Armstrong Street. | June 28, 2023Disposition 17PC Report 11 | In Effect |  |  | 2008-250 |  |  |
 | 2023-309 | To change the zoning of lands known municipally as 15 and 17 des Oblats Avenue. | June 28, 2023Disposition 17PC Report 11 | In Effect | Appeal(s) Withdrawn
-			OLT-23-000757 |  | 2008-250 |  |  |
+OLT-23-000757 |  | 2008-250 |  |  |
 | 2023-308 | To change the zoning of part of the lands known municipally as 3265 Jockvale Road. | June 28, 2023Disposition 17PC Report 11 | In Effect |  |  | 2008-250 |  |  |
 | 2023-307 | To change the zoning of lands known municipally as 233 Argyle Avenue and 330 McLeod Street. | June 28, 2023Disposition 17PC Report 11 | In Effect |  |  | 2008-250 |  |  |
 | 2023-292 | To change the zoning of lands known municipally as 1 Old Sunset Boulevard. | June 14, 2023Disposition 16PHC Report 10 | In Effect |  |  | 2008-250 |  |  |
@@ -231,7 +254,7 @@ Please Note
 | 2023-286 | To change the zoning of lands known municipally as 40 Carlisle Circle. | June 14, 2023Disposition 16ARAC Report 4 | In Effect |  |  | 2008-250 |  |  |
 | 2023-285 | To change the zoning of lands known municipally as 1565 Maple Grove Road. | June 14, 2023Disposition 16PHC Report 10 | In Effect |  |  | 2008-250 |  |  |
 | 2023-236 | To change the zoning of lands known municipally as 1568 Meadowbrook Road. | May 24, 2023Disposition 15PC Report 9 | In Effect | Appeal(s) Withdrawn
-			OLT-23-000645 |  | 2008-250 |  |  |
+OLT-23-000645 |  | 2008-250 |  |  |
 | 2023-235 | To change the zoning of lands known municipally as 2504 White Street. | May 24, 2023Disposition 15PC Report 9 | In Effect |  |  | 2008-250 |  |  |
 | 2023-234 | To change the zoning of lands known municipally as 180 Main Street. | May 24, 2023Disposition 15PC Report 9 | In Effect |  |  | 2008-250 |  |  |
 | 2023-223 | To change the zoning of lands known municipally as 572 Moodie Drive. | May 10, 2023Disposition 14PC Report 8 | In Effect |  |  | 2008-250 |  |  |

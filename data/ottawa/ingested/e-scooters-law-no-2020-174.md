@@ -90,14 +90,14 @@ Application and administration enforcement
 1. This by-law shall be enforced by the Chief of Police and the Municipal By-Law Enforcement Officers of the City of Ottawa.
 
 Effective date
-1. This by-law shall come into force and take effect on June 24, 2020 and shall be repealed on November 27, 2024.
+1. This by-law shall come into force and take effect on June 24, 2020 and shall be repealed on November 27, 2029.
 
 Short title
 1. This by-law shall be referred to as the “Electric Kick Scooter By-law”.
 
 Enacted and passed this 24th day of June, 2020.
 Deputy City Clerk Mayor
-By-lay No. 2020 – 174
+By-law No. 2020 – 174
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 A by-law of the City of Ottawa regulating the operation and use of electric kick scooters in the City of Ottawa.
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o

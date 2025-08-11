@@ -459,7 +459,9 @@ Every place of amusement license shall expire on March 31 of each year.
 No amusement place license shall be transferable.
 ### Section 1 - License required
 
-A separate license shall be obtained for each all night dance event.
+1. A separate license shall be obtained for each all night dance event.
+1. Notwithstanding subsection (1), an event that operates under a valid liquor license or Special Occasion Permit issued by the Registrar of the Alcohol and Gaming Commission of Ontario, and occurs only within the hours that are authorized under that license or permit, shall not require and All Night Dance Event license under this by-law.(By-law 2025-233)
+
 ### Section 2 - License expiry
 
 Every all night dance event license is valid only for the date and time of the all night dance event indicated on the license application.

@@ -419,7 +419,7 @@ This by-law shall come into force and effect on June 18, 2014.
 | Farm building | $8.50/110.00 |
 | Any construction where the Gross Floor Area (GFA) cannot be applied | $12.00/110.00 |
 | Construct – Limited Authorization | $12.00/110.00 |
-| Permit to demolish - $ for the first 5,000 square feet (464.5 square metres) of GFA or portion thereof, plus $ for each additional 1,000 square feet (92.9 square metres) of GFA or part thereof | $12.00/110.00 |
+| Permit to demolish - $110.00 for the first 5,000 square feet (464.5 square metres) of GFA or portion thereof, plus $12.00 for each additional 1,000 square feet (92.9 square metres) of GFA or part thereof | $12.00/110.00 |
 
 | Building Classification by Major Occupancy | Fee |
 | ------- | ------- |

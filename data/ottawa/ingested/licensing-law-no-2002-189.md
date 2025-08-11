@@ -83,6 +83,7 @@ This is a consolidation of the City of Ottawa Licensing By-law (2002-189). This 
 - By-law2024-107
 - By-law 2024-418
 - By-law 2024-474
+- By-law 2025-233
 
 ### Section 1 - Definitions
 

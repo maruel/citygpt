@@ -2,8 +2,9 @@ A by-law of the City of Ottawa regulating traffic and parking on highways.
 #### Office Consolidation
 
 This office consolidation is provided for internal staff use and reference purposes only. Every effort is made to ensure the accuracy of this consolidation up to and including the last amending by-law number noted below. This is not intended for official use, and it cannot be used in place of photocopies of original by-laws.
-A
-PDF version of Traffic and Parking (By-law no. 2017-301)
+A PDF version of the
+Traffic and Parking (By-law No. 2017-301
+)
 for printing is available.
 For legal requirements, please refer to copies of the official by-laws of the City of Ottawa.
 Updated June 2018

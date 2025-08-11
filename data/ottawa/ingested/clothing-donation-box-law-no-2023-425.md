@@ -362,7 +362,7 @@ day of October 2023.
 | Annual box fee | $150 per box |
 | Replacement permit fee | $31 |
 | Daily Storage Fee | $50 per day |
-| Administrative Fee | $57 |
+| Administrative Fee | $60 |
 | Replacement Sticker Fee | $10 |
 | HST. Tax | the above flat rates subject to applicable HST |
 

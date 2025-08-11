@@ -118,15 +118,11 @@ this global debenture is sealed with the municipal seal of the Issuer and signed
 Date of Registration:  June 6,
 2022
 | Year | Interest Rate % | Interest
-
-			6-June
-
-			$ | Interest
-
-			6-December
-
-			$ | Total Annual Interest Payment | Annual Sinking Fund Deposit | Principal Balance
-			Outstanding |
+6-June
+$ | Interest
+6-December
+$ | Total Annual Interest Payment | Annual Sinking Fund Deposit | Principal Balance
+Outstanding |
 | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
 | 2022 | 4.1 | - | 1,025,000.00 | 1,025,000.00 | - | 50,000,000.00 |
 | 2023 | 4.1 | 1,025,000.00 | 1,025,000.00 | 2,025,000.00 | 1,031,694.57 | 50,000,000.00 |

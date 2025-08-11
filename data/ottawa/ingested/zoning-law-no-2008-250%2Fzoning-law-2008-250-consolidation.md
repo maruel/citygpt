@@ -1,13 +1,13 @@
 Information and updates on the City of Ottawa's new zoning by-law can be found on the project’s
 EngageOttawa
 page.
-This consolidation of the Zoning By-law is current to November 24, 2023.
+This consolidation of the Zoning By-law is current to June 18, 2025.
 This consolidation of the City of Ottawa Zoning By-law, By-law 2008-250 and the amendments thereto, is prepared for reference purposes only. While the Planning, Infrastructure and Economic Development Department makes every effort to ensure the accuracy of the information contained herein, the reader is advised that as this publication is an office consolidation, in situations where legal accuracy is important, the By-law itself and any amending by-laws thereto must be consulted.
 Please note
 : A listing of pending and amending by-laws to Zoning By-law No. 2008-250 can be referenced in Appendix B – the Amendment Schedule to the Zoning By-law and Interim Control By-laws. Appendix B should be read in conjunction with the consolidated Zoning By-law.
 For information about these amending by-laws and the applicability of their regulations, please contact 3-1-1 and request to speak to the Development Information Officer (DIO) for the geographic area in question.
 Copies of individual zoning amendment by-laws can be obtained at the following locations:
-City Hall Client Service Center
+City Hall Client Service Centre
 1st Floor, 110 Laurier Avenue West
 Central Archives
 100 Tallwood Dr. (Corner of Woodroffe)

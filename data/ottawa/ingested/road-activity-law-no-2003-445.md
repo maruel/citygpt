@@ -425,7 +425,7 @@ Reserved for future use
 1. A receipt shall be provided for any document or item removed under subsection (1) hereof and the document or item shall be promptly returned after the copies or extracts are made
 1. Copies of or extracts from documents and items removed under subsection (1) hereof and certified as being true copies of or extracts from the originals by the Person who made them are admissible in evidence to the same extent as, and have the same evidentiary value as, the originals.
 
-## Section 28 -  Order to Discontinue Activity (Stop Work Order)
+## Section 28 - Order to Discontinue Activity (Stop Work Order)
 
 1. If the General Manager is satisfied that a contravention of this by-law, or a permit issued under this by-law has occurred, the City may make an order requiring the person who contravened this by-law or a permit issued under this by-law, or who caused or permitted the contravention, to discontinue the contravening activity.
 1. The order shall set out reasonable particulars of the contravention adequate to identify the contravention and the location at which the contravention occurred and the date by which there must be compliance with the order.

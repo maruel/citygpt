@@ -64,25 +64,17 @@ housing” means housing which is or is intended to be offered primarily to pers
 | Secondary Dwelling Units and Coach Houses | Flat rate per unit: $500, indexed annually |  |
 | Other purposes, including residential care facility as defined by the Zoning By-law, excluding residential purposes |  |  |
 | Residential density greater than 18 dwelling units/net hectare | Detached dwelling,
-
-			semi-detached dwelling, duplex dwelling,
-
-			three-unit dwelling,
-
-			townhouse dwelling,
-
-			linked-detached dwelling, and stacked dwellings
-
-			(as defined by the Zoning By-law) | Where the conveyance is comprised entirely of cash-in-lieu of parkland, the payment of cash-in-lieu of parkland shall not exceed an amount equivalent to 10% of the gross land area |
+semi-detached dwelling, duplex dwelling,
+three-unit dwelling,
+townhouse dwelling,
+linked-detached dwelling, and stacked dwellings
+(as defined by the Zoning By-law) | Where the conveyance is comprised entirely of cash-in-lieu of parkland, the payment of cash-in-lieu of parkland shall not exceed an amount equivalent to 10% of the gross land area |
 | Dwelling units within an apartment dwelling, low-rise (as defined by the Zoning By-law); and
-
-			Dwelling units within a mixed use building (as defined by the Zoning By-law) of four storeys or less | The required conveyance shall not exceed an amount equivalent to 10% of the gross land area |  |
+Dwelling units within a mixed use building (as defined by the Zoning By-law) of four storeys or less | The required conveyance shall not exceed an amount equivalent to 10% of the gross land area |  |
 | Dwelling units within an apartment dwelling, mid-rise (as defined by the Zoning By-law); and
-
-			Dwelling units within a mixed use building (as defined by the Zoning By-law) of five to nine storeys, inclusive | The required conveyance shall not exceed an amount equivalent to 15% of the gross land area |  |
+Dwelling units within a mixed use building (as defined by the Zoning By-law) of five to nine storeys, inclusive | The required conveyance shall not exceed an amount equivalent to 15% of the gross land area |  |
 | Dwelling units within an apartment dwelling, high-rise (as defined by the Zoning By-law); and
-
-			Dwelling units within a mixed use building (as defined by the Zoning By-law of 10 storeys or greater) | The required conveyance shall not exceed an amount equivalent to 25% of the gross land area |  |
+Dwelling units within a mixed use building (as defined by the Zoning By-law of 10 storeys or greater) | The required conveyance shall not exceed an amount equivalent to 25% of the gross land area |  |
 | Residential density equal to or less than 18 dwelling units/net hectare | All residential purposes, except for rural severances |  |
 | Rural severance |  |  |
 

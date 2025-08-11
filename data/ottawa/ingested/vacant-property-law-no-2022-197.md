@@ -355,10 +355,8 @@ This by-law shall come into force and effect on November 1, 2022.
 | Service | Fee | Expiry Date (from date of issuance of permit) |
 | ------- | ------- | ------- |
 | Permit | $60 Administration Fee
-
-			+
-
-			$1,523 Permit Fee | 1 year |
++
+$1,523 Permit Fee | 1 year |
 | Subdivision lot or block fee | $25 per lot or block | 1 year |
 | Replacement copy of a permit | $20 | Not applicable |
 

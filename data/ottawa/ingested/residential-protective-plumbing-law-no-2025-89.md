@@ -22,7 +22,7 @@ means that part of any drain or system of drains, including drains or subsurface
 "protective plumbing"
 means approved backwater valves, sump pump or such similar devices which improve the resiliency of a residential property, reducing the risk of basement flooding;
 "residential units"
-means one or more connected units constituting an independent·housekeeping unit for residential occLipancy only and nc:it jointly used for commercial, industrial or institutional purposes;
+means one or more connected units constituting an independent housekeeping unit for residential occupancy only and not jointly used for commercial, industrial or institutional purposes;
 "sanitary sewer"
 means a sewer intended to carry only sanitary and industrial wastewaters from residences, commercial buildings, industries, and institutions, in which storm, surface, and groundwater are not intentionally admitted;
 "separated sewer system"
@@ -31,21 +31,23 @@ means a City sewer system in which municipal sewage is collected and 
 means a sewer intended to carry only stormwater, surface runoff from streets and adjacent property, and flow from foundation drains and ditches;
 "work"
 means the installation of the protective plumbing and any repairs thereto.
-1. The provisions of this bylaw apply only to eligible applicant( s) and properties that meet ail of the following conditions:
+1. The provisions of this bylaw apply only to eligible applicant(s) and properties that meet all of the following conditions:
   1. The applicant's property must be:
     1. a residential unit within the City of Ottawa;
     1. built prior to January 1, 2004 for protective plumbing work related to the private storm sewer services; or
     1. built prior to January 1, 2012 for protective plumbing work related to private sanitary sewer services.
   1. the work for which the applicant submits a rebate application must not have been performed by the City of Ottawa;
   1. the work for which the applicant submits a rebate application must not be for the purpose of maintaining, repairing or replacing existing protective plumbing devices; and,
-  1. the work must be completed and the rebate application must be received within 12 months of the Building Permit issue date for the work.
+  1. the work must be completed and the rebate application must be received:(By- law 2024-240)
+    1. Within one year of the Building Permit issue date for the work; or
+    1. Where no Building Permit is required for the work, within one year of the invoice date for purchase of the equipment necessary to complete the work.(By- law 2024-240)
 
 ### Section 3
 
 1. To commence the rebate process, the owner of an eligible property as described in Section 2 must apply to and receive approval from the City, by filing with the General Manager the following documentation:
   1. a completed, legible, signed application in the prescribed form;
   1. a copy of the registered deed or transfer of land or tax bill confirming the applicant(s) as the registered owner(s) of the property;
-  1. an itemized list of cost and scope of work in the prescribed form prepared by a licensed plumber; and,
+  1. an itemized list of cost and scope of work in a form deemed acceptable to the City; and,(By-law 2025-240)
   1. the completed acknowledgements referred to in Section 4 below.
 
 ### Section 4
@@ -76,7 +78,8 @@ Approved rebates shall be granted in the amount as set out in Schedu
   1. the property is an eligible property in accordance with Section 2 above;
   1. the application satisfies the requirements set out in Section 3 above;
   1. the applicant satisfies the acknowledgement requirements set out in Section 4 above;
-  1. the applicant agrees that the protective plumbing has been installed in a manner and within the scope of work described in Section 3 and in accordance with theOntario Building Code Act,as amended, and
+  1. the applicant agrees that the protective plumbing has been installed in a manner and within the scope of work described in Section 3 and, where applicable, in accordance with the Ontario Building Code Act, as amended, and any applicable City of Ottawa by-laws and Sewer Design Guideline requirements; and
+(By-law 2025-240)
   1. any applicable City of Ottawa by-laws and Sewer Design Guideline requirements; and
   1. the applicant has obtained the required permits.
 
@@ -88,8 +91,10 @@ An applicant who does not receive a rebate in any year because of insufficient f
 
 1. No rebate shall be approved in the event that:
   1. the applicant or the property do not meet the eligibility criteria set out in Section 2;
-  1. the applicant does not obtain the requisite building permit(s) in advance of the work being undertaken;
-  1. the proposed work contravene the Ontario Building Code Act, City by-laws or Sewer Design Guidelines in effect at the time of the implementation of the work;
+  1. the applicant does not obtain the necessary building permit(s) in advance of the work being undertaken;
+(By-law 2025-240)
+  1. the work contravenes the Ontario Building Code Act, if applicable, City by-laws or Sewer Design Guidelines in effect at the time of the implementation of the work;
+(By-law 2025-240)
   1. the work is for the purpose of maintaining, repairing or replacing existing protective plumbing device(s); or,
   1. the applicant has applied for and has been approved for a grant or rebate for the work through other municipal or provincial programs.
 

@@ -80,20 +80,17 @@ ENACTED AND PASSED this 29th day of October, 2021
 | ------- | ------- | ------- | ------- | ------- | ------- |
 | Transportation Services - Transit |  |  |  |  |  |
 | 1. 907926 – Stage 2 LRT (Federal Gas Tax Component)
-
-			Capital costs related to the design and construction of the Ottawa Light Rail Transit Stage 2 project | 2019-58 | 281,000,000 | N/A | N/A | N/A |
+Capital costs related to the design and construction of the Ottawa Light Rail Transit Stage 2 project | 2019-58 | 281,000,000 | N/A | N/A | N/A |
 | 2019-272 | N/A | 34,000,000 | N/A | N/A |  |
 | 2020-110 | N/A | 60,000,000 | N/A | N/A |  |
 | All | 281,000,000 | 94,000,000 | 3,632,090 | 30 |  |
 | 2. 907926 - Stage 2 LRT (Transit DC Component)
-
-			Capital costs related to the design and construction of the Ottawa Light Rail Transit Stage 2 project | 2019-58 | 771,000,000 | N/A | N/A | N/A |
+Capital costs related to the design and construction of the Ottawa Light Rail Transit Stage 2 project | 2019-58 | 771,000,000 | N/A | N/A | N/A |
 | 2019-272 | N/A | 89,300,000 | N/A | N/A |  |
 | 2020-110 | N/A | 180,000,000 | N/A | N/A |  |
 | All | 771,000,000 | 269,300,000 | 212,555,710 | 30 |  |
 | 3. 905176 Confederation Line (Transit component)
-
-			Capital costs related to for the design & construction of the Ottawa Light Rail Transit project running from Tunney's Pasture to Blair with a downtown tunnel and a maintenance and storage facility | 2012-427 | 34,000,000 | N/A | N/A | N/A |
+Capital costs related to for the design & construction of the Ottawa Light Rail Transit project running from Tunney's Pasture to Blair with a downtown tunnel and a maintenance and storage facility | 2012-427 | 34,000,000 | N/A | N/A | N/A |
 | 2013-323 | N/A | 34,000,000 | N/A | N/A |  |
 | 2018-208 | 468,000 | N/A | N/A | N/A |  |
 | 2018-208 | 13,232,000 | N/A | N/A | N/A |  |
