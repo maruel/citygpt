@@ -2,6 +2,7 @@
 // Use of this source code is governed under the AGPL v3
 // that can be found in the LICENSE file.
 
+// Package internal is internal stuff.
 package internal
 
 import (
@@ -21,15 +22,15 @@ import (
 
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/adapters"
-	"github.com/maruel/genai/base"
 	"github.com/maruel/genai/providers"
+	"github.com/maruel/genai/scoreboard"
 )
 
 // ListProviderGen list the available providers.
 func ListProviderGen() []string {
 	var names []string
 	for name, f := range providers.Available() {
-		c, err := f(&genai.OptionsProvider{Model: base.NoModel}, nil)
+		c, err := f(&genai.OptionsProvider{Model: genai.ModelNone}, nil)
 		if err != nil {
 			continue
 		}
@@ -72,7 +73,7 @@ func LoadProviderGen(ctx context.Context, provider string, opts *genai.OptionsPr
 	if !ok {
 		return nil, fmt.Errorf("provider %q doesn't implement genai.ProviderGen", provider)
 	}
-	if s, ok := c.(genai.ProviderScoreboard); ok {
+	if s, ok := c.(scoreboard.ProviderScore); ok {
 		id := c.ModelID()
 		for _, sc := range s.Scoreboard().Scenarios {
 			if slices.Contains(sc.Models, id) {
