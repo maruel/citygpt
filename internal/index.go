@@ -70,14 +70,14 @@ const summarizationPrompt = "You are a helpful assistant that summarizes text co
 // Summarize creates a summary of a the provided content.
 func Summarize(ctx context.Context, c genai.ProviderGen, content string) (string, error) {
 	messages := genai.Messages{
-		genai.Message{Role: genai.User, Contents: []genai.Content{{Text: summarizationPrompt}, {Text: content}}},
+		genai.Message{Requests: []genai.Request{{Text: summarizationPrompt}, {Text: content}}},
 	}
 	opts := genai.OptionsText{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
 	resp, err := c.GenSync(ctx, messages, &opts)
 	if err != nil {
 		return "", err
 	}
-	return resp.Contents[0].Text, nil
+	return resp.AsText(), nil
 }
 
 // ProcessHTML from a single URL and saves it

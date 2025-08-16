@@ -31,8 +31,8 @@ import (
 
 // Message represents a chat message.
 type Message struct {
-	Role    genai.Role `json:"role"`
-	Content string     `json:"content"`
+	Role    string `json:"role"` // "assistant" or "user"
+	Content string `json:"content"`
 }
 
 // ChatRequest represents a chat request from the client.

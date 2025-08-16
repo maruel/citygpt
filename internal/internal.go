@@ -118,7 +118,7 @@ func (l *ProviderGenLog) GenSync(ctx context.Context, msgs genai.Messages, opts 
 	return resp, err
 }
 
-func (l *ProviderGenLog) GenStream(ctx context.Context, msgs genai.Messages, replies chan<- genai.ContentFragment, opts genai.Options) (genai.Result, error) {
+func (l *ProviderGenLog) GenStream(ctx context.Context, msgs genai.Messages, replies chan<- genai.ReplyFragment, opts genai.Options) (genai.Result, error) {
 	start := time.Now()
 	resp, err := l.ProviderGen.GenStream(ctx, msgs, replies, opts)
 	slog.DebugContext(ctx, "GenStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
