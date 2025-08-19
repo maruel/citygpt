@@ -30,7 +30,7 @@ import (
 func ListProviderGen() []string {
 	var names []string
 	for name, f := range providers.Available() {
-		c, err := f(&genai.OptionsProvider{Model: genai.ModelNone}, nil)
+		c, err := f(&genai.ProviderOptions{Model: genai.ModelNone}, nil)
 		if err != nil {
 			continue
 		}
@@ -43,8 +43,8 @@ func ListProviderGen() []string {
 }
 
 // LoadProviderGen loads the first available provider, prioritizing the one requested first.
-func LoadProviderGen(ctx context.Context, provider string, opts *genai.OptionsProvider, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
-	var f func(opts *genai.OptionsProvider, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
+func LoadProviderGen(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
+	var f func(opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
 	if provider == "" {
 		avail := providers.Available()
 		if len(avail) == 0 {

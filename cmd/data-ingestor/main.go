@@ -484,7 +484,7 @@ func mainImpl() error {
 		// Assume that if we use a local model, we don't need to throttle.
 		wrapper = nil
 	}
-	c, err := internal.LoadProviderGen(ctx, *provider, &genai.OptionsProvider{Remote: *remote, Model: *model}, wrapper)
+	c, err := internal.LoadProviderGen(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, wrapper)
 	if err != nil {
 		return err
 	}

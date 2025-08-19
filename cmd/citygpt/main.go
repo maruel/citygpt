@@ -119,7 +119,7 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProviderGen(ctx, *provider, &genai.OptionsProvider{Remote: *remote, Model: *model}, nil)
+	c, err := internal.LoadProviderGen(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, nil)
 	if err != nil {
 		return err
 	}
