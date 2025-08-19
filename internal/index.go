@@ -77,7 +77,7 @@ func Summarize(ctx context.Context, c genai.ProviderGen, content string) (string
 	if err != nil {
 		return "", err
 	}
-	return resp.AsText(), nil
+	return resp.String(), nil
 }
 
 // ProcessHTML from a single URL and saves it
