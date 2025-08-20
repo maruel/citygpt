@@ -26,24 +26,22 @@ import (
 	"github.com/maruel/genai/scoreboard"
 )
 
-// ListProviderGen list the available providers.
-func ListProviderGen() []string {
+// ListProvider list the available providers.
+func ListProvider() []string {
 	var names []string
 	for name, f := range providers.Available() {
-		c, err := f(&genai.ProviderOptions{Model: genai.ModelNone}, nil)
+		_, err := f(&genai.ProviderOptions{Model: genai.ModelNone}, nil)
 		if err != nil {
 			continue
 		}
-		if _, ok := c.(genai.ProviderGen); ok {
-			names = append(names, name)
-		}
+		names = append(names, name)
 	}
 	sort.Strings(names)
 	return names
 }
 
-// LoadProviderGen loads the first available provider, prioritizing the one requested first.
-func LoadProviderGen(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.ProviderGen, error) {
+// LoadProvider loads the first available provider, prioritizing the one requested first.
+func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error) {
 	var f func(opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
 	if provider == "" {
 		avail := providers.Available()
@@ -69,22 +67,18 @@ func LoadProviderGen(ctx context.Context, provider string, opts *genai.ProviderO
 	if err != nil {
 		return nil, err
 	}
-	p, ok := c.(genai.ProviderGen)
-	if !ok {
-		return nil, fmt.Errorf("provider %q doesn't implement genai.ProviderGen", provider)
-	}
 	if s, ok := c.(scoreboard.ProviderScore); ok {
 		id := c.ModelID()
 		for _, sc := range s.Scoreboard().Scenarios {
 			if slices.Contains(sc.Models, id) {
 				if sc.ThinkingTokenStart != "" {
-					p = &adapters.ProviderGenThinking{ProviderGen: p, ThinkingTokenStart: sc.ThinkingTokenStart, ThinkingTokenEnd: sc.ThinkingTokenEnd}
+					c = &adapters.ProviderThinking{Provider: c, ThinkingTokenStart: sc.ThinkingTokenStart, ThinkingTokenEnd: sc.ThinkingTokenEnd}
 				}
 				break
 			}
 		}
 	}
-	return &ProviderGenLog{p}, nil
+	return &ProviderLog{c}, nil
 }
 
 // GetConfigDir returns the appropriate configuration directory based on the OS
@@ -107,25 +101,25 @@ func GetConfigDir() (string, error) {
 	return filepath.Join(current.HomeDir, ".config"), nil
 }
 
-// ProviderGenLog adds logs to the ProviderGen interface.
-type ProviderGenLog struct {
-	genai.ProviderGen
+// ProviderLog adds logs to the Provider interface.
+type ProviderLog struct {
+	genai.Provider
 }
 
-func (l *ProviderGenLog) GenSync(ctx context.Context, msgs genai.Messages, opts genai.Options) (genai.Result, error) {
+func (l *ProviderLog) GenSync(ctx context.Context, msgs genai.Messages, opts genai.Options) (genai.Result, error) {
 	start := time.Now()
-	resp, err := l.ProviderGen.GenSync(ctx, msgs, opts)
+	resp, err := l.Provider.GenSync(ctx, msgs, opts)
 	slog.DebugContext(ctx, "GenSync", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *ProviderGenLog) GenStream(ctx context.Context, msgs genai.Messages, replies chan<- genai.ReplyFragment, opts genai.Options) (genai.Result, error) {
+func (l *ProviderLog) GenStream(ctx context.Context, msgs genai.Messages, replies chan<- genai.ReplyFragment, opts genai.Options) (genai.Result, error) {
 	start := time.Now()
-	resp, err := l.ProviderGen.GenStream(ctx, msgs, replies, opts)
+	resp, err := l.Provider.GenStream(ctx, msgs, replies, opts)
 	slog.DebugContext(ctx, "GenStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
 	return resp, err
 }
 
-func (l *ProviderGenLog) Unwrap() genai.Provider {
-	return l.ProviderGen
+func (l *ProviderLog) Unwrap() genai.Provider {
+	return l.Provider
 }

@@ -117,7 +117,7 @@ func isValidContentURL(link, baseURL string) bool {
 
 type summaryWorkers struct {
 	client        http.Client
-	c             genai.ProviderGen
+	c             genai.Provider
 	outputDir     string
 	previousIndex internal.Index
 	urlLookup     map[string]int
@@ -258,7 +258,7 @@ type dataIngestor struct {
 }
 
 // downloadAndSaveTexts downloads content from links and saves the text using 8 workers in parallel
-func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.ProviderGen, outputDir string) (*internal.Index, error) {
+func (d *dataIngestor) downloadAndSaveTexts(ctx context.Context, c genai.Provider, outputDir string) (*internal.Index, error) {
 	// Number of workers to process URLs and generate summaries in parallel. Generating summaries is slow so it
 	// needs to be significantly higher than 1/qps.
 	const numWorkers = 16
@@ -457,7 +457,7 @@ func mainImpl() error {
 		},
 	}))
 	slog.SetDefault(logger)
-	names := internal.ListProviderGen()
+	names := internal.ListProvider()
 
 	outputDir := flag.String("output-dir", "", "Directory to save downloaded markdown files; defaults to data/<city>/ingested")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
@@ -484,7 +484,7 @@ func mainImpl() error {
 		// Assume that if we use a local model, we don't need to throttle.
 		wrapper = nil
 	}
-	c, err := internal.LoadProviderGen(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, wrapper)
+	c, err := internal.LoadProvider(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, wrapper)
 	if err != nil {
 		return err
 	}

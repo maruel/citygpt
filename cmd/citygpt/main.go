@@ -104,7 +104,7 @@ func mainImpl() error {
 	if err := watchExecutable(ctx, cancel); err != nil {
 		return err
 	}
-	names := internal.ListProviderGen()
+	names := internal.ListProvider()
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")
@@ -119,7 +119,7 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProviderGen(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, nil)
+	c, err := internal.LoadProvider(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, nil)
 	if err != nil {
 		return err
 	}

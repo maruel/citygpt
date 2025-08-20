@@ -28,7 +28,7 @@ import (
 	"github.com/maruel/genai"
 )
 
-func generateGoldens(ctx context.Context, c genai.ProviderGen) error {
+func generateGoldens(ctx context.Context, c genai.Provider) error {
 	htmlFiles, err := filepath.Glob("testdata/*.html")
 	if err != nil {
 		return fmt.Errorf("failed to list HTML files: %w", err)
@@ -67,7 +67,7 @@ func mainImpl() error {
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
 	}
-	c, err := internal.LoadProvider(ctx, "gemini", "", nil)
+	c, err := internal.LoadProvider(ctx, "gemini", &genai.ProviderOptions{}, nil)
 	if err != nil {
 		return err
 	}

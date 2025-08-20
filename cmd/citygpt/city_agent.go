@@ -22,7 +22,7 @@ type bylaws struct {
 }
 
 type cityAgent struct {
-	c        genai.ProviderGen
+	c        genai.Provider
 	cityData fs.FS
 
 	systemPrompt string
@@ -30,7 +30,7 @@ type cityAgent struct {
 	index        internal.Index
 }
 
-func (c *cityAgent) init(cp genai.ProviderGen, cityData fs.FS) error {
+func (c *cityAgent) init(cp genai.Provider, cityData fs.FS) error {
 	c.c = cp
 	c.cityData = cityData
 	if err := c.index.Load(c.cityData, "index.json"); err != nil {
