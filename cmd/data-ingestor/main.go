@@ -457,7 +457,7 @@ func mainImpl() error {
 		},
 	}))
 	slog.SetDefault(logger)
-	names := internal.ListProvider()
+	names := internal.ListProvider(ctx)
 
 	outputDir := flag.String("output-dir", "", "Directory to save downloaded markdown files; defaults to data/<city>/ingested")
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")

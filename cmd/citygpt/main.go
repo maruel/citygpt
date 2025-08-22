@@ -104,7 +104,7 @@ func mainImpl() error {
 	if err := watchExecutable(ctx, cancel); err != nil {
 		return err
 	}
-	names := internal.ListProvider()
+	names := internal.ListProvider(ctx)
 
 	appName := flag.String("app-name", "OttawaGPT", "The name of the application displayed in the UI")
 	port := flag.String("port", "8080", "The port to run the server on")

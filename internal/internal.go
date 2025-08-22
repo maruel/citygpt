@@ -27,10 +27,10 @@ import (
 )
 
 // ListProvider list the available providers.
-func ListProvider() []string {
+func ListProvider(ctx context.Context) []string {
 	var names []string
-	for name, f := range providers.Available() {
-		_, err := f(&genai.ProviderOptions{Model: genai.ModelNone}, nil)
+	for name, f := range providers.Available(ctx) {
+		_, err := f(ctx, &genai.ProviderOptions{Model: genai.ModelNone}, nil)
 		if err != nil {
 			continue
 		}
@@ -42,9 +42,9 @@ func ListProvider() []string {
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
 func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error) {
-	var f func(opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
+	var f func(ctx context.Context, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
 	if provider == "" {
-		avail := providers.Available()
+		avail := providers.Available(ctx)
 		if len(avail) == 0 {
 			return nil, errors.New("no provider available; please set environment variables or specify a provider and API keys or remote URL")
 		}
@@ -56,14 +56,14 @@ func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOpti
 			sort.Strings(names)
 			return nil, fmt.Errorf("multiple providers available, select one of: %s", strings.Join(names, ", "))
 		}
-		for name, fac := range avail {
-			provider = name
+		for _, fac := range avail {
 			f = fac
+			break
 		}
 	} else if f = providers.All[provider]; f == nil {
 		return nil, fmt.Errorf("unknown provider %q", provider)
 	}
-	c, err := f(opts, wrapper)
+	c, err := f(ctx, opts, wrapper)
 	if err != nil {
 		return nil, err
 	}
