@@ -9,6 +9,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"iter"
 	"log/slog"
 	"net/http"
 	"os"
@@ -106,18 +107,21 @@ type ProviderLog struct {
 	genai.Provider
 }
 
-func (l *ProviderLog) GenSync(ctx context.Context, msgs genai.Messages, opts genai.Options) (genai.Result, error) {
+func (l *ProviderLog) GenSync(ctx context.Context, msgs genai.Messages, opts ...genai.Options) (genai.Result, error) {
 	start := time.Now()
-	resp, err := l.Provider.GenSync(ctx, msgs, opts)
+	resp, err := l.Provider.GenSync(ctx, msgs, opts...)
 	slog.DebugContext(ctx, "GenSync", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *ProviderLog) GenStream(ctx context.Context, msgs genai.Messages, replies chan<- genai.ReplyFragment, opts genai.Options) (genai.Result, error) {
+func (l *ProviderLog) GenStream(ctx context.Context, msgs genai.Messages, opts ...genai.Options) (iter.Seq[genai.ReplyFragment], func() (genai.Result, error)) {
 	start := time.Now()
-	resp, err := l.Provider.GenStream(ctx, msgs, replies, opts)
-	slog.DebugContext(ctx, "GenStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err)
-	return resp, err
+	fragments, finish := l.Provider.GenStream(ctx, msgs, opts...)
+	return fragments, func() (genai.Result, error) {
+		res, err := finish()
+		slog.DebugContext(ctx, "GenStream", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", res.Usage)
+		return res, err
+	}
 }
 
 func (l *ProviderLog) Unwrap() genai.Provider {

@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/lmittmann/tint v1.1.2
-	github.com/maruel/genai v0.0.0-20250821204949-f06cd3978733
+	github.com/maruel/genai v0.0.0-20250826003523-e4bb1c51db4f
 	github.com/maruel/roundtrippers v0.4.2
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
