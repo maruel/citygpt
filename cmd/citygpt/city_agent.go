@@ -50,10 +50,12 @@ func (c *cityAgent) init(cp genai.Provider, cityData fs.FS) error {
 
 func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messages, []string) {
 	var files []string
-	opts := genai.OptionsText{
+	optsText := genai.OptionsText{
 		Seed:         1,
 		SystemPrompt: c.systemPrompt,
 		// Temperature: 0.1,
+	}
+	optsTools := genai.OptionsTools{
 		Tools: []genai.ToolDef{
 			{
 				Name:        "get_bylaws_text",
@@ -74,9 +76,9 @@ func (c *cityAgent) query(ctx context.Context, msgs genai.Messages) (genai.Messa
 	}
 	slog.InfoContext(ctx, "citygpt", "query", len(msgs))
 	if len(msgs) < 2 {
-		opts.ToolCallRequest = genai.ToolCallRequired
+		optsTools.Force = genai.ToolCallRequired
 	}
-	newMsgs, usage, err := adapters.GenSyncWithToolCallLoop(ctx, c.c, msgs, &opts)
+	newMsgs, usage, err := adapters.GenSyncWithToolCallLoop(ctx, c.c, msgs, &optsText, &optsTools)
 	if _, ok := err.(*genai.UnsupportedContinuableError); ok {
 		err = nil
 	}

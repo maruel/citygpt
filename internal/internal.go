@@ -16,7 +16,6 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -24,7 +23,6 @@ import (
 	"github.com/maruel/genai"
 	"github.com/maruel/genai/adapters"
 	"github.com/maruel/genai/providers"
-	"github.com/maruel/genai/scoreboard"
 )
 
 // ListProvider list the available providers.
@@ -68,18 +66,7 @@ func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOpti
 	if err != nil {
 		return nil, err
 	}
-	if s, ok := c.(scoreboard.ProviderScore); ok {
-		id := c.ModelID()
-		for _, sc := range s.Scoreboard().Scenarios {
-			if slices.Contains(sc.Models, id) {
-				if sc.ThinkingTokenStart != "" {
-					c = &adapters.ProviderThinking{Provider: c, ThinkingTokenStart: sc.ThinkingTokenStart, ThinkingTokenEnd: sc.ThinkingTokenEnd}
-				}
-				break
-			}
-		}
-	}
-	return &ProviderLog{c}, nil
+	return &ProviderLog{adapters.WrapThinking(c)}, nil
 }
 
 // GetConfigDir returns the appropriate configuration directory based on the OS
