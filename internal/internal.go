@@ -11,11 +11,13 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"maps"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -27,21 +29,12 @@ import (
 
 // ListProvider list the available providers.
 func ListProvider(ctx context.Context) []string {
-	var names []string
-	for name, f := range providers.Available(ctx) {
-		_, err := f(ctx, &genai.ProviderOptions{Model: genai.ModelNone}, nil)
-		if err != nil {
-			continue
-		}
-		names = append(names, name)
-	}
-	sort.Strings(names)
-	return names
+	return slices.Sorted(maps.Keys(providers.Available(ctx)))
 }
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
 func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error) {
-	var f func(ctx context.Context, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error)
+	var cfg providers.Config
 	if provider == "" {
 		avail := providers.Available(ctx)
 		if len(avail) == 0 {
@@ -56,17 +49,17 @@ func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOpti
 			return nil, fmt.Errorf("multiple providers available, select one of: %s", strings.Join(names, ", "))
 		}
 		for _, fac := range avail {
-			f = fac
+			cfg = fac
 			break
 		}
-	} else if f = providers.All[provider]; f == nil {
+	} else if cfg = providers.All[provider]; cfg.Factory == nil {
 		return nil, fmt.Errorf("unknown provider %q", provider)
 	}
-	c, err := f(ctx, opts, wrapper)
+	c, err := cfg.Factory(ctx, opts, wrapper)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderLog{adapters.WrapThinking(c)}, nil
+	return &ProviderLog{adapters.WrapReasoning(c)}, nil
 }
 
 // GetConfigDir returns the appropriate configuration directory based on the OS
