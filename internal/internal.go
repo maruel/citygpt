@@ -12,7 +12,6 @@ import (
 	"iter"
 	"log/slog"
 	"maps"
-	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -33,7 +32,7 @@ func ListProvider(ctx context.Context) []string {
 }
 
 // LoadProvider loads the first available provider, prioritizing the one requested first.
-func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOptions, wrapper func(http.RoundTripper) http.RoundTripper) (genai.Provider, error) {
+func LoadProvider(ctx context.Context, provider string, opts ...genai.ProviderOption) (genai.Provider, error) {
 	var cfg providers.Config
 	if provider == "" {
 		avail := providers.Available(ctx)
@@ -55,7 +54,7 @@ func LoadProvider(ctx context.Context, provider string, opts *genai.ProviderOpti
 	} else if cfg = providers.All[provider]; cfg.Factory == nil {
 		return nil, fmt.Errorf("unknown provider %q", provider)
 	}
-	c, err := cfg.Factory(ctx, opts, wrapper)
+	c, err := cfg.Factory(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,14 +86,14 @@ type ProviderLog struct {
 	genai.Provider
 }
 
-func (l *ProviderLog) GenSync(ctx context.Context, msgs genai.Messages, opts ...genai.Options) (genai.Result, error) {
+func (l *ProviderLog) GenSync(ctx context.Context, msgs genai.Messages, opts ...genai.GenOptions) (genai.Result, error) {
 	start := time.Now()
 	resp, err := l.Provider.GenSync(ctx, msgs, opts...)
 	slog.DebugContext(ctx, "GenSync", "msgs", len(msgs), "dur", time.Since(start).Round(time.Millisecond), "err", err, "usage", resp.Usage)
 	return resp, err
 }
 
-func (l *ProviderLog) GenStream(ctx context.Context, msgs genai.Messages, opts ...genai.Options) (iter.Seq[genai.ReplyFragment], func() (genai.Result, error)) {
+func (l *ProviderLog) GenStream(ctx context.Context, msgs genai.Messages, opts ...genai.GenOptions) (iter.Seq[genai.Reply], func() (genai.Result, error)) {
 	start := time.Now()
 	fragments, finish := l.Provider.GenStream(ctx, msgs, opts...)
 	return fragments, func() (genai.Result, error) {

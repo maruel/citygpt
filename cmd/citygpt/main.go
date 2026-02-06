@@ -119,7 +119,14 @@ func mainImpl() error {
 	if *verbose {
 		Level.Set(slog.LevelDebug)
 	}
-	c, err := internal.LoadProvider(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, nil)
+	var opts []genai.ProviderOption
+	if *remote != "" {
+		opts = append(opts, genai.ProviderOptionRemote(*remote))
+	}
+	if *model != "" {
+		opts = append(opts, genai.ProviderOptionModel(*model))
+	}
+	c, err := internal.LoadProvider(ctx, *provider, opts...)
 	if err != nil {
 		return err
 	}

@@ -72,8 +72,8 @@ func Summarize(ctx context.Context, c genai.Provider, content string) (string, e
 	messages := genai.Messages{
 		genai.Message{Requests: []genai.Request{{Text: summarizationPrompt}, {Text: content}}},
 	}
-	opts := genai.OptionsText{Seed: 1, Temperature: 0.3, MaxTokens: 1024 * 1024}
-	resp, err := c.GenSync(ctx, messages, &opts)
+	opts := genai.GenOptionsText{Temperature: 0.3, MaxTokens: 1024 * 1024}
+	resp, err := c.GenSync(ctx, messages, &opts, genai.GenOptionsSeed(1))
 	if err != nil {
 		return "", err
 	}

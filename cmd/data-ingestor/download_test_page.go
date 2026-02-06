@@ -67,7 +67,7 @@ func mainImpl() error {
 	if flag.NArg() != 0 {
 		return errors.New("unknown arguments")
 	}
-	c, err := internal.LoadProvider(ctx, "gemini", &genai.ProviderOptions{}, nil)
+	c, err := internal.LoadProvider(ctx, "gemini")
 	if err != nil {
 		return err
 	}

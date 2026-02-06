@@ -479,12 +479,17 @@ func mainImpl() error {
 	if *outputDir == "" {
 		*outputDir = filepath.Join("data", *city, "ingested")
 	}
-	wrapper := throttler
+	var opts []genai.ProviderOption
 	if *remote != "" {
+		opts = append(opts, genai.ProviderOptionRemote(*remote))
+	} else {
 		// Assume that if we use a local model, we don't need to throttle.
-		wrapper = nil
+		opts = append(opts, genai.ProviderOptionTransportWrapper(throttler))
 	}
-	c, err := internal.LoadProvider(ctx, *provider, &genai.ProviderOptions{Remote: *remote, Model: *model}, wrapper)
+	if *model != "" {
+		opts = append(opts, genai.ProviderOptionModel(*model))
+	}
+	c, err := internal.LoadProvider(ctx, *provider, opts...)
 	if err != nil {
 		return err
 	}
