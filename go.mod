@@ -1,6 +1,6 @@
 module github.com/maruel/citygpt
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
@@ -11,7 +11,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/oschwald/maxminddb-golang/v2 v2.0.0-beta.8
 	github.com/tdewolff/minify/v2 v2.23.11
-	golang.org/x/net v0.43.0
+	golang.org/x/net v0.55.0
 	golang.org/x/sync v0.19.0
 )
 
@@ -25,7 +25,7 @@ require (
 	github.com/maruel/httpjson v0.5.0 // indirect
 	github.com/tdewolff/parse/v2 v2.8.2-0.20250806174018-50048bb39781 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
-	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
